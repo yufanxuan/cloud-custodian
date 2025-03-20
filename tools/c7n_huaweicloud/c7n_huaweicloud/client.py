@@ -13,6 +13,7 @@ from huaweicloudsdkvpc.v2 import *
 from huaweicloudsdktms.v1 import *
 from huaweicloudsdktms.v1.region.tms_region import TmsRegion
 from huaweicloudsdkiam.v3 import *
+from huaweicloudsdkiam.v5 import *
 
 log = logging.getLogger('custodian.huaweicloud.client')
 
@@ -73,5 +74,7 @@ class Session:
             request = ListVpcsRequest()
         elif service == 'evs':
             request = ListVolumesRequest()
+        elif service == 'iam':
+            request = ListUsersV5Request()
 
         return request
