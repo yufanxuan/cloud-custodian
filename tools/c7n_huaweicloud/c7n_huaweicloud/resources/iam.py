@@ -16,7 +16,7 @@ class User(QueryResourceManager):
 
     class resource_type(TypeInfo):
         service = 'iam5'
-        enum_spec = ("list_users_v5", 'Users', 'marker_limit')
+        enum_spec = ("list_users_v5", 'users', 'marker_limit')
         id = 'id'
         tag = True
 
