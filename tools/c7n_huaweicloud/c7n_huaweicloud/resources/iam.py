@@ -133,6 +133,7 @@ class UserAccessKey(ValueFilter):
 
     def get_user_keys(self, client, user_set):
         for u in user_set:
+            log.info(u)
             u[self.annotation_key] = self.manager.retry(
                 client.list_access_keys_v5,
                 user_id=u['userId'])['access_keys']
