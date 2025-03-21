@@ -33,17 +33,17 @@ class IAMMarkerPagination(Pagination):
         return {'limit': DEFAULT_LIMIT_SIZE, 'marker': next_marker}
 
 
-@resources.register('iam-user')
-class User(QueryResourceManager):
+@resources.register('iam5-user')
+class Iam5User(QueryResourceManager):
 
     class resource_type(TypeInfo):
         service = 'iam5'
         pagination = IAMMarkerPagination()
         enum_spec = ("list_users_v5", 'users', pagination)
-        id = 'id'
+        id = 'user_id'
         tag = True
 
-@User.action_registry.register("set-login-protect")
+@Iam5User.action_registry.register("set-login-protect")
 class SetLoginProtect(HuaweiCloudBaseAction):
     """Set IAMUser Login Protect.
 
@@ -53,11 +53,16 @@ class SetLoginProtect(HuaweiCloudBaseAction):
 
         policies:
           - name: set-User-login-protect
-            resource: huaweicloud.IAM-User
-            flters:
-              - type: value
-                key: metadata.__system__encrypted
-                value: "0"
+            resource: huaweicloud.iam5-user
+            filters:
+              - type: access-key
+                key: status
+                value: active
+              - type: access-key
+                match-operator: and
+                key: create_time
+                value_type: age
+                value: 90
             actions:
               - type: set-login-protect
                 enabled: true
@@ -89,7 +94,7 @@ class SetLoginProtect(HuaweiCloudBaseAction):
             print(e.error_code)
             print(e.error_msg)
 
-@User.filter_registry.register('access-key')
+@Iam5User.filter_registry.register('access-key')
 class UserAccessKey(ValueFilter):
     """Filter IAM users based on access-key values
 
@@ -104,7 +109,7 @@ class UserAccessKey(ValueFilter):
 
         policies:
           - name: iam-users-with-active-keys
-            resource: iam-user
+            resource: huaweicloud.iam-user
             filters:
               - type: access-key
                 key: status
