@@ -142,10 +142,8 @@ class UserAccessKey(ValueFilter):
 
     def get_user_keys(self, client, user_set):
         for u in user_set:
-            log.info(u)
             try:
                 response = client.list_access_keys_v5(ListAccessKeysV5Request(user_id=u['user_id']))
-                print(response)
                 access_keys = response.access_keys
                 u[self.annotation_key] = [
                     {
@@ -185,5 +183,6 @@ class UserAccessKey(ValueFilter):
             self.merge_annotation(r, self.matched_annotation_key, k_matched)
             if k_matched:
                 matched.append(r)
-        print(matched)
+
+        print(f"matched: {matched}")
         return matched
