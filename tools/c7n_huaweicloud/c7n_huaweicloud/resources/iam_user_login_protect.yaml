@@ -1,6 +1,6 @@
 policies:
   - name: set-User-login-protect
-    resource: huaweicloud.iam5-user
+    resource: huaweicloud.iam-user
     actions:
       - type: set-login-protect
         enabled: true
