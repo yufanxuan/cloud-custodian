@@ -145,9 +145,16 @@ class UserAccessKey(ValueFilter):
             log.info(u)
             try:
                 response = client.list_access_keys_v5(ListAccessKeysV5Request(user_id=u['user_id']))
-                print(dir(response))  # 查看响应对象的所有属性和方法
-                print(response)  # 打印响应对象的详细信息
-                u[self.annotation_key] = response.access_keys
+                print(response)
+                access_keys = response.access_keys
+                u[self.annotation_key] = [
+                    {
+                        'access_key_id': key.access_key_id,
+                        'status': key.status,
+                        'create_time': key.create_time
+                    }
+                    for key in access_keys
+                ]
             except Exception as e:
                 log.error(f"Failed to list access keys for user {u['user_id']}: {e}")
                 u[self.annotation_key] = []
