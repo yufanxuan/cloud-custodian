@@ -141,9 +141,11 @@ class UserAccessKey(ValueFilter):
     def get_user_keys(self, client, user_set):
         for u in user_set:
             log.info(u)
-            u[self.annotation_key] = self.manager.retry(
-                client.list_access_keys_v5,
-                user_id=u['user_id'])['access_keys']
+            try:
+                u[self.annotation_key] = client.list_access_keys_v5(user_id=u['user_id'])['access_keys']
+            except Exception as e:
+                log.error(f"Failed to list access keys for user {u['user_id']}: {e}")
+                u[self.annotation_key] = []
 
     def process(self, resources, event=None):
         client = self.manager.get_client()
