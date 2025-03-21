@@ -15,7 +15,7 @@ log = logging.getLogger("custodian.huaweicloud.resources.volume")
 class User(QueryResourceManager):
 
     class resource_type(TypeInfo):
-        service = 'iam'
+        service = 'iam5'
         enum_spec = ("list_users_v5", 'Users', 'marker_limit')
         id = 'id'
         tag = True
