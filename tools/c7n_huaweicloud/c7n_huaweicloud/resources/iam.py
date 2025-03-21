@@ -125,7 +125,7 @@ class UserAccessKey(ValueFilter):
                 value: active
               - type: access-key
                 match-operator: and
-                key: create_time
+                key: created_at
                 value_type: age
                 value: 90
     """
@@ -151,7 +151,7 @@ class UserAccessKey(ValueFilter):
                     {
                         'access_key_id': key.access_key_id,
                         'status': key.status,
-                        'create_time': key.create_time
+                        'create_time': key.created_at
                     }
                     for key in access_keys
                 ]
