@@ -1,0 +1,20 @@
+policies:
+    - name: filter-for-encrypted-volume
+      resource: huaweicloud.volume
+      filters:
+        - type: value
+          key: metadata.__system__encrypted
+          value: "0"
+      actions:
+        - delete
+    - name: iam-users-with-active-keys
+      resource: huaweicloud.iam5-user
+      filters:
+        - type: access-key
+          key: status
+          value: active
+        - type: access-key
+          match-operator: and
+          key: create_time
+          value_type: age
+          value: 90
