@@ -629,6 +629,8 @@ class ValueFilter(BaseValueFilter):
         return jmespath_search(self.data.get('value_path'), i)
 
     def match(self, i):
+        print(f"Matching key: {i}")  # 打印匹配的 key
+        print(f"Filter data: {self.data}")  # 打印过滤条件
         if self.v is None and len(self.data) == 1:
             [(self.k, self.v)] = self.data.items()
         elif self.v is None and not hasattr(self, 'content_initialized'):

@@ -136,7 +136,7 @@ class UserAccessKey(ValueFilter):
         **{'match-operator': {'enum': ['and', 'or']}})
     schema_alias = False
     permissions = ('iam:ListAccessKeys',)
-    annotation_key = 'c7n:AccessKeys'
+    annotation_key = 'access_keys'
     matched_annotation_key = 'c7n:matched-keys'
     annotate = False
 
@@ -151,7 +151,7 @@ class UserAccessKey(ValueFilter):
                     {
                         'access_key_id': key.access_key_id,
                         'status': key.status,
-                        'create_time': key.created_at
+                        'created_at': key.created_at
                     }
                     for key in access_keys
                 ]
@@ -178,10 +178,12 @@ class UserAccessKey(ValueFilter):
             k_matched = []
             for k in keys:
                 if self.match(k):
+                    print(f"Matched key: {k}")
                     k_matched.append(k)
             for k in k_matched:
                 k['c7n:match-type'] = 'access'
             self.merge_annotation(r, self.matched_annotation_key, k_matched)
             if k_matched:
                 matched.append(r)
+        print(matched)
         return matched

@@ -7,7 +7,7 @@ policies:
         value: active
       - type: access-key
         match-operator: and
-        key: create_time
+        key: created_at
         value_type: age
         value: 90
     actions:
