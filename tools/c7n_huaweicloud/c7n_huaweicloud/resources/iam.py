@@ -6,7 +6,7 @@ from huaweicloudsdkcore.auth.credentials import GlobalCredentials
 from huaweicloudsdkcore.exceptions import exceptions
 from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectReq, UpdateLoginProject, IamClient as IamClientV3
 from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
-from huaweicloudsdkiam.v5 import ListAccessKeysV5Request, ListAccessKeysV5Response
+from huaweicloudsdkiam.v5 import ListAccessKeysV5Request
 
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema, chunks, jmespath_search

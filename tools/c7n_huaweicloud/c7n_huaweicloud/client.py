@@ -13,8 +13,6 @@ from huaweicloudsdkvpc.v2 import *
 from huaweicloudsdktms.v1 import *
 from huaweicloudsdktms.v1.region.tms_region import TmsRegion
 
-from huaweicloudsdkiam.v3 import IamClient as IamClientV3
-from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
 from huaweicloudsdkiam.v5 import IamClient as IamClientV5, ListUsersV5Request
 from huaweicloudsdkiam.v5.region import iam_region as iam_region_v5
 
@@ -63,13 +61,7 @@ class Session:
                 .with_credentials(globalCredentials) \
                 .with_region(TmsRegion.value_of(self.region)) \
                 .build()
-        elif service == 'iam3':
-            globalCredentials = GlobalCredentials(self.ak, self.sk)
-            client = IamClientV3.new_builder() \
-                .with_credentials(globalCredentials) \
-                .with_region(iam_region_v3.IamRegion.value_of(self.region)) \
-                .build()
-        elif service == 'iam5':
+        elif service == 'iam':
             globalCredentials = GlobalCredentials(self.ak, self.sk)
             client = IamClientV5.new_builder() \
                 .with_credentials(globalCredentials) \
@@ -83,7 +75,7 @@ class Session:
             request = ListVpcsRequest()
         elif service == 'evs':
             request = ListVolumesRequest()
-        elif service == 'iam5':
+        elif service == 'iam':
             request = ListUsersV5Request()
 
 
