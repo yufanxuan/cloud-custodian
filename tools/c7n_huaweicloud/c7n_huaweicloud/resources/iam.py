@@ -109,7 +109,7 @@ class UserAccessKey(ValueFilter):
 
         policies:
           - name: iam-users-with-active-keys
-            resource: huaweicloud.iam-user
+            resource: huaweicloud.iam5-user
             filters:
               - type: access-key
                 key: status
