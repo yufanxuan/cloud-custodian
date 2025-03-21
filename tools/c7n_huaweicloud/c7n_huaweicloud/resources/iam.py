@@ -6,6 +6,8 @@ from huaweicloudsdkcore.auth.credentials import GlobalCredentials
 from huaweicloudsdkcore.exceptions import exceptions
 from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectReq, UpdateLoginProject, IamClient as IamClientV3
 from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
+from huaweicloudsdkiam.v5 import ListAccessKeysV5Request
+
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema, chunks, jmespath_search
 from tools.c7n_huaweicloud.c7n_huaweicloud.actions import HuaweiCloudBaseAction
@@ -142,7 +144,7 @@ class UserAccessKey(ValueFilter):
         for u in user_set:
             log.info(u)
             try:
-                u[self.annotation_key] = client.list_access_keys_v5(user_id=u['user_id'])['access_keys']
+                u[self.annotation_key] = client.list_access_keys_v5(ListAccessKeysV5Request(u['user_id']))['access_keys']
             except Exception as e:
                 log.error(f"Failed to list access keys for user {u['user_id']}: {e}")
                 u[self.annotation_key] = []

@@ -1,0 +1,7 @@
+policies:
+  - name: set-User-login-protect
+    resource: huaweicloud.iam5-user
+    actions:
+      - type: set-login-protect
+        enabled: true
+        verification_method: vmfa
