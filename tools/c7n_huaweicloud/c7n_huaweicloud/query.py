@@ -10,11 +10,17 @@ from c7n.filters import FilterRegistry
 from c7n.manager import ResourceManager
 from c7n.query import sources, MaxResourceLimit
 from c7n.utils import local_session
+from tools.c7n_huaweicloud.c7n_huaweicloud.pagination import Pagination
 
 log = logging.getLogger('custodian.huaweicloud.query')
 
 DEFAULT_LIMIT_SIZE = 100
-DEFAULT_MARKER_LIMIT_SIZE = 200
+
+def _dict_map(obj, params_map):
+    if not params_map:
+        return obj
+    for k, v in params_map.items():
+        obj.__dict__[k] = v
 
 class ResourceQuery:
     def __init__(self, session_factory):
@@ -26,8 +32,8 @@ class ResourceQuery:
 
         if pagination == 'offset':
             resources = self._pagination_limit_offset(m, enum_op, path)
-        elif pagination == 'marker_limit':
-            resources = self._pagination_marker_limit(m, enum_op, path)
+        elif isinstance(pagination, Pagination):
+            resources = self._pagination(m, enum_op, path, pagination)
         else:
             log.exception(f"Unsupported pagination type: {pagination}")
             sys.exit(1)
@@ -63,32 +69,36 @@ class ResourceQuery:
     def _invoke_client_enum(self, client, enum_op, request):
         return getattr(client, enum_op)(request)
 
-    def _pagination_marker_limit(self, m, enum_op, path):
+    def _pagination(self, m, enum_op, path, pagination: Pagination):
         session = local_session(self.session_factory)
         client = session.client(m.service)
 
-        marker = 0
-        limit = DEFAULT_MARKER_LIMIT_SIZE
+        page_params = pagination.get_first_page_params()
+        request = session.request(m.service)
+        _dict_map(request, page_params)
         resources = []
+        print(request)
         while 1:
-            request = session.request(m.service)
-            request.marker = marker
-            request.limit = limit
             response = self._invoke_client_enum(client, enum_op, request)
             res = jmespath.search(path, eval(
                 str(response).replace('null', 'None').replace('false', 'False').replace('true', 'True')))
 
             # replace id with the specified one
-            if res is not None:
+            if res is None or len(res) == 0:
+                return resources
+            # re-set id
+            if 'id' not in res[0]:
                 for data in res:
                     data['id'] = data[m.id]
-
+            # merge result
             resources = resources + res
-            if len(res) == limit:
-                marker += limit
+
+            # get next page info
+            next_page_params = pagination.get_next_page_params(response)
+            if next_page_params:
+                _dict_map(request, next_page_params)
             else:
-                break
-        return resources
+                return resources
 
 @sources.register('describe-huaweicloud')
 class DescribeSource:
