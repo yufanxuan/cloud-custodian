@@ -3,5 +3,5 @@
 
 ResourceMap = {
     "huaweicloud.volume": "c7n_huaweicloud.resources.volume.Volume",
-    "huaweicloud.iam-user": "c7n_huaweicloud.resources.iam.iam5User",
+    "huaweicloud.iam5-user": "c7n_huaweicloud.resources.iam.Iam5User",
 }
