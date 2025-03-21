@@ -1,8 +1,11 @@
 import functools
 import logging
-from huaweicloudsdkcore.exceptions import exceptions
-from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectReq, UpdateLoginProject
+import os
 
+from huaweicloudsdkcore.auth.credentials import GlobalCredentials
+from huaweicloudsdkcore.exceptions import exceptions
+from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectReq, UpdateLoginProject, IamClient as IamClientV3
+from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema, chunks, jmespath_search
 from tools.c7n_huaweicloud.c7n_huaweicloud.actions import HuaweiCloudBaseAction
@@ -10,7 +13,7 @@ from tools.c7n_huaweicloud.c7n_huaweicloud.pagination import Pagination
 from tools.c7n_huaweicloud.c7n_huaweicloud.provider import resources
 from tools.c7n_huaweicloud.c7n_huaweicloud.query import QueryResourceManager, TypeInfo
 
-log = logging.getLogger("custodian.huaweicloud.resources.volume")
+log = logging.getLogger("custodian.huaweicloud.resources.iam")
 
 DEFAULT_LIMIT_SIZE = 100
 
@@ -76,7 +79,11 @@ class SetLoginProtect(HuaweiCloudBaseAction):
     )
 
     def perform_action(self, resource):
-        client = self.manager.get_client()
+        globalCredentials = GlobalCredentials(os.getenv('HUAWEI_ACCESS_KEY_ID'), os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
+        client = IamClientV3.new_builder() \
+            .with_credentials(globalCredentials) \
+            .with_region(iam_region_v3.IamRegion.value_of(os.getenv('HUAWEI_DEFAULT_REGION'))) \
+            .build()
         try:
             request = UpdateLoginProtectRequest(user_id=resource["id"])
 
@@ -136,7 +143,7 @@ class UserAccessKey(ValueFilter):
             log.info(u)
             u[self.annotation_key] = self.manager.retry(
                 client.list_access_keys_v5,
-                user_id=u['userId'])['access_keys']
+                user_id=u['user_id'])['access_keys']
 
     def process(self, resources, event=None):
         client = self.manager.get_client()
