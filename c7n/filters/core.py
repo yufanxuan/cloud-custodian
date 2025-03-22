@@ -675,13 +675,15 @@ class ValueFilter(BaseValueFilter):
         elif self.op:
             op = OPERATORS[self.op]
             try:
-                return op(r, v)
+                result = op(r, v)
+                print(f"Match result: {result}")
+                return result
             except TypeError:
                 return False
         elif r == v:
             return True
-        result = self.op(r, v) if self.op else r == v
-        print(f"Match result: {result}")
+
+        # 默认返回 False
         return False
 
     def process_value_type(self, sentinel, value, resource):
