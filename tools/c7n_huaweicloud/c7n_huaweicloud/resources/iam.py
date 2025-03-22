@@ -6,7 +6,8 @@ from huaweicloudsdkcore.auth.credentials import GlobalCredentials
 from huaweicloudsdkcore.exceptions import exceptions
 from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectReq, UpdateLoginProject, IamClient as IamClientV3
 from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
-from huaweicloudsdkiam.v5 import ListAccessKeysV5Request
+from huaweicloudsdkiam.v5 import ListAccessKeysV5Request, ListAttachedUserPoliciesV5Request, DetachUserPolicyV5Request, \
+    DetachUserPolicyReqBody, DeleteUserV5Request
 
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema, chunks, jmespath_search
@@ -48,7 +49,62 @@ class User(QueryResourceManager):
         id = 'user_id'
         tag = True
 
-@User.action_registry.register("set-login-protect")
+@User.action_registry.register('delete')
+class UserDelete(HuaweiCloudBaseAction):
+    """Delete a user.
+
+    :Example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: delete-user
+            resource: huaweicloud.iam-user
+            filters:
+              - type: access-key
+                key: status
+                value: active
+              - type: access-key
+                match-operator: and
+                key: create_time
+                value_type: age
+                value: 90
+            actions:
+              - delete
+    """
+
+    schema = type_schema('set-login-protect')
+
+    def perform_action(self, resource):
+        client = self.manager.get_client()
+        try:
+            request = ListAttachedUserPoliciesV5Request(
+                user_id=resource["id"], limit=200)
+            response = client.list_attached_user_policies_v5(request)
+            policy_ids = [policy["policy_id"] for policy in response["attached_policies"]]
+
+            for policy_id in policy_ids:
+                try:
+                    request = DetachUserPolicyV5Request(policy_id=policy_id)
+                    request.body = DetachUserPolicyReqBody(user_id=resource["id"])
+                    client.detach_user_policy_v5(request)
+                    print(f"Successfully detached policy: {policy_id}")
+                except exceptions.ClientRequestException as e:
+                    print(f"Failed to detach policy {policy_id}: {e.error_msg}")
+
+            request = DeleteUserV5Request(user_id=resource["id"])
+            response = client.delete_user_v5(request)
+            print(response)
+
+        except exceptions.ClientRequestException as e:
+            print(e.status_code)
+            print(e.request_id)
+            print(e.error_code)
+            print(e.error_msg)
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+
+@User.action_registry.register('set-login-protect')
 class SetLoginProtect(HuaweiCloudBaseAction):
     """Set IAMUser Login Protect.
 
@@ -57,7 +113,7 @@ class SetLoginProtect(HuaweiCloudBaseAction):
     .. code-block:: yaml
 
         policies:
-          - name: set-User-login-protect
+          - name: set-user-login-protect
             resource: huaweicloud.iam-user
             filters:
               - type: access-key
@@ -103,6 +159,8 @@ class SetLoginProtect(HuaweiCloudBaseAction):
             print(e.error_code)
             print(e.error_msg)
 
+"""------------------------------------filter---------------------------------------"""
+
 @User.filter_registry.register('access-key')
 class UserAccessKey(ValueFilter):
     """Filter IAM users based on access-key values
@@ -117,7 +175,7 @@ class UserAccessKey(ValueFilter):
     .. code-block:: yaml
 
         policies:
-          - name: iam-users-with-active-keys
+          - name: iam-users-with-active-keys-or-created_at
             resource: huaweicloud.iam-user
             filters:
               - or:
@@ -146,7 +204,6 @@ class UserAccessKey(ValueFilter):
             try:
                 response = client.list_access_keys_v5(ListAccessKeysV5Request(user_id=u['user_id']))
                 access_keys = response.access_keys
-                print(f"access_keys is:{access_keys}")
                 u[self.annotation_key] = [
                     {
                         'access_key_id': key.access_key_id,
@@ -175,7 +232,6 @@ class UserAccessKey(ValueFilter):
             k_matched = []
             for k in keys:
                 if self.match(k):
-                    print(f"----Matched key----: {k}")
                     k_matched.append(k)
             for k in k_matched:
                 k['c7n:match-type'] = 'access'

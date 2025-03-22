@@ -1,0 +1,14 @@
+policies:
+  - name: delete-user
+    resource: huaweicloud.iam-user
+    filters:
+      - type: access-key
+        key: status
+        value: active
+      - type: access-key
+        match-operator: and
+        key: create_time
+        value_type: age
+        value: 90
+    actions:
+      - delete
