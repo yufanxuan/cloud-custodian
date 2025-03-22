@@ -657,7 +657,9 @@ class ValueFilter(BaseValueFilter):
         # value type conversion
         if self.vtype is not None:
             v, r = self.process_value_type(self.v, r, i)
+            print(f"Type of v: {type(v)}, Type of r: {type(r)}")
             print(f"Processed value: {v}, {r}")
+            print(f"Comparison: r > v = {r > v}")
         else:
             v = self.v
 
