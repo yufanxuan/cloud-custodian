@@ -81,7 +81,7 @@ class UserDelete(HuaweiCloudBaseAction):
             request = ListAttachedUserPoliciesV5Request(
                 user_id=resource["id"], limit=200)
             response = client.list_attached_user_policies_v5(request)
-            policy_ids = [policy["policy_id"] for policy in response["attached_policies"]]
+            policy_ids = [policy["policy_id"] for policy in response.attached_policies]
 
             for policy_id in policy_ids:
                 try:
