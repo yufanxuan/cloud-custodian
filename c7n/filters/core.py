@@ -657,6 +657,7 @@ class ValueFilter(BaseValueFilter):
         # value type conversion
         if self.vtype is not None:
             v, r = self.process_value_type(self.v, r, i)
+            print(f"Processed value: {v}, {r}")
         else:
             v = self.v
 
@@ -719,6 +720,7 @@ class ValueFilter(BaseValueFilter):
             if value is None:
                 # compatiblity
                 value = 0
+            print(f"Sentinel: {sentinel}, Value: {value}")
             # Reverse the age comparison, we want to compare the value being
             # greater than the sentinel typically. Else the syntax for age
             # comparisons is intuitively wrong.

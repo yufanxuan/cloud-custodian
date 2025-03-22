@@ -145,6 +145,7 @@ class UserAccessKey(ValueFilter):
             try:
                 response = client.list_access_keys_v5(ListAccessKeysV5Request(user_id=u['user_id']))
                 access_keys = response.access_keys
+                print(f"access_keys is:{access_keys}")
                 u[self.annotation_key] = [
                     {
                         'access_key_id': key.access_key_id,
