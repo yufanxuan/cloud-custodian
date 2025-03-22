@@ -680,7 +680,8 @@ class ValueFilter(BaseValueFilter):
                 return False
         elif r == v:
             return True
-
+        result = self.op(r, v) if self.op else r == v
+        print(f"Match result: {result}")
         return False
 
     def process_value_type(self, sentinel, value, resource):
