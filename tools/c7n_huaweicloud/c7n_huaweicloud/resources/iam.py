@@ -177,7 +177,7 @@ class UserAccessKey(ValueFilter):
             k_matched = []
             for k in keys:
                 if self.match(k):
-                    print(f"Matched key: {k}")
+                    print(f"----Matched key----: {k}")
                     k_matched.append(k)
             for k in k_matched:
                 k['c7n:match-type'] = 'access'

@@ -4,12 +4,12 @@ policies:
     filters:
       - type: access-key
         key: status
-        value: active
+        value: inactive
       - type: access-key
         match-operator: and
         key: created_at
         value_type: age
-        value: 90
+        value: 3
     actions:
       - type: set-login-protect
         enabled: true

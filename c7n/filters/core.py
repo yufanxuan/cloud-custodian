@@ -716,11 +716,13 @@ class ValueFilter(BaseValueFilter):
         elif self.vtype == 'age':
             if not isinstance(sentinel, datetime.datetime):
                 sentinel = datetime.datetime.now(tz=tzutc()) - timedelta(sentinel)
-            value = parse_date(value)
+            # 如果 value 是字符串类型，将其转换为 datetime.datetime 类型
+            if isinstance(value, str):
+                value = parse_date(value)
             if value is None:
                 # compatiblity
                 value = 0
-            print(f"Sentinel: {sentinel}, Value: {value}")
+            print(f"Sentinel: {sentinel}, Value: {value}")  # 打印 sentinel 和 value
             # Reverse the age comparison, we want to compare the value being
             # greater than the sentinel typically. Else the syntax for age
             # comparisons is intuitively wrong.
