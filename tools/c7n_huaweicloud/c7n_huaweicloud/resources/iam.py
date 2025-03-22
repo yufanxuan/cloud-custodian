@@ -183,5 +183,4 @@ class UserAccessKey(ValueFilter):
             if k_matched:
                 matched.append(r)
 
-        print(f"matched: {matched}")
         return matched
