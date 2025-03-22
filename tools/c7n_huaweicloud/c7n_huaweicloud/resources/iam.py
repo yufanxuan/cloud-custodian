@@ -150,7 +150,7 @@ class UserAccessKey(ValueFilter):
                     {
                         'access_key_id': key.access_key_id,
                         'status': key.status,
-                        'created_at': key.created_at
+                        'created_at': key.created_at.isoformat()
                     }
                     for key in access_keys
                 ]
