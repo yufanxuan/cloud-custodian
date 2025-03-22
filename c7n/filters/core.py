@@ -629,8 +629,6 @@ class ValueFilter(BaseValueFilter):
         return jmespath_search(self.data.get('value_path'), i)
 
     def match(self, i):
-        print(f"Matching key: {i}")  # 打印匹配的 key
-        print(f"Filter data: {self.data}")  # 打印过滤条件
         if self.v is None and len(self.data) == 1:
             [(self.k, self.v)] = self.data.items()
         elif self.v is None and not hasattr(self, 'content_initialized'):
@@ -657,9 +655,6 @@ class ValueFilter(BaseValueFilter):
         # value type conversion
         if self.vtype is not None:
             v, r = self.process_value_type(self.v, r, i)
-            print(f"Type of v: {type(v)}, Type of r: {type(r)}")
-            print(f"Processed value: {v}, {r}")
-            print(f"Comparison: r > v = {r > v}")
         else:
             v = self.v
 
@@ -675,15 +670,12 @@ class ValueFilter(BaseValueFilter):
         elif self.op:
             op = OPERATORS[self.op]
             try:
-                result = op(r, v)
-                print(f"Match result: {result}")
-                return result
+                return op(r, v)
             except TypeError:
                 return False
         elif r == v:
             return True
 
-        # 默认返回 False
         return False
 
     def process_value_type(self, sentinel, value, resource):
@@ -721,13 +713,10 @@ class ValueFilter(BaseValueFilter):
         elif self.vtype == 'age':
             if not isinstance(sentinel, datetime.datetime):
                 sentinel = datetime.datetime.now(tz=tzutc()) - timedelta(sentinel)
-            # 如果 value 是字符串类型，将其转换为 datetime.datetime 类型
-            if isinstance(value, str):
-                value = parse_date(value)
+            value = parse_date(value)
             if value is None:
                 # compatiblity
                 value = 0
-            print(f"Sentinel: {sentinel}, Value: {value}")  # 打印 sentinel 和 value
             # Reverse the age comparison, we want to compare the value being
             # greater than the sentinel typically. Else the syntax for age
             # comparisons is intuitively wrong.

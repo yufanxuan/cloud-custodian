@@ -9,8 +9,9 @@ policies:
         match-operator: and
         key: created_at
         value_type: age
-        value: 3
+        value: 300
+        op: le
     actions:
       - type: set-login-protect
         enabled: true
-        verification_method: vmfa
+        verification_method: sms

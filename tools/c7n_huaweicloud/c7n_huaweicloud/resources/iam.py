@@ -170,6 +170,7 @@ class UserAccessKey(ValueFilter):
 
         matched = []
         match_op = self.data.get('match-operator', 'or')
+        print(f"Match operator: {match_op}")  # 打印 match-operator 的值
         for r in resources:
             keys = r[self.annotation_key]
             if self.matched_annotation_key in r and match_op == 'and':
@@ -182,7 +183,10 @@ class UserAccessKey(ValueFilter):
             for k in k_matched:
                 k['c7n:match-type'] = 'access'
             self.merge_annotation(r, self.matched_annotation_key, k_matched)
-            if k_matched:
+            # 根据 match-operator 决定是否添加到 matched 列表
+            if match_op == 'or' and k_matched:
+                matched.append(r)
+            elif match_op == 'and' and len(k_matched) == len(keys):
                 matched.append(r)
 
         print(f"matched: {matched}")
