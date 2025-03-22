@@ -2,15 +2,16 @@ policies:
   - name: set-User-login-protect
     resource: huaweicloud.iam-user
     filters:
-      - type: access-key
-        key: status
-        value: inactive
-      - type: access-key
-        match-operator: and
-        key: created_at
-        value_type: age
-        value: 300
-        op: le
+      - or:
+        - type: access-key
+          key: status
+          value: inactive
+        - type: access-key
+          match-operator: and
+          key: created_at
+          value_type: age
+          value: 300
+          op: ge
     actions:
       - type: set-login-protect
         enabled: true

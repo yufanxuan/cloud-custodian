@@ -120,14 +120,15 @@ class UserAccessKey(ValueFilter):
           - name: iam-users-with-active-keys
             resource: huaweicloud.iam-user
             filters:
-              - type: access-key
-                key: status
-                value: active
-              - type: access-key
-                match-operator: and
-                key: created_at
-                value_type: age
-                value: 90
+              - or:
+                - type: access-key
+                  key: status
+                  value: active
+                - type: access-key
+                  key: created_at
+                  value_type: age
+                  value: 90
+                  op: gt
     """
 
     schema = type_schema(
@@ -169,12 +170,8 @@ class UserAccessKey(ValueFilter):
                 chunks(augment_set, 50)))
 
         matched = []
-        match_op = self.data.get('match-operator', 'or')
-        print(f"Match operator: {match_op}")  # 打印 match-operator 的值
         for r in resources:
             keys = r[self.annotation_key]
-            if self.matched_annotation_key in r and match_op == 'and':
-                keys = r[self.matched_annotation_key]
             k_matched = []
             for k in keys:
                 if self.match(k):
@@ -183,10 +180,7 @@ class UserAccessKey(ValueFilter):
             for k in k_matched:
                 k['c7n:match-type'] = 'access'
             self.merge_annotation(r, self.matched_annotation_key, k_matched)
-            # 根据 match-operator 决定是否添加到 matched 列表
-            if match_op == 'or' and k_matched:
-                matched.append(r)
-            elif match_op == 'and' and len(k_matched) == len(keys):
+            if k_matched:
                 matched.append(r)
 
         print(f"matched: {matched}")
