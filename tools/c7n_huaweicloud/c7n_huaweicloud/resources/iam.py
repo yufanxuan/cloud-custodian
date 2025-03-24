@@ -135,7 +135,7 @@ class SetGroup(HuaweiCloudBaseAction):
     """
 
     schema = type_schema(
-        'set-groups',
+        'set-group',
         state={'enum': ['add', 'remove']},
         group_id={'type': 'string'},
         required=['state', 'group_id']
