@@ -3,10 +3,8 @@ policies:
     resource: huaweicloud.iam-user
     filters:
       - type: list-item
-        key: created_at
-        value_type: age
-        value: 3
-        op: le
+        key: user_id
+        value: asfgsdfsd1adsad
     actions:
       - type: set-group
         state: add

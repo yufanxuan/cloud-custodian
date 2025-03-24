@@ -8,7 +8,7 @@ from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectRe
 from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
 from huaweicloudsdkiam.v5 import ListAccessKeysV5Request, ListAttachedUserPoliciesV5Request, DetachUserPolicyV5Request, \
     DetachUserPolicyReqBody, DeleteUserV5Request, AddUserToGroupV5Request, AddUserToGroupReqBody, \
-    RemoveUserFromGroupV5Request, RemoveUserFromGroupReqBody
+    RemoveUserFromGroupV5Request, RemoveUserFromGroupReqBody, DeletePolicyV5Request, DeleteAccessKeyV5Request
 
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema, chunks, jmespath_search
@@ -186,26 +186,22 @@ class UserRemoveAccessKey(HuaweiCloudBaseAction):
                 value: 90
                 op: gt
             actions:
-              - remove-access-key
+              - type: remove-access-key
+                disable: true
     """
 
-    schema = type_schema('remove-access-key')
+    schema = type_schema(
+        'remove-access-key',
+        disable={'type': 'boolean'})
 
     def perform_action(self, resource):
-        group_id = self.data.get('group_id')
-        user_id = resource["id"]
-        state = self.data['state']
         client = self.manager.get_client()
         try:
-            if state == 'add':
-                request = AddUserToGroupV5Request(group_id=group_id)
-                request.body = AddUserToGroupReqBody(user_id=user_id)
-                response = client.add_user_to_group_v5(request)
-                print(response)
-            elif state == 'remove':
-                request = RemoveUserFromGroupV5Request(group_id=group_id)
-                request.body = RemoveUserFromGroupReqBody(user_id=user_id)
-                response = client.remove_user_from_group_v5(request)
+            for key in resource["c7n:matched-keys"]:
+                request = DeleteAccessKeyV5Request(
+                    user_id=resource["id"],
+                    access_key_id=key.access_key_id)
+                response = client.delete_access_key_v5(request)
                 print(response)
         except exceptions.ClientRequestException as e:
             print(e.status_code)
