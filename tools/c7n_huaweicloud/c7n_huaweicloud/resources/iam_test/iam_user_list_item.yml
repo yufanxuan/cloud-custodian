@@ -3,7 +3,7 @@ policies:
     resource: huaweicloud.iam-user
     filters:
       - type: list-item
-        key: user_id
+        key: id
         value: asfgsdfsd1adsad
     actions:
       - type: set-group
