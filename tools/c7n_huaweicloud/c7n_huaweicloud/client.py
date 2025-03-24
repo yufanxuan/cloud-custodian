@@ -61,7 +61,7 @@ class Session:
                 .with_credentials(globalCredentials) \
                 .with_region(TmsRegion.value_of(self.region)) \
                 .build()
-        elif service == 'iam':
+        elif service == 'iam-user':
             globalCredentials = GlobalCredentials(self.ak, self.sk)
             client = IamClientV5.new_builder() \
                 .with_credentials(globalCredentials) \
@@ -75,7 +75,7 @@ class Session:
             request = ListVpcsRequest()
         elif service == 'evs':
             request = ListVolumesRequest()
-        elif service == 'iam':
+        elif service == 'iam-user':
             request = ListUsersV5Request()
 
 

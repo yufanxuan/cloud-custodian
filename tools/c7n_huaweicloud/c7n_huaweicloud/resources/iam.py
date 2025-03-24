@@ -8,7 +8,8 @@ from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectRe
 from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
 from huaweicloudsdkiam.v5 import ListAccessKeysV5Request, ListAttachedUserPoliciesV5Request, DetachUserPolicyV5Request, \
     DetachUserPolicyReqBody, DeleteUserV5Request, AddUserToGroupV5Request, AddUserToGroupReqBody, \
-    RemoveUserFromGroupV5Request, RemoveUserFromGroupReqBody, DeletePolicyV5Request, DeleteAccessKeyV5Request
+    RemoveUserFromGroupV5Request, RemoveUserFromGroupReqBody, DeletePolicyV5Request, DeleteAccessKeyV5Request, \
+    ListMfaDevicesV5Request
 
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema, chunks, jmespath_search
@@ -44,7 +45,7 @@ class IAMMarkerPagination(Pagination):
 class User(QueryResourceManager):
 
     class resource_type(TypeInfo):
-        service = 'iam'
+        service = 'iam-user'
         pagination = IAMMarkerPagination()
         enum_spec = ("list_users_v5", 'users', pagination)
         id = 'user_id'
@@ -282,43 +283,31 @@ class UserMfaDevice(ValueFilter):
             resource: iam-user
             filters:
               - type: mfa-device
-                key: UserName
+                key: mfa_devices
                 value: not-null
     """
 
     schema = type_schema('mfa-device', rinherit=ValueFilter.schema)
     schema_alias = False
-    permissions = ('iam:ListMFADevices',)
 
     def __init__(self, *args, **kw):
         super(UserMfaDevice, self).__init__(*args, **kw)
-        self.data['key'] = 'MFADevices'
+        self.data['key'] = 'mfa_devices'
 
     def process(self, resources, event=None):
 
-        def _user_mfa_devices(resource):
+        for resource in resources:
+
             globalCredentials = GlobalCredentials(os.getenv('HUAWEI_ACCESS_KEY_ID'),
                                                   os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
             client = IamClientV3.new_builder() \
                 .with_credentials(globalCredentials) \
                 .with_region(iam_region_v3.IamRegion.value_of(os.getenv('HUAWEI_DEFAULT_REGION'))) \
                 .build()
-            resource['MFADevices'] = client.list_mfa_devices(
-                UserName=resource['UserName'])['MFADevices']
 
-        with self.executor_factory(max_workers=2) as w:
-            query_resources = [
-                r for r in resources if 'MFADevices' not in r]
-            self.log.debug(
-                "Querying %d users' mfa devices" % len(query_resources))
-            list(w.map(_user_mfa_devices, query_resources))
-
-        matched = []
-        for r in resources:
-            if self.match(r):
-                matched.append(r)
-
-        return matched
+            request = ListMfaDevicesV5Request(user_id=resource["id"])
+            resource['mfa_devices'] = client.list_mfa_devices(request).mfa_devices
+            return super(UserMfaDevice, self).process(resources, event)
 
 @User.filter_registry.register('access-key')
 class UserAccessKey(ValueFilter):
