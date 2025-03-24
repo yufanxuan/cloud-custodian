@@ -21,6 +21,7 @@ def _dict_map(obj, params_map):
         return obj
     for k, v in params_map.items():
         obj.__dict__[k] = v
+    return obj
 
 class ResourceQuery:
     def __init__(self, session_factory):
@@ -75,7 +76,7 @@ class ResourceQuery:
 
         page_params = pagination.get_first_page_params()
         request = session.request(m.service)
-        _dict_map(request, page_params)
+        request = _dict_map(request, page_params)
         resources = []
 
         while 1:
@@ -97,8 +98,7 @@ class ResourceQuery:
             next_page_params = pagination.get_next_page_params(response)
             print(f"next_page_params: {next_page_params}")
             if next_page_params:
-                _dict_map(request, next_page_params)
-                request = request
+                request = _dict_map(request, next_page_params)
             else:
                 return resources
 
