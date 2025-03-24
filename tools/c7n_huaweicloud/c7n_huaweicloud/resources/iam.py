@@ -20,7 +20,7 @@ from tools.c7n_huaweicloud.c7n_huaweicloud.query import QueryResourceManager, Ty
 
 log = logging.getLogger("custodian.huaweicloud.resources.iam")
 
-DEFAULT_LIMIT_SIZE = 100
+DEFAULT_LIMIT_SIZE = 500
 
 class IAMMarkerPagination(Pagination):
     def get_first_page_params(self):
