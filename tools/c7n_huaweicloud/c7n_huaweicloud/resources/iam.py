@@ -298,7 +298,7 @@ class UserMfaDevice(ValueFilter):
         client = self.manager.get_client()
         for resource in resources:
             request = ListMfaDevicesV5Request(user_id=resource["id"])
-            resource['mfa_devices'] = client.list_mfa_devices(request).mfa_devices
+            resource['mfa_devices'] = client.list_mfa_devices_v5(request).mfa_devices
             return super(UserMfaDevice, self).process(resources, event)
 
 @User.filter_registry.register('access-key')
