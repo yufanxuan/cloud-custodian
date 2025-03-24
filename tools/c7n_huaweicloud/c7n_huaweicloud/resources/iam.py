@@ -364,7 +364,7 @@ class AllowAllIamPolicies(ValueFilter):
         ).policy_version.document
 
         print(f"document:                                          {document}")
-        statements = json.load(document)['Statement']
+        statements = document.get('Statement')
         if isinstance(statements, dict):
             statements = [statements]
 
