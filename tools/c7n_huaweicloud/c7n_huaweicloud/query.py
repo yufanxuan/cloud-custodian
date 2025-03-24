@@ -20,7 +20,7 @@ def _dict_map(obj, params_map):
     if not params_map:
         return obj
     for k, v in params_map.items():
-        obj.__dict__[k] = v
+        obj[k] = v
     return obj
 
 class ResourceQuery:
