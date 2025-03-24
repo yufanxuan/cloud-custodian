@@ -280,7 +280,7 @@ class UserMfaDevice(ValueFilter):
 
         policies:
           - name: mfa-enabled-users
-            resource: iam-user
+            resource: huaweicloud.iam-user
             filters:
               - type: mfa-device
                 key: mfa_devices
@@ -298,7 +298,8 @@ class UserMfaDevice(ValueFilter):
         def _user_mfa_devices(resource):
             client = self.manager.get_client()
             request = ListMfaDevicesV5Request(user_id=resource["id"])
-            resource['mfa_devices'] = client.list_mfa_devices_v5(request).mfa_devices
+            mfa_devices = client.list_mfa_devices_v5(request).mfa_devices
+            resource['mfa_devices'] = [device.__dict__ for device in mfa_devices]
 
         with self.executor_factory(max_workers=2) as w:
             query_resources = [
