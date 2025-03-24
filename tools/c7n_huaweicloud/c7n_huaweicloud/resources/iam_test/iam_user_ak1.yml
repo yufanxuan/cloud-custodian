@@ -9,4 +9,5 @@ policies:
         match-operator: and
         key: create_time
         value_type: age
-        value: 90
+        value: 3
+        op: lt

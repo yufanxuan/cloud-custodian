@@ -74,7 +74,7 @@ class UserDelete(HuaweiCloudBaseAction):
               - delete
     """
 
-    schema = type_schema('set-login-protect')
+    schema = type_schema('delete')
 
     def perform_action(self, resource):
         client = self.manager.get_client()
@@ -140,6 +140,56 @@ class SetGroup(HuaweiCloudBaseAction):
         group_id={'type': 'string'},
         required=['state', 'group_id']
     )
+
+    def perform_action(self, resource):
+        group_id = self.data.get('group_id')
+        user_id = resource["id"]
+        state = self.data['state']
+        client = self.manager.get_client()
+        try:
+            if state == 'add':
+                request = AddUserToGroupV5Request(group_id=group_id)
+                request.body = AddUserToGroupReqBody(user_id=user_id)
+                response = client.add_user_to_group_v5(request)
+                print(response)
+            elif state == 'remove':
+                request = RemoveUserFromGroupV5Request(group_id=group_id)
+                request.body = RemoveUserFromGroupReqBody(user_id=user_id)
+                response = client.remove_user_from_group_v5(request)
+                print(response)
+        except exceptions.ClientRequestException as e:
+            print(e.status_code)
+            print(e.request_id)
+            print(e.error_code)
+            print(e.error_msg)
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+
+@User.action_registry.register('remove-access-key')
+class UserRemoveAccessKey(HuaweiCloudBaseAction):
+    """Delete a user.
+
+    :Example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: UserRemoveAccessKey
+            resource: huaweicloud.iam-user
+            filters:
+              - type: access-key
+                key: status
+                value: active
+              - type: access-key
+                key: created_at
+                value_type: age
+                value: 90
+                op: gt
+            actions:
+              - remove-access-key
+    """
+
+    schema = type_schema('remove-access-key')
 
     def perform_action(self, resource):
         group_id = self.data.get('group_id')
