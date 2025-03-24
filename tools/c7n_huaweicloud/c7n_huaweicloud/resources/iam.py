@@ -8,7 +8,8 @@ from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectRe
 from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
 from huaweicloudsdkiam.v5 import ListAccessKeysV5Request, ListAttachedUserPoliciesV5Request, DetachUserPolicyV5Request, \
     DetachUserPolicyReqBody, DeleteUserV5Request, AddUserToGroupV5Request, AddUserToGroupReqBody, \
-    RemoveUserFromGroupV5Request, RemoveUserFromGroupReqBody
+    RemoveUserFromGroupV5Request, RemoveUserFromGroupReqBody, GetPolicyVersionV5Request, DeletePolicyVersionV5Request, \
+    ListPolicyVersionsV5Request, DeletePolicyV5Request
 
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema, chunks, jmespath_search
@@ -49,6 +50,17 @@ class User(QueryResourceManager):
         enum_spec = ("list_users_v5", 'users', pagination)
         id = 'user_id'
         tag = True
+
+@resources.register('iam-policy')
+class Policy(QueryResourceManager):
+
+    class resource_type(TypeInfo):
+        service = 'iam'
+        pagination = IAMMarkerPagination()
+        enum_spec = ("list_policies_v5", 'users', pagination)
+        id = 'policy_id'
+        tag = True
+
 
 @User.action_registry.register('delete')
 class UserDelete(HuaweiCloudBaseAction):
@@ -301,3 +313,146 @@ class UserAccessKey(ValueFilter):
                 matched.append(r)
 
         return matched
+
+@Policy.filter_registry.register('has-allow-all')
+class AllowAllIamPolicies(ValueFilter):
+    """Check if IAM policy resource(s) have allow-all IAM policy statement block.
+
+    Policy must have 'Action' and Resource = '*' with 'Effect' = 'Allow'
+
+    The policy will trigger on the following IAM policy (statement).
+    For example:
+
+    .. code-block:: json
+
+      {
+          "Version": "2012-10-17",
+          "Statement": [{
+              "Action": "*",
+              "Resource": "*",
+              "Effect": "Allow"
+          }]
+      }
+
+    Additionally, the policy checks if the statement has no 'Condition' or
+    'NotAction'.
+
+    For example, if the user wants to check all used policies and filter on
+    allow all:
+
+    .. code-block:: yaml
+
+     - name: iam-no-used-all-all-policy
+       resource: iam-policy
+       filters:
+         - type: used
+         - type: has-allow-all
+
+    Note that scanning and getting all policies and all statements can take
+    a while. Use it sparingly or combine it with filters such as 'used' as
+    above.
+
+    """
+
+    schema = type_schema('has-allow-all')
+
+    def has_allow_all_policy(self, client, resource):
+        statements = client.get_policy_version_v5(GetPolicyVersionV5Request(policy_id=resource['policy_id'],
+                                                               version_id=resource['default_version_id'])
+        )['policy_version']['document']['Statement']
+        if isinstance(statements, dict):
+            statements = [statements]
+
+        for s in statements:
+            if ('Condition' not in s and
+                    'Action' in s and
+                    isinstance(s['Action'], str) and
+                    s['Action'] == "*" and
+                    'Resource' in s and
+                    isinstance(s['Resource'], str) and
+                    s['Resource'] == "*" and
+                    s['Effect'] == "Allow"):
+                return True
+        return False
+
+    def process(self, resources, event=None):
+        client = self.manager.get_client()
+        results = [r for r in resources if self.has_allow_all_policy(client, r)]
+        self.log.info(
+            "%d of %d iam policies have allow all.",
+            len(results), len(resources))
+        return results
+
+
+@Policy.filter_registry.register('unused')
+class UnusedIamPolicies(ValueFilter):
+    """Filter IAM policies that are not being used
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: iam-policy-unused
+            resource: iam-policy
+            filters:
+              - type: unused
+    """
+
+    schema = type_schema('unused')
+
+    def process(self, resources, event=None):
+        return [r for r in resources if
+                r['attachment_count'] == 0]
+
+@Policy.filter_registry.register('used')
+class UnusedIamPolicies(ValueFilter):
+    """Filter IAM policies that are being used
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: iam-policy-used
+            resource: iam-policy
+            filters:
+              - type: used
+    """
+
+    schema = type_schema('used')
+
+    def process(self, resources, event=None):
+        return [r for r in resources if
+                r['attachment_count'] > 0]
+
+@Policy.action_registry.register('delete')
+class PolicyDelete(HuaweiCloudBaseAction):
+    """Delete an IAM Policy.
+
+    For example, if you want to automatically delete all unused IAM policies.
+
+    :example:
+
+      .. code-block:: yaml
+
+        - name: iam-delete-unused-policies
+          resource: iam-policy
+          filters:
+            - type: unused
+          actions:
+            - delete
+
+    """
+    schema = type_schema('delete')
+
+    def process(self, resources):
+        client = self.manager.get_client()
+
+        for r in resources:
+            if r.get('default_version_id') != 'v1':
+                versions = [v['version_id'] for v in client.list_policy_versions_v5(
+                    ListPolicyVersionsV5Request(policy_id=r['policy_id'])).get('version_id') if not v.get('is_default')]
+                for v in versions:
+                    client.delete_policy_version_v5(DeletePolicyVersionV5Request(policy_id=r['policy_id'], version_id=v))
+            client.delete_policy_v5(DeletePolicyV5Request(policy_id=r['policy_id']))
