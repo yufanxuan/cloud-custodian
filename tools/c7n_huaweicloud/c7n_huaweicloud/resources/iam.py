@@ -295,16 +295,8 @@ class UserMfaDevice(ValueFilter):
         self.data['key'] = 'mfa_devices'
 
     def process(self, resources, event=None):
-
+        client = self.manager.get_client()
         for resource in resources:
-
-            globalCredentials = GlobalCredentials(os.getenv('HUAWEI_ACCESS_KEY_ID'),
-                                                  os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
-            client = IamClientV3.new_builder() \
-                .with_credentials(globalCredentials) \
-                .with_region(iam_region_v3.IamRegion.value_of(os.getenv('HUAWEI_DEFAULT_REGION'))) \
-                .build()
-
             request = ListMfaDevicesV5Request(user_id=resource["id"])
             resource['mfa_devices'] = client.list_mfa_devices(request).mfa_devices
             return super(UserMfaDevice, self).process(resources, event)
