@@ -464,4 +464,4 @@ class PolicyDelete(HuaweiCloudBaseAction):
             print(f"resource versions: {versions}")
             for versionNum in versions:
                 client.delete_policy_version_v5(DeletePolicyVersionV5Request(policy_id=resource['policy_id'], version_id=versionNum))
-        client.delete_policy_v5(DeletePolicyV5Request(policy_id=resource['policy_id']))
+            client.delete_policy_v5(DeletePolicyV5Request(policy_id=resource['policy_id']))
