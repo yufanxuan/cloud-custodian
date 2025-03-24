@@ -98,6 +98,7 @@ class ResourceQuery:
             print(f"next_page_params: {next_page_params}")
             if next_page_params:
                 _dict_map(request, next_page_params)
+                request = request
             else:
                 return resources
 
