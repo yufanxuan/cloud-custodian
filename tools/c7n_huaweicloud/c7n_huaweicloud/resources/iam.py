@@ -298,8 +298,7 @@ class UserAccessKey(ValueFilter):
 
     schema = type_schema(
         'access-key',
-        rinherit=ValueFilter.schema,
-        **{'match-operator': {'enum': ['and', 'or']}})
+        rinherit=ValueFilter.schema)
     schema_alias = False
     permissions = ('iam:ListAccessKeys',)
     annotation_key = 'access_keys'

@@ -7,7 +7,6 @@ policies:
           key: status
           value: inactive
         - type: access-key
-          match-operator: and
           key: created_at
           value_type: age
           value: 300

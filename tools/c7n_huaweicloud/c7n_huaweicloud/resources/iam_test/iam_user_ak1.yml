@@ -6,7 +6,6 @@ policies:
         key: status
         value: active
       - type: access-key
-        match-operator: and
         key: create_time
         value_type: age
         value: 3
