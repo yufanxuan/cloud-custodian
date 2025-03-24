@@ -82,24 +82,24 @@ class ResourceQuery:
             response = self._invoke_client_enum(client, enum_op, request)
             res = jmespath.search(path, eval(
                 str(response).replace('null', 'None').replace('false', 'False').replace('true', 'True')))
-
-            print(f"_pagination {res}")
-            # replace id with the specified one
-            if res is None or len(res) == 0:
-                return resources
-            # re-set id
-            if 'id' not in res[0]:
-                for data in res:
-                    data['id'] = data[m.id]
-            # merge result
-            resources = resources + res
-
-            # get next page info
-            next_page_params = pagination.get_next_page_params(response)
-            if next_page_params:
-                _dict_map(request, next_page_params)
-            else:
-                return resources
+            print(f"_pagination  {res}")
+            return res
+            # # replace id with the specified one
+            # if res is None or len(res) == 0:
+            #     return resources
+            # # re-set id
+            # if 'id' not in res[0]:
+            #     for data in res:
+            #         data['id'] = data[m.id]
+            # # merge result
+            # resources = resources + res
+            #
+            # # get next page info
+            # next_page_params = pagination.get_next_page_params(response)
+            # if next_page_params:
+            #     _dict_map(request, next_page_params)
+            # else:
+            #     return resources
 
 @sources.register('describe-huaweicloud')
 class DescribeSource:
