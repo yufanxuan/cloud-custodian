@@ -46,7 +46,7 @@ class IAMMarkerPagination(Pagination):
 class User(QueryResourceManager):
 
     class resource_type(TypeInfo):
-        service = 'iam-policy'
+        service = 'iam'
         pagination = IAMMarkerPagination()
         enum_spec = ("list_users_v5", 'users', pagination)
         id = 'user_id'
@@ -56,7 +56,7 @@ class User(QueryResourceManager):
 class Policy(QueryResourceManager):
 
     class resource_type(TypeInfo):
-        service = 'iam'
+        service = 'iam-policy'
         pagination = IAMMarkerPagination()
         enum_spec = ("list_policies_v5", 'policies', pagination)
         id = 'policy_id'
