@@ -152,12 +152,11 @@ class SetGroup(HuaweiCloudBaseAction):
                 request.body = AddUserToGroupReqBody(user_id=user_id)
                 response = client.add_user_to_group_v5(request)
                 print(f"add user to group success, user id: {user_id}")
-                print(response)
             elif state == 'remove':
                 request = RemoveUserFromGroupV5Request(group_id=group_id)
                 request.body = RemoveUserFromGroupReqBody(user_id=user_id)
                 response = client.remove_user_from_group_v5(request)
-                print(response)
+                print(f"remove user from group success, user id: {user_id}")
         except exceptions.ClientRequestException as e:
             print(e.status_code)
             print(e.request_id)
