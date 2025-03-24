@@ -201,8 +201,8 @@ class UserRemoveAccessKey(HuaweiCloudBaseAction):
                 request = DeleteAccessKeyV5Request(
                     user_id=resource["id"],
                     access_key_id=key['access_key_id'])
-                response = client.delete_access_key_v5(request)
-                print(response)
+                client.delete_access_key_v5(request)
+                print(f"delete access key success, access key id: {key['access_key_id']}")
         except exceptions.ClientRequestException as e:
             print(e.status_code)
             print(e.request_id)

@@ -4,12 +4,7 @@ policies:
     filters:
       - type: access-key
         key: status
-        value: active
-      - type: access-key
-        key: created_at
-        value_type: age
-        value: 90
-        op: gt
+        value: inactive
     actions:
       - type: set-group
         state: add
