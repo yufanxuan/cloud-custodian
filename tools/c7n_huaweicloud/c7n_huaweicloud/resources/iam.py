@@ -314,6 +314,74 @@ class UserMfaDevice(ValueFilter):
                 matched.append(r)
 
         return matched
+
+
+@User.filter_registry.register('policy')
+class UserPolicy(ValueFilter):
+    """Filter IAM users based on attached policy values
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: iam-users-with-admin-access
+            resource: huaweicloud.iam-user
+            filters:
+              - type: policy
+                key: Policy_id
+                value: xxxx
+    """
+    schema = type_schema('policy', rinherit=ValueFilter.schema)
+    annotation_key = 'attached_policies'
+    matched_annotation_key = 'c7n:matched-attached-policies'
+    schema_alias = False
+
+    def get_user_policies(self, client, user_set):
+        for u in user_set:
+            try:
+                request = ListAttachedUserPoliciesV5Request(
+                    user_id=u['user_id'], limit=200)
+                response = client.list_attached_user_policies_v5(request)
+                attached_policies = response.attached_policies
+                u[self.annotation_key] = [
+                    {
+                        'policy_name': key.policy_name,
+                        'policy_id': key.policy_id,
+                        'urn': key.urn,
+                        'attached_at': key.attached_at.isoformat()
+                    }
+                    for key in attached_policies
+                ]
+            except Exception as e:
+                log.error(f"Failed to list attached policies for user {u['user_id']}: {e}")
+                u[self.annotation_key] = []
+
+    def process(self, resources, event=None):
+        client = self.manager.get_client()
+        with self.executor_factory(max_workers=2) as w:
+            augment_set = [r for r in resources if self.annotation_key not in r]
+            list(w.map(
+                functools.partial(self.get_user_policies, client),
+                chunks(augment_set, 50)))
+
+        matched = []
+        for r in resources:
+            keys = r[self.annotation_key]
+            k_matched = []
+            for k in keys:
+                if self.match(k):
+                    k_matched.append(k)
+            for k in k_matched:
+                k['c7n:match-type'] = 'policies'
+            self.merge_annotation(r, self.matched_annotation_key, k_matched)
+            if k_matched:
+                matched.append(r)
+
+        print(f"matched: {matched}")
+        return matched
+
+
 @User.filter_registry.register('access-key')
 class UserAccessKey(ValueFilter):
     """Filter IAM users based on access-key values
@@ -346,7 +414,6 @@ class UserAccessKey(ValueFilter):
         'access-key',
         rinherit=ValueFilter.schema)
     schema_alias = False
-    permissions = ('iam:ListAccessKeys',)
     annotation_key = 'access_keys'
     matched_annotation_key = 'c7n:matched-keys'
     annotate = False
@@ -372,8 +439,6 @@ class UserAccessKey(ValueFilter):
         client = self.manager.get_client()
         with self.executor_factory(max_workers=2) as w:
             augment_set = [r for r in resources if self.annotation_key not in r]
-            self.log.debug(
-                "Querying %d users' api keys" % len(augment_set))
             list(w.map(
                 functools.partial(self.get_user_keys, client),
                 chunks(augment_set, 50)))
