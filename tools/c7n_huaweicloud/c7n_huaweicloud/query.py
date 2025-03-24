@@ -83,6 +83,7 @@ class ResourceQuery:
             res = jmespath.search(path, eval(
                 str(response).replace('null', 'None').replace('false', 'False').replace('true', 'True')))
 
+            print(f"_pagination {res}")
             # replace id with the specified one
             if res is None or len(res) == 0:
                 return resources
