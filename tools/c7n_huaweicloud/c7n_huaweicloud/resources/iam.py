@@ -7,7 +7,8 @@ from huaweicloudsdkcore.exceptions import exceptions
 from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectReq, UpdateLoginProject, IamClient as IamClientV3
 from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
 from huaweicloudsdkiam.v5 import ListAccessKeysV5Request, ListAttachedUserPoliciesV5Request, DetachUserPolicyV5Request, \
-    DetachUserPolicyReqBody, DeleteUserV5Request
+    DetachUserPolicyReqBody, DeleteUserV5Request, AddUserToGroupV5Request, AddUserToGroupReqBody, \
+    RemoveUserFromGroupV5Request, RemoveUserFromGroupReqBody
 
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema, chunks, jmespath_search
@@ -65,10 +66,10 @@ class UserDelete(HuaweiCloudBaseAction):
                 key: status
                 value: active
               - type: access-key
-                match-operator: and
-                key: create_time
+                key: created_at
                 value_type: age
                 value: 90
+                op: gt
             actions:
               - delete
     """
@@ -81,7 +82,7 @@ class UserDelete(HuaweiCloudBaseAction):
             request = ListAttachedUserPoliciesV5Request(
                 user_id=resource["id"], limit=200)
             response = client.list_attached_user_policies_v5(request)
-            policy_ids = [policy["policy_id"] for policy in response.attached_policies]
+            policy_ids = [policy.policy_id for policy in response.attached_policies]
 
             for policy_id in policy_ids:
                 try:
@@ -94,8 +95,68 @@ class UserDelete(HuaweiCloudBaseAction):
 
             request = DeleteUserV5Request(user_id=resource["id"])
             response = client.delete_user_v5(request)
-            print(response)
+            if response.status_code == 204:
+                print(f"Successfully deleted user: {resource['id']}")
+            else:
+                print(f"Failed to delete user: {resource['id']}. Status code: {response.status_code}")
 
+        except exceptions.ClientRequestException as e:
+            print(e.status_code)
+            print(e.request_id)
+            print(e.error_code)
+            print(e.error_msg)
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+
+@User.action_registry.register('set-group')
+class SetGroup(HuaweiCloudBaseAction):
+    """Delete a user.
+
+    :Example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: set-group
+            resource: huaweicloud.iam-user
+            filters:
+              - type: access-key
+                key: status
+                value: active
+              - type: access-key
+                key: created_at
+                value_type: age
+                value: 90
+                op: gt
+            actions:
+              - type: set-groups
+                state: remove
+                group_id: aba123xxxxxxxxxxxd1ss1fd
+    """
+
+    schema = type_schema(
+        'set-groups',
+        state={'enum': ['add', 'remove']},
+        group_id={'type': 'string'},
+        required=['state', 'group_id']
+    )
+
+    def perform_action(self, resource):
+        group_id = self.data.get('group_id')
+        user_id = resource["id"]
+        state = self.data['state']
+        client = self.manager.get_client()
+        try:
+            if state == 'add':
+                request = AddUserToGroupV5Request(group_id=group_id)
+                request.body = AddUserToGroupReqBody(user_id=user_id)
+                response = client.add_user_to_group_v5(request)
+                print(response)
+            elif state == 'remove':
+                request = RemoveUserFromGroupV5Request(group_id=group_id)
+                request.body = RemoveUserFromGroupReqBody(user_id=user_id)
+                response = client.remove_user_from_group_v5(request)
+                print(response)
         except exceptions.ClientRequestException as e:
             print(e.status_code)
             print(e.request_id)
@@ -120,10 +181,10 @@ class SetLoginProtect(HuaweiCloudBaseAction):
                 key: status
                 value: active
               - type: access-key
-                match-operator: and
-                key: create_time
+                key: created_at
                 value_type: age
                 value: 90
+                op: gt
             actions:
               - type: set-login-protect
                 enabled: true
