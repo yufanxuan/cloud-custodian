@@ -19,9 +19,10 @@ DEFAULT_LIMIT_SIZE = 100
 def _dict_map(obj, params_map):
     if not params_map:
         return obj
-    for k, v in params_map.items():
-        print(f"ssparams_map.items {k} ,,, {v}")
-        obj.__dict__[k] = v
+    _dict_map(obj, params_map)
+    # for k, v in params_map.items():
+    #     print(f"ssparams_map.items {k} ,,, {v}")
+    #     obj.__dict__[k] = v
     print(f"params_map.items {obj}")
     return obj
 
