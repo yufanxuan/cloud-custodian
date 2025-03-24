@@ -449,14 +449,14 @@ class PolicyDelete(HuaweiCloudBaseAction):
     """
     schema = type_schema('delete')
 
-    def perform_action(self, resources):
+    def perform_action(self, resource):
         client = self.manager.get_client()
 
-        for r in resources:
-            print(f"resource: {r}")
-            if r['default_version_id'] != 'v1':
-                versions = [v['version_id'] for v in client.list_policy_versions_v5(
-                    ListPolicyVersionsV5Request(policy_id=r['policy_id'])).get('version_id') if not v.get('is_default')]
-                for v in versions:
-                    client.delete_policy_version_v5(DeletePolicyVersionV5Request(policy_id=r['policy_id'], version_id=v))
-            client.delete_policy_v5(DeletePolicyV5Request(policy_id=r['policy_id']))
+
+        print(f"resource: {resource}")
+        if resource['default_version_id'] != 'v1':
+            versions = [v['version_id'] for v in client.list_policy_versions_v5(
+                ListPolicyVersionsV5Request(policy_id=resource['policy_id'])).get('version_id') if not v.get('is_default')]
+            for v in versions:
+                client.delete_policy_version_v5(DeletePolicyVersionV5Request(policy_id=resource['policy_id'], version_id=v))
+        client.delete_policy_v5(DeletePolicyV5Request(policy_id=resource['policy_id']))
