@@ -363,8 +363,8 @@ class AllowAllIamPolicies(ValueFilter):
                                                                version_id=resource.get('default_version_id'))
         ).policy_version.document
 
-        print(f"document:                                          {document}")
-        statements = document.get('Statement')
+        print(f"document:   {document}")
+        statements = json.loads(document).get('Statement')
         if isinstance(statements, dict):
             statements = [statements]
 
