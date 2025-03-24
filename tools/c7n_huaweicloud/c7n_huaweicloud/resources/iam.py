@@ -360,7 +360,7 @@ class AllowAllIamPolicies(ValueFilter):
         print(f"resource :                  {resource}")
         statements = client.get_policy_version_v5(GetPolicyVersionV5Request(policy_id=resource['policy_id'],
                                                                version_id=resource['default_version_id'])
-        )['policy_version']['document']['Statement']
+        ).policy_version.document.Statement
         if isinstance(statements, dict):
             statements = [statements]
 
