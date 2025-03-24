@@ -358,12 +358,10 @@ class AllowAllIamPolicies(ValueFilter):
     schema = type_schema('has-allow-all')
 
     def has_allow_all_policy(self, client, resource):
-        print(f"resource :                  {resource}")
         document = client.get_policy_version_v5(GetPolicyVersionV5Request(policy_id=resource.get('policy_id'),
                                                                version_id=resource.get('default_version_id'))
         ).policy_version.document
 
-        print(f"document:   {document}")
         statements = json.loads(document).get('Statement')
         if isinstance(statements, dict):
             statements = [statements]
@@ -382,7 +380,6 @@ class AllowAllIamPolicies(ValueFilter):
 
     def process(self, resources, event=None):
         client = self.manager.get_client()
-        print(f"resource :                  {resources}"                )
         results = [r for r in resources if self.has_allow_all_policy(client, r)]
         self.log.info(
             "%d of %d iam policies have allow all.",
@@ -452,7 +449,7 @@ class PolicyDelete(HuaweiCloudBaseAction):
     """
     schema = type_schema('delete')
 
-    def process(self, resources):
+    def perform_action(self, resources):
         client = self.manager.get_client()
 
         for r in resources:
