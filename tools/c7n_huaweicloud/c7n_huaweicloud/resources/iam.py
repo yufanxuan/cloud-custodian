@@ -359,11 +359,12 @@ class AllowAllIamPolicies(ValueFilter):
 
     def has_allow_all_policy(self, client, resource):
         print(f"resource :                  {resource}")
-        statements = client.get_policy_version_v5(GetPolicyVersionV5Request(policy_id=resource.get('policy_id'),
+        document = client.get_policy_version_v5(GetPolicyVersionV5Request(policy_id=resource.get('policy_id'),
                                                                version_id=resource.get('default_version_id'))
-        ).policy_version.document.Statement
+        ).policy_version.document
 
-        # statements = json.load(document)['Statement']
+        print(f"document:                                          {document}")
+        statements = json.load(document)['Statement']
         if isinstance(statements, dict):
             statements = [statements]
 
