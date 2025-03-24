@@ -359,9 +359,9 @@ class AllowAllIamPolicies(ValueFilter):
 
     def has_allow_all_policy(self, client, resource):
         print(f"resource :                  {resource}")
-        document = client.get_policy_version_v5(GetPolicyVersionV5Request(policy_id=resource.policy_id,
-                                                               version_id=resource.default_version_id)
-        ).policy_version.document['Statement']
+        document = client.get_policy_version_v5(GetPolicyVersionV5Request(policy_id=resource['policy_id'],
+                                                               version_id=resource.get('default_version_id'))
+        ).policy_version.document
 
         statements = json.load(document)['Statement']
         if isinstance(statements, dict):
