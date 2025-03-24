@@ -377,7 +377,7 @@ class AllowAllIamPolicies(ValueFilter):
 
     def process(self, resources, event=None):
         client = self.manager.get_client()
-        print(resources)
+        print(f"resource :                  {resources}"                )
         results = [r for r in resources if self.has_allow_all_policy(client, r)]
         self.log.info(
             "%d of %d iam policies have allow all.",
