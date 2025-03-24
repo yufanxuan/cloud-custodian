@@ -67,6 +67,12 @@ class Session:
                 .with_credentials(globalCredentials) \
                 .with_region(iam_region_v5.IamRegion.value_of(self.region)) \
                 .build()
+        elif service == 'iam-policy':
+            globalCredentials = GlobalCredentials(self.ak, self.sk)
+            client = IamClientV5.new_builder() \
+                .with_credentials(globalCredentials) \
+                .with_region(iam_region_v5.IamRegion.value_of(self.region)) \
+                .build()
 
         return client
 
