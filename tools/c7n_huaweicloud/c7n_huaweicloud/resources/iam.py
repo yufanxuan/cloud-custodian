@@ -268,6 +268,58 @@ class SetLoginProtect(HuaweiCloudBaseAction):
 
 """------------------------------------filter---------------------------------------"""
 
+# Mfa-device filter for iam-users
+@User.filter_registry.register('mfa-device')
+class UserMfaDevice(ValueFilter):
+    """Filter iam-users based on mfa-device status
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: mfa-enabled-users
+            resource: iam-user
+            filters:
+              - type: mfa-device
+                key: UserName
+                value: not-null
+    """
+
+    schema = type_schema('mfa-device', rinherit=ValueFilter.schema)
+    schema_alias = False
+    permissions = ('iam:ListMFADevices',)
+
+    def __init__(self, *args, **kw):
+        super(UserMfaDevice, self).__init__(*args, **kw)
+        self.data['key'] = 'MFADevices'
+
+    def process(self, resources, event=None):
+
+        def _user_mfa_devices(resource):
+            globalCredentials = GlobalCredentials(os.getenv('HUAWEI_ACCESS_KEY_ID'),
+                                                  os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
+            client = IamClientV3.new_builder() \
+                .with_credentials(globalCredentials) \
+                .with_region(iam_region_v3.IamRegion.value_of(os.getenv('HUAWEI_DEFAULT_REGION'))) \
+                .build()
+            resource['MFADevices'] = client.list_mfa_devices(
+                UserName=resource['UserName'])['MFADevices']
+
+        with self.executor_factory(max_workers=2) as w:
+            query_resources = [
+                r for r in resources if 'MFADevices' not in r]
+            self.log.debug(
+                "Querying %d users' mfa devices" % len(query_resources))
+            list(w.map(_user_mfa_devices, query_resources))
+
+        matched = []
+        for r in resources:
+            if self.match(r):
+                matched.append(r)
+
+        return matched
+
 @User.filter_registry.register('access-key')
 class UserAccessKey(ValueFilter):
     """Filter IAM users based on access-key values
