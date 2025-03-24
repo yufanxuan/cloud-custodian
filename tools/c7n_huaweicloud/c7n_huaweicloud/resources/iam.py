@@ -295,12 +295,24 @@ class UserMfaDevice(ValueFilter):
         self.data['key'] = 'mfa_devices'
 
     def process(self, resources, event=None):
-        client = self.manager.get_client()
-        for resource in resources:
+        def _user_mfa_devices(resource):
+            client = self.manager.get_client()
             request = ListMfaDevicesV5Request(user_id=resource["id"])
             resource['mfa_devices'] = client.list_mfa_devices_v5(request).mfa_devices
-            return super(UserMfaDevice, self).process(resources, event)
 
+        with self.executor_factory(max_workers=2) as w:
+            query_resources = [
+                r for r in resources if 'mfa_devices' not in r]
+            self.log.debug(
+                "Querying %d users' mfa devices" % len(query_resources))
+            list(w.map(_user_mfa_devices, query_resources))
+
+        matched = []
+        for r in resources:
+            if self.match(r):
+                matched.append(r)
+
+        return matched
 @User.filter_registry.register('access-key')
 class UserAccessKey(ValueFilter):
     """Filter IAM users based on access-key values
