@@ -57,7 +57,7 @@ class Policy(QueryResourceManager):
     class resource_type(TypeInfo):
         service = 'iam'
         pagination = IAMMarkerPagination()
-        enum_spec = ("list_policies_v5", 'users', pagination)
+        enum_spec = ("list_policies_v5", 'policies', pagination)
         id = 'policy_id'
         tag = True
 
