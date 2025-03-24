@@ -88,7 +88,7 @@ class Session:
         elif service == 'evs':
             request = ListVolumesRequest()
         elif service == 'iam':
-            request = ListPoliciesV5Request()
+            request = ListUsersV5Request()
         elif service == 'iam-policy':
             request = ListPoliciesV5Request()
 

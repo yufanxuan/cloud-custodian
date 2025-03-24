@@ -21,7 +21,7 @@ from tools.c7n_huaweicloud.c7n_huaweicloud.query import QueryResourceManager, Ty
 
 log = logging.getLogger("custodian.huaweicloud.resources.iam")
 
-DEFAULT_LIMIT_SIZE = 100
+DEFAULT_LIMIT_SIZE = 200
 
 class IAMMarkerPagination(Pagination):
     def get_first_page_params(self):
@@ -46,7 +46,7 @@ class IAMMarkerPagination(Pagination):
 class User(QueryResourceManager):
 
     class resource_type(TypeInfo):
-        service = 'iam'
+        service = 'iam-policy'
         pagination = IAMMarkerPagination()
         enum_spec = ("list_users_v5", 'users', pagination)
         id = 'user_id'
@@ -452,8 +452,6 @@ class PolicyDelete(HuaweiCloudBaseAction):
     def perform_action(self, resource):
         client = self.manager.get_client()
 
-
-        print(f"resource: {resource}")
         if resource['default_version_id'] != 'v1' and resource['policy_type'] == 'custom':
             versions = []
             response = client.list_policy_versions_v5(
@@ -461,7 +459,6 @@ class PolicyDelete(HuaweiCloudBaseAction):
             for version in response.versions:
                 if not version.is_default:
                     versions.append(version.version_id)
-            print(f"resource versions: {versions}")
             for versionNum in versions:
                 client.delete_policy_version_v5(DeletePolicyVersionV5Request(policy_id=resource['policy_id'], version_id=versionNum))
             client.delete_policy_v5(DeletePolicyV5Request(policy_id=resource['policy_id']))
