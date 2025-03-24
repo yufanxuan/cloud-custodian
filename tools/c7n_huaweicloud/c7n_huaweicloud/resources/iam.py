@@ -405,7 +405,7 @@ class UnusedIamPolicies(ValueFilter):
 
     def process(self, resources, event=None):
         return [r for r in resources if
-                r.attachment_count == 0]
+                r['attachment_count'] == 0]
 
 @Policy.filter_registry.register('used')
 class UnusedIamPolicies(ValueFilter):
