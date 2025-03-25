@@ -82,18 +82,6 @@ class PolicyDelete(HuaweiCloudBaseAction):
         client = self.manager.get_client()
         try:
             if resource['policy_type'] == 'custom':
-                versions = []
-                response = client.list_policy_versions_v5(
-                    ListPolicyVersionsV5Request(policy_id=resource['policy_id']))
-
-                for version in response.versions:
-                    if not version.is_default:
-                        versions.append(version.version_id)
-
-                for versionNum in versions:
-                    client.delete_policy_version_v5(DeletePolicyVersionV5Request(
-                        policy_id=resource['policy_id'], version_id=versionNum))
-
                 client.delete_policy_v5(DeletePolicyV5Request(policy_id=resource['policy_id']))
                 print(f"Successfully detached policy: {resource['policy_id']}")
         except exceptions.ClientRequestException as e:
