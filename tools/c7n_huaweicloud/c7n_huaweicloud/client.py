@@ -5,16 +5,27 @@ import logging
 import os
 import sys
 
+from huaweicloudsdkconfig.v1 import ConfigClient, ShowTrackerConfigRequest
+from huaweicloudsdkconfig.v1.region.config_region import ConfigRegion
 from huaweicloudsdkcore.auth.credentials import BasicCredentials, GlobalCredentials
-from huaweicloudsdkecs.v2 import *
+from huaweicloudsdkecs.v2 import EcsClient
 from huaweicloudsdkecs.v2.region.ecs_region import EcsRegion
-from huaweicloudsdkevs.v2 import *
+from huaweicloudsdkevs.v2 import EvsClient, ListVolumesRequest
 from huaweicloudsdkevs.v2.region.evs_region import EvsRegion
+from huaweicloudsdkiam.v3 import IamClient
+from huaweicloudsdkiam.v3.region.iam_region import IamRegion
+from huaweicloudsdkvpc.v2 import VpcClient, ListVpcsRequest
+from huaweicloudsdkvpc.v2.region.vpc_region import VpcRegion
+from huaweicloudsdktms.v1 import TmsClient
+from huaweicloudsdktms.v1.region.tms_region import TmsRegion
+from huaweicloudsdkdeh.v1 import DeHClient, ListDedicatedHostsRequest
+from huaweicloudsdkdeh.v1.region.deh_region import DeHRegion
+from huaweicloudsdkces.v2 import CesClient, ListAlarmRulesRequest
+from huaweicloudsdkces.v2.region.ces_region import CesRegion
+from huaweicloudsdksmn.v2 import SmnClient
+from huaweicloudsdksmn.v2.region.smn_region import SmnRegion
 from huaweicloudsdkkms.v2 import KmsClient, ListKeysRequest, ListKeysRequestBody
 from huaweicloudsdkkms.v2.region.kms_region import KmsRegion
-from huaweicloudsdkvpc.v2 import *
-from huaweicloudsdktms.v1 import *
-from huaweicloudsdktms.v1.region.tms_region import TmsRegion
 
 log = logging.getLogger('custodian.huaweicloud.client')
 
@@ -23,23 +34,27 @@ class Session:
     """Session"""
 
     def __init__(self, options=None):
-        self.region = "ap-southeast-1"
+        self.region = os.getenv('HUAWEI_DEFAULT_REGION')
         if not self.region:
             log.error('No default region set. Specify a default via HUAWEI_DEFAULT_REGION')
             sys.exit(1)
 
-        self.ak = "LTWSTNHWOS1LTQRMVNYG"
+        self.ak = os.getenv('HUAWEI_ACCESS_KEY_ID')
         if self.ak is None:
             log.error('No access key id set. Specify a default via HUAWEI_ACCESS_KEY_ID')
             sys.exit(1)
 
-        self.sk = "P2v3JPzhgTa7dE078nYXyZ8ztSEiuHSYbvgAIRLA"
+        self.sk = os.getenv('HUAWEI_SECRET_ACCESS_KEY')
         if self.sk is None:
             log.error('No secret access key set. Specify a default via HUAWEI_SECRET_ACCESS_KEY')
             sys.exit(1)
 
+        self.tms_region = os.getenv('HUAWEI_DEFAULT_TMS_REGION')
+        if not self.tms_region:
+            self.tms_region = 'cn-north-4'
+
     def client(self, service):
-        credentials = BasicCredentials(self.ak, self.sk, "b0672a39f3804280ae8d16c9b004f63d")
+        credentials = BasicCredentials(self.ak, self.sk, os.getenv('HUAWEI_PROJECT_ID'))
         if service == 'vpc':
             client = VpcClient.new_builder() \
                 .with_credentials(credentials) \
@@ -59,7 +74,34 @@ class Session:
             globalCredentials = GlobalCredentials(self.ak, self.sk)
             client = TmsClient.new_builder() \
                 .with_credentials(globalCredentials) \
-                .with_region(TmsRegion.value_of(self.region)) \
+                .with_region(TmsRegion.value_of(self.tms_region)) \
+                .build()
+        elif service == 'iam':
+            globalCredentials = GlobalCredentials(self.ak, self.sk)
+            client = IamClient.new_builder() \
+                .with_credentials(globalCredentials) \
+                .with_region(IamRegion.value_of(self.region)) \
+                .build()
+        elif service == 'config':
+            globalCredentials = GlobalCredentials(self.ak, self.sk)
+            client = ConfigClient.new_builder() \
+                .with_credentials(globalCredentials) \
+                .with_region(ConfigRegion.value_of(self.region)) \
+                .build()
+        elif service == 'deh':
+            client = DeHClient.new_builder() \
+                .with_credentials(credentials) \
+                .with_region(DeHRegion.value_of(self.region)) \
+                .build()
+        elif service == 'ces':
+            client = CesClient.new_builder() \
+                .with_credentials(credentials) \
+                .with_region(CesRegion.value_of(self.region)) \
+                .build()
+        elif service == 'smn':
+            client = SmnClient.new_builder() \
+                .with_credentials(credentials) \
+                .with_region(SmnRegion.value_of(self.region)) \
                 .build()
         elif service == 'kms':
             client = KmsClient.new_builder() \
@@ -74,6 +116,12 @@ class Session:
             request = ListVpcsRequest()
         elif service == 'evs':
             request = ListVolumesRequest()
+        elif service == 'config':
+            request = ShowTrackerConfigRequest()
+        elif service == 'deh':
+            request = ListDedicatedHostsRequest()
+        elif service == 'ces':
+            request = ListAlarmRulesRequest()
         elif service == 'kms':
             request = ListKeysRequest()
             request.body = ListKeysRequestBody(
