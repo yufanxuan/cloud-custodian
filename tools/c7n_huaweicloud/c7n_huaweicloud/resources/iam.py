@@ -382,6 +382,7 @@ class UserMfaDevice(ValueFilter):
                 list(w.map(self._user_mfa_devices, query_resources))
 
             for user in resources:
+                print(f"user:{user}")
                 matched_devices = [
                     d for d in user.get(self.annotation_key, []) or []
                     if self.match(d)
@@ -594,6 +595,7 @@ class AllowAllIamPolicies(ValueFilter):
                 statements = [statements]
 
             for s in statements:
+                print(f"statement: {s}")
                 if ('Condition' not in s and
                         'Action' in s and
                         isinstance(s['Action'], str) and

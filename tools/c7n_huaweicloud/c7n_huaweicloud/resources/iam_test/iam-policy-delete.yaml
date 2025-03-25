@@ -2,4 +2,8 @@ policies:
  - name: iam-list-policy
    resource: huaweicloud.iam-policy
    filters:
+     - type: value
+       key: policy_name
+       value: test1
+   actions:
     - delete
