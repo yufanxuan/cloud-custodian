@@ -383,14 +383,13 @@ class UserMfaDevice(ValueFilter):
 
             for user in resources:
                 matched_devices = [
-                    d for d in user.get(self.annotation_key, [])
+                    d for d in user.get(self.annotation_key, []) or []
                     if self.match(d)
                 ]
                 self.merge_annotation(user, self.matched_annotation_key, matched_devices)
                 if matched_devices:
                     matched.append(user)
             print(f"matched: {matched}")
-            return matched
         except exceptions.ClientRequestException as e:
             print(e.status_code)
             print(e.request_id)
@@ -398,6 +397,7 @@ class UserMfaDevice(ValueFilter):
             print(e.error_msg)
         except Exception as e:
             print(f"Unexpected error: {e}")
+        return matched or []
 
 @User.filter_registry.register('policy')
 class UserPolicy(ValueFilter):
