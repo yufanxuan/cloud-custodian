@@ -1530,44 +1530,6 @@ class AllowAllIamPolicies(Filter):
         return results
 
 
-        def _query_mfa_devices(user):
-            """查询用户的 MFA 设备（华为云 API）"""
-            try:
-                devices = client.list_virtual_mfa_devices(user_id=user['id']).get('devices', [])
-                # 标准化设备数据结构
-                user[self.annotation_key] = [
-                    {
-                        'device_id': d['device_id'],
-                        'device_name': d['device_name'],
-                        'status': d.get('status', 'INACTIVE'),  # 华为云状态字段
-                        'enable_time': d.get('create_time')
-                    }
-                    for d in devices
-                ]
-            except Exception as e:
-                self.log.error(f"Failed to query MFA devices for user {user['id']}: {e}")
-                user[self.annotation_key] = []
-
-        # 并行查询 MFA 设备
-        with self.executor_factory(max_workers=2) as w:
-            query_users = [u for u in resources if self.annotation_key not in u]
-            list(w.map(_query_mfa_devices, query_users))
-
-        # 匹配设备
-        matched = []
-        for user in resources:
-            matched_devices = [
-                d for d in user.get(self.annotation_key, [])
-                if self.match(d)  # 依赖 ValueFilter 的匹配逻辑
-            ]
-            # 记录匹配的设备
-            self.merge_annotation(user, self.matched_annotation_key, matched_devices)
-            if matched_devices:
-                matched.append(user)
-
-
-
-
 @Policy.action_registry.register('delete')
 class PolicyDelete(BaseAction):
     """Delete an IAM Policy.
