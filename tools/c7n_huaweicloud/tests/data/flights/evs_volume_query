@@ -22,19 +22,7 @@ interactions:
     uri: https://evs.ap-southeast-1.myhuaweicloud.com/v2/ap-southeat-1/cloudvolumes/detail?limit=100&offset=0
   response:
     body:
-      string: '{"count": 1, "volumes": [{"id": "8e79e30b-cea2-45b3-8643-fe879493b7a3",
-        "links": [{"href": "https://evs.ap-southeast-1.myhuaweicloud.com/v2/0970dd9c1a0026a62fddc0038c52b5eb/os-vendor-volumes/8e79e30b-cea2-45b3-8643-fe879493b7a3",
-        "rel": "self"}, {"href": "https://evs.ap-southeast-1.myhuaweicloud.com/0970dd9c1a0026a62fddc0038c52b5eb/os-vendor-volumes/8e79e30b-cea2-45b3-8643-fe879493b7a3",
-        "rel": "bookmark"}], "name": "custodian-volume", "status": "available", "attachments":
-        [], "availability_zone": "ap-southeast-1c", "os-vol-host-attr:host": "cinder-kvm003@GPSSD#5",
-        "created_at": "2025-03-20T07:28:45.780415", "os-vol-tenant-attr:tenant_id":
-        "0970dd9c1a0026a62fddc0038c52b5eb", "volume_image_metadata": {}, "volume_type":
-        "GPSSD", "size": 10, "bootable": "false", "metadata": {"__system__encrypted":
-        "0", "hw:passthrough": "false"}, "updated_at": "2025-03-20T07:28:45.901082",
-        "encrypted": false, "replication_status": "disabled", "shareable": "false",
-        "user_id": "8a69ab024795445ebf20af583e6a4e82", "service_type": "EVS", "multiattach":
-        false, "tags": {}, "wwn": "6888603000002024fa16821e56476146", "enterprise_project_id":
-        "0"}]}'
+      string: '{"count": 1, "volumes": [{"id": "8e79e30b-cea2-45b3-8643-fe879493b7a3", "links": [{"href": "https://evs.ap-southeast-1.myhuaweicloud.com/v2/0970dd9c1a0026a62fddc0038c52b5eb/os-vendor-volumes/8e79e30b-cea2-45b3-8643-fe879493b7a3", "rel": "self"}, {"href": "https://evs.ap-southeast-1.myhuaweicloud.com/0970dd9c1a0026a62fddc0038c52b5eb/os-vendor-volumes/8e79e30b-cea2-45b3-8643-fe879493b7a3", "rel": "bookmark"}], "name": "custodian-volume", "status": "available", "attachments": [], "availability_zone": "ap-southeast-1c", "os-vol-host-attr:host": "cinder-kvm003@GPSSD#5", "created_at": "2025-03-20T07:28:45.780415", "os-vol-tenant-attr:tenant_id": "0970dd9c1a0026a62fddc0038c52b5eb", "volume_image_metadata": {}, "volume_type": "GPSSD", "size": 10, "bootable": "false", "metadata": {"__system__encrypted": "0", "hw:passthrough": "false"}, "updated_at": "2025-03-20T07:28:45.901082", "encrypted": false, "replication_status": "disabled", "shareable": "false", "user_id": "8a69ab024795445ebf20af583e6a4e82", "service_type": "EVS", "multiattach": false, "tags": {}, "wwn": "6888603000002024fa16821e56476146", "enterprise_project_id": "0"}]}'
     headers:
       Connection:
       - keep-alive
@@ -58,76 +46,5 @@ interactions:
       - 078d8acc403c245ea4aa7c2d6991fdf3
       X-XSS-Protection:
       - 1; mode=block;
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Type:
-      - application/json
-      Host:
-      - evs.ap-southeast-1.myhuaweicloud.com
-      User-Agent:
-      - huaweicloud-usdk-python/3.0
-      X-Project-Id:
-      - b0672a39f3804280ae8d16c9b004f63d
-      X-Sdk-Date:
-      - 20250324T022449Z
-    method: GET
-    uri: https://evs.ap-southeast-1.myhuaweicloud.com/v2/b0672a39f3804280ae8d16c9b004f63d/cloudvolumes/detail?limit=100&offset=0
-  response:
-    body:
-      string: "{\"count\":2,\"volumes\":[{\"id\":\"f4791a10-f872-4725-bd4b-1c783eaac703\",\"links\":[{\"href\":\"https://evs.ap-southeast-1.myhuaweicloud.com/v2/b0672a39f3804280ae8d16c9b004f63d/os-vendor-volumes/f4791a10-f872-4725-bd4b-1c783eaac703\",\"rel\":\"self\"},{\"href\":\"https://evs.ap-southeast-1.myhuaweicloud.com/b0672a39f3804280ae8d16c9b004f63d/os-vendor-volumes/f4791a10-f872-4725-bd4b-1c783eaac703\",\"rel\":\"bookmark\"}],\"name\":\"ecs-castodian-\u7528\u52303\u6708\u5E95-volume-0000\",\"status\":\"in-use\",\"attachments\":[{\"attachment_id\":\"39be823a-4afe-434b-b87e-ac6eff41b4b0\",\"volume_id\":\"f4791a10-f872-4725-bd4b-1c783eaac703\",\"device\":\"/dev/vda\",\"server_id\":\"340d8ecc-966e-4898-b5b3-b502f649b382\",\"host_name\":null,\"attached_at\":\"2025-03-20T02:50:27.815120\",\"id\":\"f4791a10-f872-4725-bd4b-1c783eaac703\"}],\"size\":40,\"metadata\":{\"resourceType\":\"3\",\"resourceSpecCode\":\"GPSSD\",\"readonly\":\"False\",\"attached_mode\":\"rw\"},\"bootable\":\"true\",\"encrypted\":false,\"tags\":{},\"wwn\":\"68886031535323271000000000700520\",\"availability_zone\":\"ap-southeast-1b\",\"os-vol-host-attr:host\":\"cinder-kvm002@GPSSD#4099\",\"created_at\":\"2025-03-20T02:50:15.991504\",\"volume_type\":\"GPSSD\",\"shareable\":\"false\",\"multiattach\":false,\"os-vol-tenant-attr:tenant_id\":\"b0672a39f3804280ae8d16c9b004f63d\",\"os-volume-replication:extended_status\":null,\"volume_image_metadata\":{\"__os_bit\":\"64\",\"__os_version\":\"Other
-        Windows(64 bit)\",\"__isregistered\":\"true\",\"__platform\":\"Windows\",\"__os_type\":\"Windows\",\"virtual_env_type\":\"FusionCompute\",\"__image_source_type\":\"uds\",\"__imagetype\":\"market\",\"__productcode\":\"dfa991b7-b42c-4b35-876c-e3bac26654b6\",\"__image_size\":\"8310341632\",\"__account_code\":\"\",\"__lazyloading\":\"true\",\"__data_origin\":\"file,mkp-crr-intl-ap-southeast-1:mkp-crr-intl-ap-southeast-1/0cb0228349b84a889e825a2df85bf00d/1737452505188/Windows
-        Server 2022 datacenter_ch_market_v1.1.zvhd2\",\"hw_firmware_type\":\"bios\",\"hw_vif_multiqueue_enabled\":\"true\",\"__root_origin\":\"file\",\"image_location_backup\":\"\",\"__support_xen\":\"true\",\"__support_kvm\":\"true\",\"__metering_type\":\"cpu\",\"__originalimagename\":\"b51669dc-6277-4598-b892-aec7050e11d1\",\"__backup_id\":\"\",\"max_ram\":\"0\",\"__market_resource_type_code\":\"hws.resource.type.marketplace\",\"active_at\":\"2025-01-21T10:22:50Z\",\"__market_service_type_code\":\"hws.service.type.marketplace\",\"__description\":\"\",\"image_id\":\"b51669dc-6277-4598-b892-aec7050e11d1\",\"image_name\":\"Windows
-        Server 2022 datacenter_ch_market_v1.1\",\"checksum\":\"99914b932bd37a50b983c5e7c90ae93b\",\"container_format\":\"bare\",\"disk_format\":\"zvhd2\",\"min_disk\":\"40\",\"min_ram\":\"0\",\"size\":\"2\"},\"updated_at\":\"2025-03-20T02:50:27.825462\",\"replication_status\":\"disabled\",\"os-vol-mig-status-attr:name_id\":null,\"os-vol-mig-status-attr:migstat\":null,\"user_id\":\"b78d5d462b7b4e2eb395c9067fb9d44a\",\"service_type\":\"EVS\",\"enterprise_project_id\":\"0\"},{\"id\":\"612d6f88-0359-4688-b833-b6ad12490b64\",\"links\":[{\"href\":\"https://evs.ap-southeast-1.myhuaweicloud.com/v2/b0672a39f3804280ae8d16c9b004f63d/os-vendor-volumes/612d6f88-0359-4688-b833-b6ad12490b64\",\"rel\":\"self\"},{\"href\":\"https://evs.ap-southeast-1.myhuaweicloud.com/b0672a39f3804280ae8d16c9b004f63d/os-vendor-volumes/612d6f88-0359-4688-b833-b6ad12490b64\",\"rel\":\"bookmark\"}],\"name\":\"ecs-ae34\",\"status\":\"in-use\",\"attachments\":[{\"attachment_id\":\"c3c0fbb2-b9cd-44ff-bdf7-fb64ffa1e220\",\"volume_id\":\"612d6f88-0359-4688-b833-b6ad12490b64\",\"device\":\"/dev/vda\",\"server_id\":\"bfe3a9ba-fc8c-46ae-8969-74dad02111cf\",\"host_name\":null,\"attached_at\":\"2024-09-26T13:51:30.800000\",\"id\":\"612d6f88-0359-4688-b833-b6ad12490b64\"}],\"description\":\"\",\"size\":40,\"metadata\":{\"readonly\":\"False\",\"attached_mode\":\"rw\"},\"bootable\":\"true\",\"encrypted\":false,\"tags\":{},\"wwn\":\"6888603000000fb83473d15b79388875\",\"availability_zone\":\"ap-southeast-1g\",\"os-vol-host-attr:host\":\"cinder-kvm007@GPSSD#1\",\"created_at\":\"2024-09-26T13:03:34.287000\",\"volume_type\":\"GPSSD\",\"shareable\":\"false\",\"multiattach\":false,\"os-vol-tenant-attr:tenant_id\":\"b0672a39f3804280ae8d16c9b004f63d\",\"os-volume-replication:extended_status\":null,\"volume_image_metadata\":{\"__os_bit\":\"64\",\"__os_version\":\"Huawei
-        Cloud EulerOS 2.0 64bit\",\"__isregistered\":\"true\",\"__platform\":\"Huawei
-        Cloud EulerOS\",\"__os_type\":\"Linux\",\"virtual_env_type\":\"FusionCompute\",\"__image_source_type\":\"uds\",\"__imagetype\":\"gold\",\"__productcode\":\"\",\"__image_size\":\"1141653504\",\"__account_code\":\"\",\"__lazyloading\":\"true\",\"__data_origin\":\"\",\"hw_vif_multiqueue_enabled\":\"true\",\"__support_kvm\":\"true\",\"__originalimagename\":\"277449d5-5b48-4b14-93a6-638fc595a07e\",\"__support_agent_list\":\"hss,ces,appbooster:nginx&redis&mysql\",\"__support_kvm_hi1822_hiovs\":\"true\",\"__backup_id\":\"\",\"__image_displayname\":\"{\\\"zh-cn\\\":\\\"Huawei
-        Cloud EulerOS 2.0 \u6807\u51C6\u7248 64\u4F4D\\\",\\\"en-us\\\":\\\"Huawei
-        Cloud EulerOS 2.0 Standard 64 bit\\\"}\",\"max_ram\":\"4194304\",\"__support_largememory\":\"true\",\"__os_feature_list\":\"{\\\"nic_hotplug\\\":\\\"true\\\",
-        \\\"disk_hotplug\\\": \\\"true\\\", \\\"user_data\\\": \\\"true\\\", \\\"ssh_key\\\":\\\"true\\\",
-        \\\"hostname_inject\\\": \\\"true\\\", \\\"onekey_resetpasswd\\\": \\\"true\\\"}\",\"active_at\":\"2022-07-18T14:10:57Z\",\"__description\":\"Register
-        zvhd2 private image by OpsImageMgmt\",\"image_id\":\"277449d5-5b48-4b14-93a6-638fc595a07e\",\"image_name\":\"Huawei
-        Cloud EulerOS 2.0 Standard 64 bit\",\"checksum\":\"99914b932bd37a50b983c5e7c90ae93b\",\"container_format\":\"bare\",\"disk_format\":\"zvhd2\",\"min_disk\":\"10\",\"min_ram\":\"0\",\"size\":\"2\"},\"updated_at\":\"2024-11-29T20:00:27.271111\",\"replication_status\":\"disabled\",\"os-vol-mig-status-attr:name_id\":null,\"os-vol-mig-status-attr:migstat\":null,\"user_id\":\"bdbac5814a7c44648b2c676a2da06496\",\"service_type\":\"EVS\",\"enterprise_project_id\":\"0\"}]}"
-    headers:
-      Accept-Ranges:
-      - bytes
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '5481'
-      Content-Type:
-      - application/json; charset=UTF-8
-      Date:
-      - Mon, 24 Mar 2025 02:24:49 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Pragma:
-      - no-cache
-      Server:
-      - api-gateway
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubdomains;
-      X-Content-Type-Options:
-      - nosniff
-      X-Download-Options:
-      - noopen
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Request-Id:
-      - 03d66b39c6694e61ce8ea60cc960df1c
-      X-XSS-Protection:
-      - 1; mode=block;
-    status:
-      code: 200
-      message: ''
+    status: {code: 200, message: OK}
 version: 1
