@@ -4,8 +4,6 @@
 import logging
 import uuid
 
-from huaweicloudsdkcore.exceptions import exceptions
-from huaweicloudsdkevs.v2 import *
 from huaweicloudsdkkms.v2 import EnableKeyRotationRequest, OperateKeyRequestBody, DisableKeyRotationRequest, \
     EnableKeyRequest, DisableKeyRequest
 
