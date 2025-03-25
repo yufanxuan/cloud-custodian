@@ -356,33 +356,36 @@ class UserMfaDevice(ValueFilter):
     matched_annotation_key = 'c7n:matched-mfa-devices'
     schema_alias = False
 
-    def process(self, resources, event=None):
+    def _user_mfa_devices(self, resource):
         try:
-            def _user_mfa_devices(resource):
-                client = self.manager.get_client()
-                request = ListMfaDevicesV5Request(user_id=resource["id"])
-                mfa_devices = client.list_mfa_devices_v5(request).mfa_devices
-                resource[self.annotation_key] = [
-                    {
-                        'serial_number': mfa['serial_number'],
-                        'user_id': mfa['user_id'],
-                        'enabled': mfa.get('enabled')
-                    }
-                    for mfa in mfa_devices
-                ]
+            client = self.manager.get_client()
+            request = ListMfaDevicesV5Request(user_id=resource["id"])
+            mfa_devices = client.list_mfa_devices_v5(request).mfa_devices
+            resource[self.annotation_key] = [
+                {
+                    'serial_number': mfa['serial_number'],
+                    'user_id': mfa['user_id'],
+                    'enabled': mfa.get('enabled', False)
+                }
+                for mfa in mfa_devices
+            ]
+        except Exception as e:
+            self.log.warning(f"Failed to query MFA for user {resource['id']}: {str(e)}")
+            resource[self.annotation_key] = []
 
+    def process(self, resources, event=None):
+        matched = []
+        try:
             with self.executor_factory(max_workers=2) as w:
                 query_resources = [
                     r for r in resources if self.annotation_key not in r]
-                list(w.map(_user_mfa_devices, query_resources))
+                list(w.map(self._user_mfa_devices, query_resources))
 
-            matched = []
             for user in resources:
                 matched_devices = [
                     d for d in user.get(self.annotation_key, [])
-                    if self.match(d)  # 依赖 ValueFilter 的匹配逻辑
+                    if self.match(d)
                 ]
-                # 记录匹配的设备
                 self.merge_annotation(user, self.matched_annotation_key, matched_devices)
                 if matched_devices:
                     matched.append(user)
