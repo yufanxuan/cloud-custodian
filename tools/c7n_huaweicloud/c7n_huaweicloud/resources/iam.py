@@ -345,11 +345,13 @@ class UserMfaDevice(ValueFilter):
             resource: huaweicloud.iam-user
             filters:
               - type: mfa-device
-                key: mfa_devices
+                key: enabled
                 value: not-null
     """
 
     schema = type_schema('mfa-device', rinherit=ValueFilter.schema)
+    annotation_key = 'mfa-devices'
+    matched_annotation_key = 'c7n:matched-mfa-devices'
     schema_alias = False
 
     def process(self, resources, event=None):
@@ -368,12 +370,19 @@ class UserMfaDevice(ValueFilter):
 
         matched = []
         for r in resources:
-            if self.match(r):
+            keys = r[self.annotation_key]
+            k_matched = []
+            for k in keys:
+                if self.match(k):
+                    k_matched.append(k)
+            for k in k_matched:
+                k['c7n:match-type'] = 'mfa-devices'
+            self.merge_annotation(r, self.matched_annotation_key, k_matched)
+            if k_matched:
                 matched.append(r)
 
         print(f"matched: {matched}")
         return matched
-
 
 @User.filter_registry.register('policy')
 class UserPolicy(ValueFilter):
@@ -560,25 +569,26 @@ class AllowAllIamPolicies(ValueFilter):
     schema = type_schema('has-allow-all')
 
     def has_allow_all_policy(self, client, resource):
-        document = client.get_policy_version_v5(GetPolicyVersionV5Request(
-            policy_id=resource.get('policy_id'), version_id=resource.get('default_version_id'))
-        ).policy_version.document
+        if resource['default_version_id'] != 'v1' and resource['policy_type'] == 'custom':
+            document = client.get_policy_version_v5(GetPolicyVersionV5Request(
+                policy_id=resource.get('policy_id'), version_id=resource.get('default_version_id'))
+            ).policy_version.document
 
-        statements = json.loads(document).get('Statement')
-        if isinstance(statements, dict):
-            statements = [statements]
+            statements = json.loads(document).get('Statement')
+            if isinstance(statements, dict):
+                statements = [statements]
 
-        for s in statements:
-            if ('Condition' not in s and
-                    'Action' in s and
-                    isinstance(s['Action'], str) and
-                    s['Action'] == "*" and
-                    'Resource' in s and
-                    isinstance(s['Resource'], str) and
-                    s['Resource'] == "*" and
-                    s['Effect'] == "Allow"):
-                return True
-        return False
+            for s in statements:
+                if ('Condition' not in s and
+                        'Action' in s and
+                        isinstance(s['Action'], str) and
+                        s['Action'] == "*" and
+                        'Resource' in s and
+                        isinstance(s['Resource'], str) and
+                        s['Resource'] == "*" and
+                        s['Effect'] == "Allow"):
+                    return True
+            return False
 
     def process(self, resources, event=None):
         client = self.manager.get_client()
