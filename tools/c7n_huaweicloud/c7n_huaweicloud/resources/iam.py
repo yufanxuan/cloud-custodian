@@ -371,6 +371,7 @@ class UserMfaDevice(ValueFilter):
             if self.match(r):
                 matched.append(r)
 
+        print(f"matched: {matched}")
         return matched
 
 
@@ -436,7 +437,6 @@ class UserPolicy(ValueFilter):
             if k_matched:
                 matched.append(r)
 
-        print(f"matched: {matched}")
         return matched
 
 
