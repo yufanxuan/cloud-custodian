@@ -365,7 +365,7 @@ class UserMfaDevice(ValueFilter):
                 {
                     'serial_number': mfa['serial_number'],
                     'user_id': mfa['user_id'],
-                    'enabled': mfa.get('enabled', False)
+                    'enabled': mfa['enabled', False]
                 }
                 for mfa in mfa_devices
             ]
