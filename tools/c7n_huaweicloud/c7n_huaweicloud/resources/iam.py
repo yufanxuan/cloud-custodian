@@ -370,7 +370,6 @@ class UserMfaDevice(ValueFilter):
                     }
                     for mfa in mfa_devices
                 ]
-                resource[self.annotation_key] = [device.__dict__ for device in mfa_devices]
 
             with self.executor_factory(max_workers=2) as w:
                 query_resources = [
