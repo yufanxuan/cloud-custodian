@@ -19,10 +19,12 @@ DEFAULT_LIMIT_SIZE = 100
 def _dict_map(obj, params_map):
     if not params_map:
         return obj
-    dict
     for k, v in params_map.items():
         print(f"ssparams_map.items {k} ,,, {v}")
-        dict(obj, **{k,v})
+        if hasattr(obj, k):
+            setattr(obj, k, v)
+        else:
+            print(f"Object {type(obj)} does not have att {k}")
     print(f"params_map.items {obj}")
     return obj
 
