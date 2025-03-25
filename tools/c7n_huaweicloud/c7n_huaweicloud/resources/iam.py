@@ -328,6 +328,8 @@ class SetLoginProtect(HuaweiCloudBaseAction):
             print(e.request_id)
             print(e.error_code)
             print(e.error_msg)
+        except Exception as e:
+            print(f"Unexpected error: {e}")
 
 """------------------------------------filter---------------------------------------"""
 
@@ -355,34 +357,45 @@ class UserMfaDevice(ValueFilter):
     schema_alias = False
 
     def process(self, resources, event=None):
-        def _user_mfa_devices(resource):
-            client = self.manager.get_client()
-            request = ListMfaDevicesV5Request(user_id=resource["id"])
-            mfa_devices = client.list_mfa_devices_v5(request).mfa_devices
-            resource['mfa_devices'] = [device.__dict__ for device in mfa_devices]
+        try:
+            def _user_mfa_devices(resource):
+                client = self.manager.get_client()
+                request = ListMfaDevicesV5Request(user_id=resource["id"])
+                mfa_devices = client.list_mfa_devices_v5(request).mfa_devices
+                resource[self.annotation_key] = [
+                    {
+                        'serial_number': mfa['serial_number'],
+                        'user_id': mfa['user_id'],
+                        'enabled': mfa.get('enabled')
+                    }
+                    for mfa in mfa_devices
+                ]
+                resource[self.annotation_key] = [device.__dict__ for device in mfa_devices]
 
-        with self.executor_factory(max_workers=2) as w:
-            query_resources = [
-                r for r in resources if 'mfa_devices' not in r]
-            self.log.debug(
-                "Querying %d users' mfa devices" % len(query_resources))
-            list(w.map(_user_mfa_devices, query_resources))
+            with self.executor_factory(max_workers=2) as w:
+                query_resources = [
+                    r for r in resources if self.annotation_key not in r]
+                list(w.map(_user_mfa_devices, query_resources))
 
-        matched = []
-        for r in resources:
-            keys = r[self.annotation_key]
-            k_matched = []
-            for k in keys:
-                if self.match(k):
-                    k_matched.append(k)
-            for k in k_matched:
-                k['c7n:match-type'] = 'mfa-devices'
-            self.merge_annotation(r, self.matched_annotation_key, k_matched)
-            if k_matched:
-                matched.append(r)
-
-        print(f"matched: {matched}")
-        return matched
+            matched = []
+            for user in resources:
+                matched_devices = [
+                    d for d in user.get(self.annotation_key, [])
+                    if self.match(d)  # 依赖 ValueFilter 的匹配逻辑
+                ]
+                # 记录匹配的设备
+                self.merge_annotation(user, self.matched_annotation_key, matched_devices)
+                if matched_devices:
+                    matched.append(user)
+            print(f"matched: {matched}")
+            return matched
+        except exceptions.ClientRequestException as e:
+            print(e.status_code)
+            print(e.request_id)
+            print(e.error_code)
+            print(e.error_msg)
+        except Exception as e:
+            print(f"Unexpected error: {e}")
 
 @User.filter_registry.register('policy')
 class UserPolicy(ValueFilter):

@@ -83,7 +83,6 @@ class ResourceQuery:
         resources = []
 
         while 1:
-            print(f"request: {request}")
             response = self._invoke_client_enum(client, enum_op, request)
             res = jmespath.search(path, eval(
                 str(response).replace('null', 'None').replace('false', 'False').replace('true', 'True')))
@@ -96,10 +95,8 @@ class ResourceQuery:
                     data['id'] = data[m.id]
             # merge result
             resources = resources + res
-            print(f"response: {response}")
             # get next page info
             next_page_params = pagination.get_next_page_params(response)
-            print(f"next_page_params: {next_page_params}")
             if next_page_params:
                 request = _dict_map(request, next_page_params)
             else:
