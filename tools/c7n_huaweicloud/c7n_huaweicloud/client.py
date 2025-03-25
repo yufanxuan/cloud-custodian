@@ -27,6 +27,7 @@ from huaweicloudsdksmn.v2.region.smn_region import SmnRegion
 from huaweicloudsdkkms.v2 import KmsClient, ListKeysRequest, ListKeysRequestBody
 from huaweicloudsdkkms.v2.region.kms_region import KmsRegion
 
+
 log = logging.getLogger('custodian.huaweicloud.client')
 
 
