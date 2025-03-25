@@ -81,7 +81,7 @@ class PolicyDelete(HuaweiCloudBaseAction):
     def perform_action(self, resource):
         client = self.manager.get_client()
         try:
-            if resource['default_version_id'] != 'v1' and resource['policy_type'] == 'custom':
+            if resource['policy_type'] == 'custom':
                 versions = []
                 response = client.list_policy_versions_v5(
                     ListPolicyVersionsV5Request(policy_id=resource['policy_id']))
@@ -597,12 +597,16 @@ class AllowAllIamPolicies(ValueFilter):
             for s in statements:
                 print(f"statement: {s}")
                 if ('Condition' not in s and
+                        'NotResource' not in s and
                         'Action' in s and
-                        isinstance(s['Action'], str) and
-                        s['Action'] == "*" and
+                        isinstance(s['Action'], list) and
+                        ("*" in s['Action'] or
+                        "*:*:*" in s['Action']) and
+                        ('Resource' not in s or
                         'Resource' in s and
-                        isinstance(s['Resource'], str) and
-                        s['Resource'] == "*" and
+                        isinstance(s['Resource'], list) and
+                        "*" in s['Resource'] or
+                        "*:*:*:*:*" in s['Resource']) and
                         s['Effect'] == "Allow"):
                     return True
             return False
