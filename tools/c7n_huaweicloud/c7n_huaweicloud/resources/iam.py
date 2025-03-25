@@ -585,7 +585,7 @@ class AllowAllIamPolicies(ValueFilter):
     schema = type_schema('has-allow-all')
 
     def has_allow_all_policy(self, client, resource):
-        if resource['default_version_id'] != 'v1' and resource['policy_type'] == 'custom':
+        if resource['policy_type'] == 'custom':
             document = client.get_policy_version_v5(GetPolicyVersionV5Request(
                 policy_id=resource.get('policy_id'), version_id=resource.get('default_version_id'))
             ).policy_version.document
