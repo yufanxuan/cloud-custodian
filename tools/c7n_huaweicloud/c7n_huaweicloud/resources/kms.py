@@ -24,7 +24,7 @@ class Kms(QueryResourceManager):
         service = 'kms'
         enum_spec = ("list_keys", 'key_details', 'offset')
         id = 'key_id'
-        tag = False
+        tag_resource_type = 'kms'
 
 
 @Kms.action_registry.register("enable_key_rotation")
@@ -39,9 +39,16 @@ policies:
   - name: enable_key_rotation
     resource: huaweicloud.kms
     filters:
-      - type: value
-        key: key_state
-        value: "17368998-bdca-4302-95ee-8925d139a29f"
+      - or:
+        - type: value
+          key: key_rotation_enabled
+          value: "False"
+        - type: value
+          key: key_spec
+          value: "AES_256"
+        - type: value
+          key: key_spec
+          value: "SM4"
     actions:
       - enable_key_rotation
     """
@@ -76,9 +83,16 @@ policies:
   - name: disable_key_rotation
     resource: huaweicloud.kms
     filters:
-      - type: value
-        key: key_state
-        value: "2"
+      - or:
+        - type: value
+          key: key_rotation_enabled
+          value: "True"
+        - type: value
+          key: key_spec
+          value: "AES_256"
+        - type: value
+          key: key_spec
+          value: "SM4"
     actions:
       - disable_key_rotation
     """
@@ -112,8 +126,8 @@ policies:
     resource: huaweicloud.kms
     filters:
       - type: value
-        key: key_id
-        value: "17368998-bdca-4302-95ee-8925d139a29f"
+        key: key_state
+        value: "3"
     actions:
       - enable_key
     """
@@ -148,8 +162,8 @@ policies:
     resource: huaweicloud.kms
     filters:
       - type: value
-        key: key_id
-        value: "17368998-bdca-4302-95ee-8925d139a29f"
+        key: key_state
+        value: "2"
     actions:
       - disable_key
     """
@@ -174,13 +188,13 @@ policies:
 @Kms.filter_registry.register("all_keys_disable")
 class instanceDisable(ValueFilter):
     '''
-    policies:
-  - name: instance_disable
+policies:
+  - name: all_keys_disable
     resource: huaweicloud.kms
     filters:
-      - type: instance_disable
+      - type: all_keys_disable
         key: "key_state"
-        value: "3"
+        value: "2"
 
     '''
     schema = type_schema("all_keys_disable", rinherit=ValueFilter.schema)
