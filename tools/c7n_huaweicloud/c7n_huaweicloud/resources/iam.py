@@ -7,11 +7,7 @@ from huaweicloudsdkcore.auth.credentials import GlobalCredentials
 from huaweicloudsdkcore.exceptions import exceptions
 from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectReq, UpdateLoginProject, IamClient as IamClientV3
 from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
-from huaweicloudsdkiam.v5 import ListAccessKeysV5Request, ListAttachedUserPoliciesV5Request, DetachUserPolicyV5Request, \
-    DetachUserPolicyReqBody, DeleteUserV5Request, AddUserToGroupV5Request, AddUserToGroupReqBody, \
-    RemoveUserFromGroupV5Request, RemoveUserFromGroupReqBody, DeletePolicyV5Request, DeleteAccessKeyV5Request, \
-    ListMfaDevicesV5Request GetPolicyVersionV5Request, DeletePolicyVersionV5Request, \
-    ListPolicyVersionsV5Request, DeletePolicyV5Request
+from huaweicloudsdkiam.v5 import *
 
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema, chunks, jmespath_search
@@ -51,7 +47,6 @@ class User(QueryResourceManager):
         pagination = IAMMarkerPagination()
         enum_spec = ("list_users_v5", 'users', pagination)
         id = 'user_id'
-        tag = True
 
 @resources.register('iam-policy')
 class Policy(QueryResourceManager):
@@ -61,8 +56,53 @@ class Policy(QueryResourceManager):
         pagination = IAMMarkerPagination()
         enum_spec = ("list_policies_v5", 'policies', pagination)
         id = 'policy_id'
-        tag = True
 
+
+@Policy.action_registry.register('delete')
+class PolicyDelete(HuaweiCloudBaseAction):
+    """Delete an IAM Policy.
+
+    For example, if you want to automatically delete all unused IAM policies.
+
+    :example:
+
+      .. code-block:: yaml
+
+        - name: iam-delete-unused-policies
+          resource: huaweicloud.iam-policy
+          filters:
+            - type: unused
+          actions:
+            - delete
+
+    """
+    schema = type_schema('delete')
+
+    def perform_action(self, resource):
+        client = self.manager.get_client()
+        try:
+            if resource['default_version_id'] != 'v1' and resource['policy_type'] == 'custom':
+                versions = []
+                response = client.list_policy_versions_v5(
+                    ListPolicyVersionsV5Request(policy_id=resource['policy_id']))
+
+                for version in response.versions:
+                    if not version.is_default:
+                        versions.append(version.version_id)
+
+                for versionNum in versions:
+                    client.delete_policy_version_v5(DeletePolicyVersionV5Request(
+                        policy_id=resource['policy_id'], version_id=versionNum))
+
+                client.delete_policy_v5(DeletePolicyV5Request(policy_id=resource['policy_id']))
+                print(f"Successfully detached policy: {resource['policy_id']}")
+        except exceptions.ClientRequestException as e:
+            print(e.status_code)
+            print(e.request_id)
+            print(e.error_code)
+            print(e.error_msg)
+        except Exception as e:
+            print(f"Unexpected error: {e}")
 
 @User.action_registry.register('delete')
 class UserDelete(HuaweiCloudBaseAction):
@@ -213,11 +253,13 @@ class UserRemoveAccessKey(HuaweiCloudBaseAction):
         try:
             for key in resource["c7n:matched-keys"]:
                 if self.data.get('disable'):
-                    request = DeleteAccessKeyV5Request(
+                    request = UpdateAccessKeyV5Request(
                         user_id=resource["id"],
                         access_key_id=key['access_key_id'])
-                    client.delete_access_key_v5(request)
-                    print(f"delete access key success, access key id: {key['access_key_id']}")
+                    request.body = UpdateAccessKeyReqBody(
+                        status=AccessKeyStatus.INACTIVE)
+                    client.update_access_key_v5(request)
+                    print(f"disable access key success, access key id: {key['access_key_id']}")
                 else:
                     request = DeleteAccessKeyV5Request(
                         user_id=resource["id"],
@@ -441,7 +483,8 @@ class UserAccessKey(ValueFilter):
     def get_user_keys(self, client, user_set):
         for u in user_set:
             try:
-                response = client.list_access_keys_v5(ListAccessKeysV5Request(user_id=u['user_id']))
+                response = client.list_access_keys_v5(
+                    ListAccessKeysV5Request(user_id=u['user_id']))
                 access_keys = response.access_keys
                 u[self.annotation_key] = [
                     {
@@ -591,37 +634,3 @@ class UnusedIamPolicies(ValueFilter):
     def process(self, resources, event=None):
         return [r for r in resources if
                 r['attachment_count'] > 0]
-
-@Policy.action_registry.register('delete')
-class PolicyDelete(HuaweiCloudBaseAction):
-    """Delete an IAM Policy.
-
-    For example, if you want to automatically delete all unused IAM policies.
-
-    :example:
-
-      .. code-block:: yaml
-
-        - name: iam-delete-unused-policies
-          resource: iam-policy
-          filters:
-            - type: unused
-          actions:
-            - delete
-
-    """
-    schema = type_schema('delete')
-
-    def perform_action(self, resource):
-        client = self.manager.get_client()
-
-        if resource['default_version_id'] != 'v1' and resource['policy_type'] == 'custom':
-            versions = []
-            response = client.list_policy_versions_v5(
-                ListPolicyVersionsV5Request(policy_id=resource['policy_id']))
-            for version in response.versions:
-                if not version.is_default:
-                    versions.append(version.version_id)
-            for versionNum in versions:
-                client.delete_policy_version_v5(DeletePolicyVersionV5Request(policy_id=resource['policy_id'], version_id=versionNum))
-            client.delete_policy_v5(DeletePolicyV5Request(policy_id=resource['policy_id']))
