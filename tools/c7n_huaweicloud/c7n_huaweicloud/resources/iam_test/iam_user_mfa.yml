@@ -4,10 +4,9 @@ policies:
     filters:
       - or:
         - type: mfa-device
-          key: "length(mfa_devices || `[]`)"
-          value: 0
+          key: mfa_devices
+          value: []
           op: eq
         - type: mfa-device
-          key: "enabled"
+          key: enabled
           value: false
-          op: any

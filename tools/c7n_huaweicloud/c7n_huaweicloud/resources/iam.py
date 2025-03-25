@@ -370,7 +370,6 @@ class UserMfaDevice(ValueFilter):
                 list(w.map(self._user_mfa_devices, query_resources))
 
             for user in resources:
-                print(f"user:{user}")
                 devices = user.get(self.annotation_key, []) or []
                 if not devices:
                     matched.append(user)
@@ -380,7 +379,6 @@ class UserMfaDevice(ValueFilter):
                 self.merge_annotation(user, self.matched_annotation_key, matched_devices)
                 if matched_devices:
                     matched.append(user)
-            print(f"matched: {matched}")
         except exceptions.ClientRequestException as e:
             print(e.status_code)
             print(e.request_id)
