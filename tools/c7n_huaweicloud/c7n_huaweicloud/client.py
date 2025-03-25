@@ -24,6 +24,8 @@ from huaweicloudsdkces.v2 import CesClient, ListAlarmRulesRequest
 from huaweicloudsdkces.v2.region.ces_region import CesRegion
 from huaweicloudsdksmn.v2 import SmnClient
 from huaweicloudsdksmn.v2.region.smn_region import SmnRegion
+from huaweicloudsdkkms.v2 import KmsClient, ListKeysRequest, ListKeysRequestBody
+from huaweicloudsdkkms.v2.region.kms_region import KmsRegion
 
 log = logging.getLogger('custodian.huaweicloud.client')
 
@@ -101,6 +103,11 @@ class Session:
                 .with_credentials(credentials) \
                 .with_region(SmnRegion.value_of(self.region)) \
                 .build()
+        elif service == 'kms':
+            client = KmsClient.new_builder() \
+                .with_credentials(credentials) \
+                .with_region(KmsRegion.value_of(self.region)) \
+                .build()
 
         return client
 
@@ -115,4 +122,9 @@ class Session:
             request = ListDedicatedHostsRequest()
         elif service == 'ces':
             request = ListAlarmRulesRequest()
+        elif service == 'kms':
+            request = ListKeysRequest()
+            request.body = ListKeysRequestBody(
+                key_spec="ALL"
+            )
         return request

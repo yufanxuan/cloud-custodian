@@ -6,4 +6,5 @@ ResourceMap = {
     "huaweicloud.deh": "c7n_huaweicloud.resources.deh.Deh",
     "huaweicloud.config-tracker": "c7n_huaweicloud.resources.config.ConfigTracker",
     "huaweicloud.alarm": "c7n_huaweicloud.resources.ces.Alarm",
+    "huaweicloud.kms": "c7n_huaweicloud.resources.kms.Kms",
 }
