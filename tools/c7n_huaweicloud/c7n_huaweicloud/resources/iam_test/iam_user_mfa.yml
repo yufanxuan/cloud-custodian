@@ -3,5 +3,6 @@ policies:
     resource: huaweicloud.iam-user
     filters:
       - type: mfa-device
-        key: enabled
-        value: true
+        key: "mfa_devices|length"
+        value: 0
+        op: eq

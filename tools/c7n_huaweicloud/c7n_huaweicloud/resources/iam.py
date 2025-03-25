@@ -251,7 +251,7 @@ class UserRemoveAccessKey(HuaweiCloudBaseAction):
     def perform_action(self, resource):
         client = self.manager.get_client()
         try:
-            for key in resource["c7n:matched-keys"]:
+            for key in resource["c7n:matched_keys"]:
                 if self.data.get('disable'):
                     request = UpdateAccessKeyV5Request(
                         user_id=resource["id"],
@@ -352,8 +352,8 @@ class UserMfaDevice(ValueFilter):
     """
 
     schema = type_schema('mfa-device', rinherit=ValueFilter.schema)
-    annotation_key = 'mfa-devices'
-    matched_annotation_key = 'c7n:matched-mfa-devices'
+    annotation_key = 'mfa_devices'
+    matched_annotation_key = 'c7n:matched_mfa_devices'
     schema_alias = False
 
     def _user_mfa_devices(self, resource):
@@ -417,7 +417,7 @@ class UserPolicy(ValueFilter):
     """
     schema = type_schema('policy', rinherit=ValueFilter.schema)
     annotation_key = 'attached_policies'
-    matched_annotation_key = 'c7n:matched-attached-policies'
+    matched_annotation_key = 'c7n:matched_attached_policies'
     schema_alias = False
 
     def get_user_policies(self, client, user_set):
@@ -497,7 +497,7 @@ class UserAccessKey(ValueFilter):
         rinherit=ValueFilter.schema)
     schema_alias = False
     annotation_key = 'access_keys'
-    matched_annotation_key = 'c7n:matched-keys'
+    matched_annotation_key = 'c7n:matched_keys'
     annotate = False
 
     def get_user_keys(self, client, user_set):
