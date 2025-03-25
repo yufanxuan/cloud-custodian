@@ -363,9 +363,9 @@ class UserMfaDevice(ValueFilter):
             mfa_devices = client.list_mfa_devices_v5(request).mfa_devices
             resource[self.annotation_key] = [
                 {
-                    'serial_number': mfa['serial_number'],
-                    'user_id': mfa['user_id'],
-                    'enabled': mfa['enabled', False]
+                    'serial_number': mfa.serial_number,
+                    'user_id': mfa.user_id,
+                    'enabled': mfa.enabled
                 }
                 for mfa in mfa_devices
             ]
