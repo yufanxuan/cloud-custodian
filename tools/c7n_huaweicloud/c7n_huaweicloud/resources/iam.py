@@ -371,10 +371,12 @@ class UserMfaDevice(ValueFilter):
 
             for user in resources:
                 print(f"user:{user}")
-                matched_devices = [
-                    d for d in user.get(self.annotation_key, []) or []
-                    if self.match(d)
-                ]
+                devices = user.get(self.annotation_key, []) or []
+                if not devices:
+                    matched.append(user)
+                    continue
+                matched_devices = [d for d in devices if self.match(d)]
+
                 self.merge_annotation(user, self.matched_annotation_key, matched_devices)
                 if matched_devices:
                     matched.append(user)
