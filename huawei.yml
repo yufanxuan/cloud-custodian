@@ -1,0 +1,57 @@
+#policies:
+#  - name: enable_key_rotation
+#    resource: huaweicloud.kms
+#    filters:
+#      - or:
+#        - type: value
+#          key: key_rotation_enabled
+#          value: "False"
+#        - type: value
+#          key: key_spec
+#          value: "AES_256"
+#        - type: value
+#          key: key_spec
+#          value: "SM4"
+#    actions:
+#      - enable_key_rotation
+policies:
+  - name: disable_key_rotation
+    resource: huaweicloud.kms
+    filters:
+      - or:
+        - type: value
+          key: key_rotation_enabled
+          value: "True"
+        - type: value
+          key: key_spec
+          value: "AES_256"
+        - type: value
+          key: key_spec
+          value: "SM4"
+    actions:
+      - disable_key_rotation
+#policies:
+#  - name: enable_key
+#    resource: huaweicloud.kms
+#    filters:
+#      - type: value
+#        key: key_state
+#        value: "3"
+#    actions:
+#      - enable_key
+#policies:
+#  - name: disable_key
+#    resource: huaweicloud.kms
+#    filters:
+#      - type: value
+#        key: key_state
+#        value: "2"
+#    actions:
+#      - disable_key
+#policies:
+#  - name: instance_disable
+#    resource: huaweicloud.kms
+#    filters:
+#      - type: instance_disable
+#        key: "key_state"
+#        value: "2"

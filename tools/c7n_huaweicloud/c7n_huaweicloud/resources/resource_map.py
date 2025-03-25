@@ -3,4 +3,5 @@
 
 ResourceMap = {
     "huaweicloud.volume": "c7n_huaweicloud.resources.volume.Volume",
+    "huaweicloud.kms": "c7n_huaweicloud.resources.kms.Kms",
 }

@@ -5,10 +5,13 @@ import logging
 import os
 import sys
 
-from huaweicloudsdkcore.auth.credentials import BasicCredentials
+from huaweicloudsdkcore.auth.credentials import BasicCredentials, GlobalCredentials
 from huaweicloudsdkecs.v2 import *
+from huaweicloudsdkecs.v2.region.ecs_region import EcsRegion
 from huaweicloudsdkevs.v2 import *
 from huaweicloudsdkevs.v2.region.evs_region import EvsRegion
+from huaweicloudsdkkms.v2 import KmsClient, ListKeysRequest, ListKeysRequestBody
+from huaweicloudsdkkms.v2.region.kms_region import KmsRegion
 from huaweicloudsdkvpc.v2 import *
 from huaweicloudsdktms.v1 import *
 from huaweicloudsdktms.v1.region.tms_region import TmsRegion
@@ -20,23 +23,23 @@ class Session:
     """Session"""
 
     def __init__(self, options=None):
-        self.region = os.getenv('HUAWEI_DEFAULT_REGION')
+        self.region = "ap-southeast-1"
         if not self.region:
             log.error('No default region set. Specify a default via HUAWEI_DEFAULT_REGION')
             sys.exit(1)
 
-        self.ak = os.getenv('HUAWEI_ACCESS_KEY_ID')
+        self.ak = "LTWSTNHWOS1LTQRMVNYG"
         if self.ak is None:
             log.error('No access key id set. Specify a default via HUAWEI_ACCESS_KEY_ID')
             sys.exit(1)
 
-        self.sk = os.getenv('HUAWEI_SECRET_ACCESS_KEY')
+        self.sk = "P2v3JPzhgTa7dE078nYXyZ8ztSEiuHSYbvgAIRLA"
         if self.sk is None:
             log.error('No secret access key set. Specify a default via HUAWEI_SECRET_ACCESS_KEY')
             sys.exit(1)
 
     def client(self, service):
-        credentials = BasicCredentials(self.ak, self.sk, os.getenv('HUAWEI_PROJECT_ID'))
+        credentials = BasicCredentials(self.ak, self.sk, "b0672a39f3804280ae8d16c9b004f63d")
         if service == 'vpc':
             client = VpcClient.new_builder() \
                 .with_credentials(credentials) \
@@ -58,6 +61,11 @@ class Session:
                 .with_credentials(globalCredentials) \
                 .with_region(TmsRegion.value_of(self.region)) \
                 .build()
+        elif service == 'kms':
+            client = KmsClient.new_builder() \
+                .with_credentials(credentials) \
+                .with_region(KmsRegion.value_of(self.region)) \
+                .build()
 
         return client
 
@@ -66,5 +74,9 @@ class Session:
             request = ListVpcsRequest()
         elif service == 'evs':
             request = ListVolumesRequest()
-
+        elif service == 'kms':
+            request = ListKeysRequest()
+            request.body = ListKeysRequestBody(
+                key_spec="ALL"
+            )
         return request
