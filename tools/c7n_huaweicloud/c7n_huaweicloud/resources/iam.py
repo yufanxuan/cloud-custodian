@@ -352,10 +352,6 @@ class UserMfaDevice(ValueFilter):
     schema = type_schema('mfa-device', rinherit=ValueFilter.schema)
     schema_alias = False
 
-    def __init__(self, *args, **kw):
-        super(UserMfaDevice, self).__init__(*args, **kw)
-        self.data['key'] = 'mfa_devices'
-
     def process(self, resources, event=None):
         def _user_mfa_devices(resource):
             client = self.manager.get_client()
@@ -564,8 +560,8 @@ class AllowAllIamPolicies(ValueFilter):
     schema = type_schema('has-allow-all')
 
     def has_allow_all_policy(self, client, resource):
-        document = client.get_policy_version_v5(GetPolicyVersionV5Request(policy_id=resource.get('policy_id'),
-                                                               version_id=resource.get('default_version_id'))
+        document = client.get_policy_version_v5(GetPolicyVersionV5Request(
+            policy_id=resource.get('policy_id'), version_id=resource.get('default_version_id'))
         ).policy_version.document
 
         statements = json.loads(document).get('Statement')
