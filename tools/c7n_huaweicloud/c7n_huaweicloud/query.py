@@ -20,7 +20,13 @@ def _dict_map(obj, params_map):
     if not params_map:
         return obj
     for k, v in params_map.items():
-        obj.__dict__[k] = v
+        print(f"ssparams_map.items {k} ,,, {v}")
+        if hasattr(obj, k):
+            setattr(obj, k, v)
+        else:
+            print(f"Object {type(obj)} does not have att {k}")
+    print(f"params_map.items {obj}")
+    return obj
 
 class ResourceQuery:
     def __init__(self, session_factory):
@@ -75,14 +81,14 @@ class ResourceQuery:
 
         page_params = pagination.get_first_page_params()
         request = session.request(m.service)
-        _dict_map(request, page_params)
+        request = _dict_map(request, page_params)
         resources = []
-        print(request)
+
         while 1:
+            print(f"request: {request}")
             response = self._invoke_client_enum(client, enum_op, request)
             res = jmespath.search(path, eval(
                 str(response).replace('null', 'None').replace('false', 'False').replace('true', 'True')))
-
             # replace id with the specified one
             if res is None or len(res) == 0:
                 return resources
@@ -92,11 +98,12 @@ class ResourceQuery:
                     data['id'] = data[m.id]
             # merge result
             resources = resources + res
-
+            print(f"response: {response}")
             # get next page info
             next_page_params = pagination.get_next_page_params(response)
+            print(f"next_page_params: {next_page_params}")
             if next_page_params:
-                _dict_map(request, next_page_params)
+                request = _dict_map(request, next_page_params)
             else:
                 return resources
 

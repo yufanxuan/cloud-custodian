@@ -13,7 +13,13 @@ from huaweicloudsdkvpc.v2 import *
 from huaweicloudsdktms.v1 import *
 from huaweicloudsdktms.v1.region.tms_region import TmsRegion
 
-from huaweicloudsdkiam.v5 import IamClient as IamClientV5, ListUsersV5Request
+from huaweicloudsdkiam.v5 import IamClient as IamClientV5, ListUsersV5Request, ListPoliciesV5Request
+
+LIST_POLICIES_V_REQUEST = ListPoliciesV5Request
+
+REQUEST = ListPoliciesV5Request
+
+V_REQUEST = ListPoliciesV5Request
 from huaweicloudsdkiam.v5.region import iam_region as iam_region_v5
 
 log = logging.getLogger('custodian.huaweicloud.client')
@@ -67,6 +73,12 @@ class Session:
                 .with_credentials(globalCredentials) \
                 .with_region(iam_region_v5.IamRegion.value_of(self.region)) \
                 .build()
+        elif service == 'iam-policy':
+            globalCredentials = GlobalCredentials(self.ak, self.sk)
+            client = IamClientV5.new_builder() \
+                .with_credentials(globalCredentials) \
+                .with_region(iam_region_v5.IamRegion.value_of(self.region)) \
+                .build()
 
         return client
 
@@ -77,6 +89,7 @@ class Session:
             request = ListVolumesRequest()
         elif service == 'iam-user':
             request = ListUsersV5Request()
-
+        elif service == 'iam-policy':
+            request = ListPoliciesV5Request()
 
         return request
