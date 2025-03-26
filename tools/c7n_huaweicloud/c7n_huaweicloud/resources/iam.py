@@ -400,6 +400,7 @@ class UserLoginProtect(ValueFilter):
             print(e.error_msg)
         except Exception as e:
             print(f"Unexpected error: {e}")
+        print(f"user: {matched}")
         return matched or []
 
 # Mfa-device filter for iam-users
