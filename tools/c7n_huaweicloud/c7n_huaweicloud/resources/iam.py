@@ -386,7 +386,7 @@ class UserLoginProtect(ValueFilter):
 
             for user in resources:
                 login_protect = user.get(self.annotation_key, {})
-                if self.data.get('key') == 'login-protect' and self.data.get('value') == 'none' and not login_protect:
+                if self.data.get('key') == 'login_protect' and self.data.get('value') == 'none' and not login_protect:
                     matched.append(user)
                 else:
                     if self.match(login_protect):
@@ -452,7 +452,7 @@ class UserMfaDevice(ValueFilter):
 
             for user in resources:
                 devices = user.get(self.annotation_key, []) or []
-                if self.data.get('key') == 'mfa-device' and self.data.get('value') == 'none' and len(devices) == 0:
+                if self.data.get('key') == 'mfa_devices' and self.data.get('value') == 'none' and len(devices) == 0:
                     matched.append(user)
                 else:
                     matched_devices = [d for d in devices if self.match(d)]
