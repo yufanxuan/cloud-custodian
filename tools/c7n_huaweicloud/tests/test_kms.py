@@ -63,7 +63,7 @@ class KeyTest(BaseTest):
         p = self.load_policy({
             'name': 'all-keys',
             'resource': 'huaweicloud.kms',
-            'filters': ['all_keys_disable'] },
+            'filters': ['all_keys_disable']},
             session_factory=factory)
         resources = p.run()
         self.assertEqual(len(resources), 0)
