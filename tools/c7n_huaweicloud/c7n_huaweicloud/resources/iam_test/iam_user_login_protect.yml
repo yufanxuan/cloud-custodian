@@ -3,9 +3,5 @@ policies:
     resource: huaweicloud.iam-user
     filters:
       - type: login-protect
-        key: enabled
-        value: true
-    actions:
-      - type: set-login-protect
-        enabled: false
-        verification_method: none
+        key: login_protect
+        value: null

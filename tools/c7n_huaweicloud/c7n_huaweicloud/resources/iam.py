@@ -371,10 +371,8 @@ class UserLoginProtect(ValueFilter):
                 print(e.request_id)
                 print(e.error_code)
                 print(e.error_msg)
-            resource[self.annotation_key] = {}
         except Exception as e:
             print(f"Unexpected error: {e}")
-            resource[self.annotation_key] = {}
 
     def process(self, resources, event=None):
         matched = []
@@ -385,11 +383,12 @@ class UserLoginProtect(ValueFilter):
                 list(w.map(self._user_login_protect, query_resources))
 
             for user in resources:
-                login_protect = user.get(self.annotation_key, {})
+                print(f"user: {user}")
+                login_protect = user.get(self.annotation_key)
                 if not login_protect:
                     matched.append(user)
                     continue
-                if self.match(login_protect):  # ValueFilter 会自动匹配 key
+                if self.match(login_protect):
                     self.merge_annotation(user, self.matched_annotation_key, login_protect)
                     matched.append(user)
         except exceptions.ClientRequestException as e:
