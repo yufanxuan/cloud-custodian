@@ -13,7 +13,6 @@ class KeyTest(BaseTest):
         factory = self.replay_flight_data('kms_query')
         p = self.load_policy({
             'name': 'all-keys',
-            'name': 'all-keys',
             'resource': 'huaweicloud.kms',
             'filters': [{'key_id': '17368998-bdca-4302-95ee-8925d139a29f'}],
             'actions': ['disable_key']},
