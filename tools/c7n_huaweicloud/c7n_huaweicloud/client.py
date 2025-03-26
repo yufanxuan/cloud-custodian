@@ -8,7 +8,7 @@ import sys
 from huaweicloudsdkconfig.v1 import ConfigClient, ShowTrackerConfigRequest
 from huaweicloudsdkconfig.v1.region.config_region import ConfigRegion
 from huaweicloudsdkcore.auth.credentials import BasicCredentials, GlobalCredentials
-from huaweicloudsdkecs.v2 import EcsClient
+from huaweicloudsdkecs.v2 import EcsClient, ListServersDetailsRequest
 from huaweicloudsdkecs.v2.region.ecs_region import EcsRegion
 from huaweicloudsdkevs.v2 import EvsClient, ListVolumesRequest
 from huaweicloudsdkevs.v2.region.evs_region import EvsRegion
@@ -40,6 +40,8 @@ from huaweicloudsdkgeip.v3.region.geip_region import GeipRegion
 from huaweicloudsdkgeip.v3 import GeipClient
 from huaweicloudsdkims.v2.region.ims_region import ImsRegion
 from huaweicloudsdkims.v2 import ImsClient, ListImagesRequest
+from huaweicloudsdkcbr.v1.region.cbr_region import CbrRegion
+from huaweicloudsdkcbr.v1 import CbrClient
 
 log = logging.getLogger('custodian.huaweicloud.client')
 
@@ -165,6 +167,11 @@ class Session:
                 .with_credentials(credentials) \
                 .with_region(ImsRegion.value_of(self.region)) \
                 .build()
+        elif service == 'cbr-backup' or service == 'cbr-vault' or service == 'cbr-policy':
+            client = CbrClient.new_builder() \
+                .with_credentials(credentials) \
+                .with_region(CbrRegion.value_of(self.region)) \
+                .build()
 
         return client
 
@@ -175,6 +182,8 @@ class Session:
             request = ListVolumesRequest()
         elif service == 'config':
             request = ShowTrackerConfigRequest()
+        elif service == 'ecs':
+            request = ListServersDetailsRequest()
         elif service == 'deh':
             request = ListDedicatedHostsRequest()
         elif service == 'ces':
