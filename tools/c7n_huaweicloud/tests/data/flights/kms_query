@@ -1,7 +1,6 @@
 interactions:
 - request:
-    body:
-      string: '{"limit":2000,"key_spec":"ALL"}'
+    body: '{"key_spec":"ALL"}'
     headers:
       Accept:
       - '*/*'
@@ -19,23 +18,11 @@ interactions:
       - ap-southeat-1
       X-Sdk-Date:
       - 20250320T063810Z
-    method: GET
-    uri: https://kms.ap-southeast-1.myhuaweicloud.com/v1.0/b0672a39f3804280ae8d16c9b004f63d/kms/list-keys
+    method: POST
+    uri: https://kms.ap-southeast-1.myhuaweicloud.com/v1.0/ap-southeat-1/kms/list-keys
   response:
     body:
-      string: '{"count": 1, "volumes": [{"id": "8e79e30b-cea2-45b3-8643-fe879493b7a3",
-        "links": [{"href": "https://evs.ap-southeast-1.myhuaweicloud.com/v2/0970dd9c1a0026a62fddc0038c52b5eb/os-vendor-volumes/8e79e30b-cea2-45b3-8643-fe879493b7a3",
-        "rel": "self"}, {"href": "https://evs.ap-southeast-1.myhuaweicloud.com/0970dd9c1a0026a62fddc0038c52b5eb/os-vendor-volumes/8e79e30b-cea2-45b3-8643-fe879493b7a3",
-        "rel": "bookmark"}], "name": "custodian-volume", "status": "available", "attachments":
-        [], "availability_zone": "ap-southeast-1c", "os-vol-host-attr:host": "cinder-kvm003@GPSSD#5",
-        "created_at": "2025-03-20T07:28:45.780415", "os-vol-tenant-attr:tenant_id":
-        "0970dd9c1a0026a62fddc0038c52b5eb", "volume_image_metadata": {}, "volume_type":
-        "GPSSD", "size": 10, "bootable": "false", "metadata": {"__system__encrypted":
-        "0", "hw:passthrough": "false"}, "updated_at": "2025-03-20T07:28:45.901082",
-        "encrypted": false, "replication_status": "disabled", "shareable": "false",
-        "user_id": "8a69ab024795445ebf20af583e6a4e82", "service_type": "EVS", "multiattach":
-        false, "tags": {}, "wwn": "6888603000002024fa16821e56476146", "enterprise_project_id":
-        "0"}]}'
+      string: "{\"next_marker\":\"\",\"total\":6,\"key_details\":[{\"key_rotation_enabled\":\"false\",\"key_usage\":\"ENCRYPT_DECRYPT\",\"key_type\":\"1\",\"key_id\":\"17368998-bdca-4302-95ee-8925d139a29f\",\"key_spec\":\"AES_256\",\"origin\":\"kms\",\"expiration_time\":\"\",\"sys_enterprise_project_id\":\"0\",\"default_key_flag\":\"0\",\"creation_date\":\"1716661217000\",\"pending_days\":\"\",\"domain_id\":\"16e914a4f83a4c6ba9f06c24648cc146\",\"keystore_type\":\"DEFAULT\",\"scheduled_deletion_date\":\"\",\"multi_region_key_type\":\"SINGLE\",\"key_alias\":\"KMS-2990\",\"key_description\":\"\",\"realm\":\"ap-southeast-1\",\"keystore_id\":\"0\",\"key_state\":\"2\"},{\"key_rotation_enabled\":\"false\",\"key_usage\":\"ENCRYPT_DECRYPT\",\"key_type\":\"1\",\"key_id\":\"da4d4b85-a0ee-4a04-a179-a4e2dae4b762\",\"key_spec\":\"AES_256\",\"origin\":\"kms\",\"expiration_time\":\"\",\"sys_enterprise_project_id\":\"0\",\"default_key_flag\":\"0\",\"creation_date\":\"1711094925000\",\"pending_days\":\"\",\"domain_id\":\"16e914a4f83a4c6ba9f06c24648cc146\",\"keystore_type\":\"DEFAULT\",\"scheduled_deletion_date\":\"\",\"multi_region_key_type\":\"SINGLE\",\"key_alias\":\"KMS-82e2\",\"key_description\":\"\",\"realm\":\"ap-southeast-1\",\"keystore_id\":\"0\",\"key_state\":\"2\"},{\"key_rotation_enabled\":\"false\",\"key_usage\":\"ENCRYPT_DECRYPT\",\"key_type\":\"1\",\"key_id\":\"287bed34-e3f5-45c2-9d00-d4e0432a0944\",\"key_spec\":\"AES_256\",\"origin\":\"kms\",\"expiration_time\":\"\",\"sys_enterprise_project_id\":\"1812c907-ecef-41ac-b5da-1d99d17e15ce\",\"default_key_flag\":\"0\",\"creation_date\":\"1681743454000\",\"pending_days\":\"\",\"domain_id\":\"16e914a4f83a4c6ba9f06c24648cc146\",\"keystore_type\":\"DEFAULT\",\"scheduled_deletion_date\":\"\",\"multi_region_key_type\":\"SINGLE\",\"key_alias\":\"KMS-f89e\",\"key_description\":\"fdas\",\"realm\":\"ap-southeast-1\",\"keystore_id\":\"0\",\"key_state\":\"2\"},{\"key_rotation_enabled\":\"false\",\"key_usage\":\"ENCRYPT_DECRYPT\",\"key_type\":\"1\",\"key_id\":\"b15f6555-8473-4376-bc9a-eb35278efea6\",\"key_spec\":\"AES_256\",\"origin\":\"kms\",\"expiration_time\":\"\",\"sys_enterprise_project_id\":\"0\",\"default_key_flag\":\"1\",\"creation_date\":\"1679067631000\",\"pending_days\":\"\",\"domain_id\":\"16e914a4f83a4c6ba9f06c24648cc146\",\"keystore_type\":\"DEFAULT\",\"scheduled_deletion_date\":\"\",\"multi_region_key_type\":\"SINGLE\",\"key_alias\":\"evs/default\",\"key_description\":\"\u7528\u4E8E\u52A0\u5BC6\u4E91\u786C\u76D8\u7684\u9ED8\u8BA4\u5BC6\u94A5\u3002\",\"realm\":\"ap-southeast-1\",\"keystore_id\":\"0\",\"key_state\":\"2\"},{\"key_rotation_enabled\":\"false\",\"key_usage\":\"ENCRYPT_DECRYPT\",\"key_type\":\"1\",\"key_id\":\"d34d7736-c143-4e36-95be-4199e99c487b\",\"key_spec\":\"AES_256\",\"origin\":\"kms\",\"expiration_time\":\"\",\"sys_enterprise_project_id\":\"0\",\"default_key_flag\":\"1\",\"creation_date\":\"1656425806000\",\"pending_days\":\"\",\"domain_id\":\"16e914a4f83a4c6ba9f06c24648cc146\",\"keystore_type\":\"DEFAULT\",\"scheduled_deletion_date\":\"\",\"multi_region_key_type\":\"SINGLE\",\"key_alias\":\"kps/default\",\"key_description\":\"\",\"realm\":\"ap-southeast-1\",\"keystore_id\":\"0\",\"key_state\":\"2\"},{\"key_rotation_enabled\":\"false\",\"key_usage\":\"ENCRYPT_DECRYPT\",\"key_type\":\"1\",\"key_id\":\"6f1daf0a-cfa2-4468-b4c4-8915d6a01bc3\",\"key_spec\":\"AES_256\",\"origin\":\"kms\",\"expiration_time\":\"\",\"sys_enterprise_project_id\":\"0\",\"default_key_flag\":\"1\",\"creation_date\":\"1656392040000\",\"pending_days\":\"\",\"domain_id\":\"16e914a4f83a4c6ba9f06c24648cc146\",\"keystore_type\":\"DEFAULT\",\"scheduled_deletion_date\":\"\",\"multi_region_key_type\":\"SINGLE\",\"key_alias\":\"csms/default\",\"key_description\":\"\",\"realm\":\"ap-southeast-1\",\"keystore_id\":\"0\",\"key_state\":\"2\"}],\"keys\":[\"17368998-bdca-4302-95ee-8925d139a29f\",\"da4d4b85-a0ee-4a04-a179-a4e2dae4b762\",\"287bed34-e3f5-45c2-9d00-d4e0432a0944\",\"b15f6555-8473-4376-bc9a-eb35278efea6\",\"d34d7736-c143-4e36-95be-4199e99c487b\",\"6f1daf0a-cfa2-4468-b4c4-8915d6a01bc3\"],\"truncated\":\"false\"}\n"
     headers:
       Connection:
       - keep-alive
@@ -63,7 +50,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: null
+    body: '{"key_spec": "ALL"}'
     headers:
       Accept:
       - '*/*'
@@ -72,7 +59,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '0'
+      - '19'
       Content-Type:
       - application/json;charset=utf-8
       Host:
@@ -80,149 +67,23 @@ interactions:
       User-Agent:
       - huaweicloud-usdk-python/3.0
       X-Project-Id:
-      - b0672a39f3804280ae8d16c9b004f63d
+      - ap-southeat-1
       X-Sdk-Date:
-      - 20250324T025357Z
+      - 20250326T071714Z
     method: POST
-    uri: https://kms.ap-southeast-1.myhuaweicloud.com/v1.0/b0672a39f3804280ae8d16c9b004f63d/kms/list-keys
+    uri: https://kms.ap-southeast-1.myhuaweicloud.com/v1.0/ap-southeat-1/kms/list-keys
   response:
     body:
-      string: "{\"next_marker\":\"\",\"total\":6,\"key_details\":[{\"key_rotation_enabled\":\"false\",\"key_usage\":\"ENCRYPT_DECRYPT\",\"key_type\":\"1\",\"key_id\":\"17368998-bdca-4302-95ee-8925d139a29f\",\"key_spec\":\"AES_256\",\"origin\":\"kms\",\"expiration_time\":\"\",\"sys_enterprise_project_id\":\"0\",\"default_key_flag\":\"0\",\"creation_date\":\"1716661217000\",\"pending_days\":\"\",\"domain_id\":\"16e914a4f83a4c6ba9f06c24648cc146\",\"keystore_type\":\"DEFAULT\",\"scheduled_deletion_date\":\"\",\"multi_region_key_type\":\"SINGLE\",\"key_alias\":\"KMS-2990\",\"key_description\":\"\",\"realm\":\"ap-southeast-1\",\"keystore_id\":\"0\",\"key_state\":\"2\"},{\"key_rotation_enabled\":\"false\",\"key_usage\":\"ENCRYPT_DECRYPT\",\"key_type\":\"1\",\"key_id\":\"da4d4b85-a0ee-4a04-a179-a4e2dae4b762\",\"key_spec\":\"AES_256\",\"origin\":\"kms\",\"expiration_time\":\"\",\"sys_enterprise_project_id\":\"0\",\"default_key_flag\":\"0\",\"creation_date\":\"1711094925000\",\"pending_days\":\"\",\"domain_id\":\"16e914a4f83a4c6ba9f06c24648cc146\",\"keystore_type\":\"DEFAULT\",\"scheduled_deletion_date\":\"\",\"multi_region_key_type\":\"SINGLE\",\"key_alias\":\"KMS-82e2\",\"key_description\":\"\",\"realm\":\"ap-southeast-1\",\"keystore_id\":\"0\",\"key_state\":\"2\"},{\"key_rotation_enabled\":\"false\",\"key_usage\":\"ENCRYPT_DECRYPT\",\"key_type\":\"1\",\"key_id\":\"287bed34-e3f5-45c2-9d00-d4e0432a0944\",\"key_spec\":\"AES_256\",\"origin\":\"kms\",\"expiration_time\":\"\",\"sys_enterprise_project_id\":\"1812c907-ecef-41ac-b5da-1d99d17e15ce\",\"default_key_flag\":\"0\",\"creation_date\":\"1681743454000\",\"pending_days\":\"\",\"domain_id\":\"16e914a4f83a4c6ba9f06c24648cc146\",\"keystore_type\":\"DEFAULT\",\"scheduled_deletion_date\":\"\",\"multi_region_key_type\":\"SINGLE\",\"key_alias\":\"KMS-f89e\",\"key_description\":\"fdas\",\"realm\":\"ap-southeast-1\",\"keystore_id\":\"0\",\"key_state\":\"2\"},{\"key_rotation_enabled\":\"false\",\"key_usage\":\"ENCRYPT_DECRYPT\",\"key_type\":\"1\",\"key_id\":\"b15f6555-8473-4376-bc9a-eb35278efea6\",\"key_spec\":\"AES_256\",\"origin\":\"kms\",\"expiration_time\":\"\",\"sys_enterprise_project_id\":\"0\",\"default_key_flag\":\"1\",\"creation_date\":\"1679067631000\",\"pending_days\":\"\",\"domain_id\":\"16e914a4f83a4c6ba9f06c24648cc146\",\"keystore_type\":\"DEFAULT\",\"scheduled_deletion_date\":\"\",\"multi_region_key_type\":\"SINGLE\",\"key_alias\":\"evs/default\",\"key_description\":\"\u7528\u4E8E\u52A0\u5BC6\u4E91\u786C\u76D8\u7684\u9ED8\u8BA4\u5BC6\u94A5\u3002\",\"realm\":\"ap-southeast-1\",\"keystore_id\":\"0\",\"key_state\":\"2\"},{\"key_rotation_enabled\":\"false\",\"key_usage\":\"ENCRYPT_DECRYPT\",\"key_type\":\"1\",\"key_id\":\"d34d7736-c143-4e36-95be-4199e99c487b\",\"key_spec\":\"AES_256\",\"origin\":\"kms\",\"expiration_time\":\"\",\"sys_enterprise_project_id\":\"0\",\"default_key_flag\":\"1\",\"creation_date\":\"1656425806000\",\"pending_days\":\"\",\"domain_id\":\"16e914a4f83a4c6ba9f06c24648cc146\",\"keystore_type\":\"DEFAULT\",\"scheduled_deletion_date\":\"\",\"multi_region_key_type\":\"SINGLE\",\"key_alias\":\"kps/default\",\"key_description\":\"\",\"realm\":\"ap-southeast-1\",\"keystore_id\":\"0\",\"key_state\":\"2\"},{\"key_rotation_enabled\":\"false\",\"key_usage\":\"ENCRYPT_DECRYPT\",\"key_type\":\"1\",\"key_id\":\"6f1daf0a-cfa2-4468-b4c4-8915d6a01bc3\",\"key_spec\":\"AES_256\",\"origin\":\"kms\",\"expiration_time\":\"\",\"sys_enterprise_project_id\":\"0\",\"default_key_flag\":\"1\",\"creation_date\":\"1656392040000\",\"pending_days\":\"\",\"domain_id\":\"16e914a4f83a4c6ba9f06c24648cc146\",\"keystore_type\":\"DEFAULT\",\"scheduled_deletion_date\":\"\",\"multi_region_key_type\":\"SINGLE\",\"key_alias\":\"csms/default\",\"key_description\":\"\",\"realm\":\"ap-southeast-1\",\"keystore_id\":\"0\",\"key_state\":\"2\"}],\"keys\":[\"17368998-bdca-4302-95ee-8925d139a29f\",\"da4d4b85-a0ee-4a04-a179-a4e2dae4b762\",\"287bed34-e3f5-45c2-9d00-d4e0432a0944\",\"b15f6555-8473-4376-bc9a-eb35278efea6\",\"d34d7736-c143-4e36-95be-4199e99c487b\",\"6f1daf0a-cfa2-4468-b4c4-8915d6a01bc3\"],\"truncated\":\"false\"}\n"
-    headers:
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Connection:
-      - keep-alive
-      Content-Type:
-      - application/json; charset=UTF-8
-      Date:
-      - Mon, 24 Mar 2025 02:53:58 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Pragma:
-      - no-cache
-      Server:
-      - api-gateway
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubdomains;
-      X-Content-Type-Options:
-      - nosniff
-      - nosniff
-      X-Download-Options:
-      - noopen
-      X-Frame-Options:
-      - SAMEORIGIN
-      - SAMEORIGIN
-      X-Request-Id:
-      - 38280111d0f080c7ccc029d690899242
-      X-XSS-Protection:
-      - 1; mode=block
-      - 1; mode=block;
-    status:
-      code: 200
-      message: ''
-- request:
-    body: '{"key_id": "17368998-bdca-4302-95ee-8925d139a29f", "sequence": "ad0446c38bf64921aa22e4e32b481a46"}'
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '98'
-      Content-Type:
-      - application/json;charset=utf-8
-      Host:
-      - kms.ap-southeast-1.myhuaweicloud.com
-      User-Agent:
-      - huaweicloud-usdk-python/3.0
-      X-Project-Id:
-      - b0672a39f3804280ae8d16c9b004f63d
-      X-Sdk-Date:
-      - 20250324T040126Z
-    method: POST
-    uri: https://kms.ap-southeast-1.myhuaweicloud.com/v1.0/b0672a39f3804280ae8d16c9b004f63d/kms/enable-key-rotation
-  response:
-    body:
-      string: '{}
+      string: '{"error_msg":"Incorrect IAM authentication information: Unauthorized","error_code":"APIGW.0301","request_id":"59a2e407ee471a94573b2510cc6db323"}
 
         '
     headers:
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
       Connection:
       - keep-alive
       Content-Type:
-      - application/json; charset=UTF-8
+      - application/json
       Date:
-      - Mon, 24 Mar 2025 04:01:27 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Pragma:
-      - no-cache
-      Server:
-      - api-gateway
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubdomains;
-      X-Content-Type-Options:
-      - nosniff
-      - nosniff
-      X-Download-Options:
-      - noopen
-      X-Frame-Options:
-      - SAMEORIGIN
-      - SAMEORIGIN
-      X-Request-Id:
-      - 47017d13f15e4cd8eaa6ae35b7405a08
-      X-XSS-Protection:
-      - 1; mode=block
-      - 1; mode=block;
-    status:
-      code: 200
-      message: ''
-- request:
-    body: '{"key_id": "17368998-bdca-4302-95ee-8925d139a29f", "sequence": "8f01ee29918e4f1c8f9a4e7d6afc3553"}'
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '98'
-      Content-Type:
-      - application/json;charset=utf-8
-      Host:
-      - kms.ap-southeast-1.myhuaweicloud.com
-      User-Agent:
-      - huaweicloud-usdk-python/3.0
-      X-Project-Id:
-      - b0672a39f3804280ae8d16c9b004f63d
-      X-Sdk-Date:
-      - 20250324T061533Z
-    method: POST
-    uri: https://kms.ap-southeast-1.myhuaweicloud.com/v1.0/b0672a39f3804280ae8d16c9b004f63d/kms/enable-key
-  response:
-    body:
-      string: '{"error":{"error_msg":"The key is not disabled.","error_code":"KMS.1201"}}
-
-        '
-    headers:
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Connection:
-      - keep-alive
-      Content-Type:
-      - application/json; charset=UTF-8
-      Date:
-      - Mon, 24 Mar 2025 06:15:33 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Pragma:
-      - no-cache
+      - Wed, 26 Mar 2025 07:17:14 GMT
       Server:
       - api-gateway
       Strict-Transport-Security:
@@ -231,144 +92,15 @@ interactions:
       - chunked
       X-Content-Type-Options:
       - nosniff
-      - nosniff
       X-Download-Options:
       - noopen
       X-Frame-Options:
       - SAMEORIGIN
-      - SAMEORIGIN
       X-Request-Id:
-      - 1fcef2a37af2b32c23d1acc0c4ca3fce
+      - 59a2e407ee471a94573b2510cc6db323
       X-XSS-Protection:
-      - 1; mode=block
       - 1; mode=block;
     status:
-      code: 400
-      message: ''
-- request:
-    body: '{"key_id": "17368998-bdca-4302-95ee-8925d139a29f", "sequence": "df6a4570e6ab4d61ae52766454675351"}'
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '98'
-      Content-Type:
-      - application/json;charset=utf-8
-      Host:
-      - kms.ap-southeast-1.myhuaweicloud.com
-      User-Agent:
-      - huaweicloud-usdk-python/3.0
-      X-Project-Id:
-      - b0672a39f3804280ae8d16c9b004f63d
-      X-Sdk-Date:
-      - 20250324T061825Z
-    method: POST
-    uri: https://kms.ap-southeast-1.myhuaweicloud.com/v1.0/b0672a39f3804280ae8d16c9b004f63d/kms/disable-key
-  response:
-    body:
-      string: '{"key_info":{"key_id":"17368998-bdca-4302-95ee-8925d139a29f","key_state":"3"}}
-
-        '
-    headers:
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Connection:
-      - keep-alive
-      Content-Type:
-      - application/json; charset=UTF-8
-      Date:
-      - Mon, 24 Mar 2025 06:18:25 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Pragma:
-      - no-cache
-      Server:
-      - api-gateway
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubdomains;
-      Transfer-Encoding:
-      - chunked
-      X-Content-Type-Options:
-      - nosniff
-      - nosniff
-      X-Download-Options:
-      - noopen
-      X-Frame-Options:
-      - SAMEORIGIN
-      - SAMEORIGIN
-      X-Request-Id:
-      - bf1d6e18af70fb13042f0c911f7db9cf
-      X-XSS-Protection:
-      - 1; mode=block
-      - 1; mode=block;
-    status:
-      code: 200
-      message: ''
-- request:
-    body: '{"key_id": "17368998-bdca-4302-95ee-8925d139a29f", "sequence": "be7bd85c311a4481be602a2a551ddfa6"}'
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '98'
-      Content-Type:
-      - application/json;charset=utf-8
-      Host:
-      - kms.ap-southeast-1.myhuaweicloud.com
-      User-Agent:
-      - huaweicloud-usdk-python/3.0
-      X-Project-Id:
-      - b0672a39f3804280ae8d16c9b004f63d
-      X-Sdk-Date:
-      - 20250324T071115Z
-    method: POST
-    uri: https://kms.ap-southeast-1.myhuaweicloud.com/v1.0/b0672a39f3804280ae8d16c9b004f63d/kms/disable-key-rotation
-  response:
-    body:
-      string: '{"error":{"error_msg":"The rotation state of key is not enabled.","error_code":"KMS.0313"}}
-
-        '
-    headers:
-      Cache-Control:
-      - no-cache, no-store, must-revalidate
-      Connection:
-      - keep-alive
-      Content-Type:
-      - application/json; charset=UTF-8
-      Date:
-      - Mon, 24 Mar 2025 07:11:15 GMT
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Pragma:
-      - no-cache
-      Server:
-      - api-gateway
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubdomains;
-      Transfer-Encoding:
-      - chunked
-      X-Content-Type-Options:
-      - nosniff
-      - nosniff
-      X-Download-Options:
-      - noopen
-      X-Frame-Options:
-      - SAMEORIGIN
-      - SAMEORIGIN
-      X-Request-Id:
-      - 7858cc4c2498c64a6fe3d2276d9b0795
-      X-XSS-Protection:
-      - 1; mode=block
-      - 1; mode=block;
-    status:
-      code: 400
-      message: ''
+      code: 401
+      message: Unauthorized
 version: 1

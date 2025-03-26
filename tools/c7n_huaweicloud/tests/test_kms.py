@@ -14,8 +14,11 @@ class KeyTest(BaseTest):
         p = self.load_policy({
             'name': 'all-keys',
             'resource': 'huaweicloud.kms',
-            'filters': [{'key_id': '17368998-bdca-4302-95ee-8925d139a29f'}],
-            'actions': ['disable_key']},
+            'filters': [{
+                "type": "value",
+                "key": "key_state",
+                "value": "3"
+            }]},
             session_factory=factory)
         resources = p.run()
 
@@ -26,7 +29,7 @@ class KeyTest(BaseTest):
         p = self.load_policy({
             'name': 'all-keys',
             'resource': 'huaweicloud.kms',
-            'filters': [{'key_id': '17368998-bdca-4302-95ee-8925d139a29f'}],
+            'filters': [{'key_id': 'kms'}],
             'actions': ['enable_key']},
             session_factory=factory)
         resources = p.run()
@@ -37,7 +40,7 @@ class KeyTest(BaseTest):
         p = self.load_policy({
             'name': 'all-keys',
             'resource': 'huaweicloud.kms',
-            'filters': [{'key_id': '17368998-bdca-4302-95ee-8925d139a29f'}],
+            'filters': [{'key_id': 'kms'}],
             'actions': ['disable_key_rotation']},
             session_factory=factory)
         resources = p.run()
@@ -48,7 +51,7 @@ class KeyTest(BaseTest):
         p = self.load_policy({
             'name': 'all-keys',
             'resource': 'huaweicloud.kms',
-            'filters': [{'key_id': '17368998-bdca-4302-95ee-8925d139a29f'}],
+            'filters': [{'key_id': 'kms'}],
             'actions': ['enable_key_rotation']},
             session_factory=factory)
         resources = p.run()
@@ -60,7 +63,7 @@ class KeyTest(BaseTest):
         p = self.load_policy({
             'name': 'all-keys',
             'resource': 'huaweicloud.kms',
-            'filters': ['instance_disable'], },
+            'filters': ['all_keys_disable'] },
             session_factory=factory)
         resources = p.run()
         self.assertEqual(len(resources), 0)
