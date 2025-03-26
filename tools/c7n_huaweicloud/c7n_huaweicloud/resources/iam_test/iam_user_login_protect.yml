@@ -8,3 +8,7 @@ policies:
       - type: login-protect
         key: enabled
         value: false
+    actions:
+      - type: set-login-protect
+        enabled: true
+        verification_method: vmfa
