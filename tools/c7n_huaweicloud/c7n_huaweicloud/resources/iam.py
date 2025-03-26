@@ -385,7 +385,6 @@ class UserLoginProtect(ValueFilter):
                 list(w.map(self._user_login_protect, query_resources))
 
             for user in resources:
-                print(f"user: {user}")
                 login_protect = user.get(self.annotation_key, {})
                 if not login_protect:
                     matched.append(user)
@@ -400,7 +399,6 @@ class UserLoginProtect(ValueFilter):
             print(e.error_msg)
         except Exception as e:
             print(f"Unexpected error: {e}")
-        print(f"matched: {matched}")
         return matched or []
 
 # Mfa-device filter for iam-users
@@ -665,7 +663,6 @@ class AllowAllIamPolicies(ValueFilter):
                 statements = [statements]
 
             for s in statements:
-                print(f"statement: {s}")
                 if ('Condition' not in s and
                         'NotResource' not in s and
                         'Action' in s and
