@@ -3,9 +3,6 @@ policies:
     resource: huaweicloud.iam-user
     filters:
       - type: login-protect
-        key: login_protect
-        value: '{}'
-      - type: login-protect
         key: enabled
         value: false
     actions:
