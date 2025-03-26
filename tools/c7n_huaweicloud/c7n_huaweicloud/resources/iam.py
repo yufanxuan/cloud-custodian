@@ -386,9 +386,6 @@ class UserLoginProtect(ValueFilter):
 
             for user in resources:
                 login_protect = user.get(self.annotation_key, {})
-                if not login_protect:
-                    matched.append(user)
-                    continue
                 if self.match(login_protect):
                     self.merge_annotation(user, self.matched_annotation_key, login_protect)
                     matched.append(user)
@@ -451,11 +448,7 @@ class UserMfaDevice(ValueFilter):
 
             for user in resources:
                 devices = user.get(self.annotation_key, []) or []
-                if not devices:
-                    matched.append(user)
-                    continue
                 matched_devices = [d for d in devices if self.match(d)]
-
                 self.merge_annotation(user, self.matched_annotation_key, matched_devices)
                 if matched_devices:
                     matched.append(user)
