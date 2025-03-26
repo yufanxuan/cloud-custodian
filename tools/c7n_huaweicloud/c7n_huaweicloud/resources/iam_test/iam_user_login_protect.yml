@@ -8,4 +8,4 @@ policies:
     actions:
       - type: set-login-protect
         enabled: false
-        verification_method: vmfa
+        verification_method: none

@@ -322,7 +322,7 @@ class SetLoginProtect(HuaweiCloudBaseAction):
 
 """------------------------------------filter---------------------------------------"""
 
-# Mfa-device filter for iam-users
+# login-protect filter for iam-users
 @User.filter_registry.register('login-protect')
 class UserLoginProtect(ValueFilter):
     """Filter iam-users based on login-protect
@@ -338,6 +338,10 @@ class UserLoginProtect(ValueFilter):
               - type: login-protect
                 key: enabled
                 value: true
+            actions:
+              - type: set-login-protect
+                enabled: false
+                verification_method: none
     """
 
     schema = type_schema('login-protect', rinherit=ValueFilter.schema)
@@ -357,9 +361,9 @@ class UserLoginProtect(ValueFilter):
             response = client.show_user_login_protect(request)
             login_protect = response.login_protect
             resource[self.annotation_key] = {
-                    'verification_method': login_protect.verification_method,
-                    'user_id': login_protect.user_id,
-                    'enabled': login_protect.enabled
+                'verification_method': login_protect.verification_method,
+                'user_id': login_protect.user_id,
+                'enabled': login_protect.enabled
             }
         except exceptions.ClientRequestException as e:
             if not (e.status_code == 404 and e.error_code == 'IAM.0004'):
@@ -367,10 +371,10 @@ class UserLoginProtect(ValueFilter):
                 print(e.request_id)
                 print(e.error_code)
                 print(e.error_msg)
-            resource[self.annotation_key] = []
+            resource[self.annotation_key] = {}
         except Exception as e:
             print(f"Unexpected error: {e}")
-            resource[self.annotation_key] = []
+            resource[self.annotation_key] = {}
 
     def process(self, resources, event=None):
         matched = []
@@ -381,14 +385,12 @@ class UserLoginProtect(ValueFilter):
                 list(w.map(self._user_login_protect, query_resources))
 
             for user in resources:
-                devices = user.get(self.annotation_key, []) or []
-                if not devices:
+                login_protect = user.get(self.annotation_key, {})
+                if not login_protect:
                     matched.append(user)
                     continue
-                matched_devices = [d for d in devices if self.match(d)]
-
-                self.merge_annotation(user, self.matched_annotation_key, matched_devices)
-                if matched_devices:
+                if self.match(login_protect):  # ValueFilter 会自动匹配 key
+                    self.merge_annotation(user, self.matched_annotation_key, login_protect)
                     matched.append(user)
         except exceptions.ClientRequestException as e:
             print(e.status_code)
