@@ -126,6 +126,7 @@ class Session:
             client = KmsClient.new_builder() \
                 .with_credentials(credentials) \
                 .with_region(KmsRegion.value_of(self.region)) \
+                .build()
         elif service == 'functiongraph':
             client = FunctionGraphClient.new_builder() \
                 .with_credentials(credentials) \
