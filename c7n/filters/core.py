@@ -629,6 +629,8 @@ class ValueFilter(BaseValueFilter):
         return jmespath_search(self.data.get('value_path'), i)
 
     def match(self, i):
+        print(f"Matching key: {i}")
+        print(f"Filter data: {self.data}")
         if self.v is None and len(self.data) == 1:
             [(self.k, self.v)] = self.data.items()
         elif self.v is None and not hasattr(self, 'content_initialized'):
@@ -658,6 +660,7 @@ class ValueFilter(BaseValueFilter):
         else:
             v = self.v
 
+        print(f"---r---v---: {r} {v}")
         # Value match
         if r is None and v == 'absent':
             return True
