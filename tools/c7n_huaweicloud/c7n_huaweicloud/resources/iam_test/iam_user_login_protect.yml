@@ -4,7 +4,7 @@ policies:
     filters:
       - type: login-protect
         key: login_protect
-        value: null
+        value: '{}'
       - type: login-protect
         key: enabled
         value: false
