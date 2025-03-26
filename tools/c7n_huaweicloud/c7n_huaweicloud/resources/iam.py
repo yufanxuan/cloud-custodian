@@ -386,9 +386,12 @@ class UserLoginProtect(ValueFilter):
 
             for user in resources:
                 login_protect = user.get(self.annotation_key, {})
-                if self.match(login_protect):
-                    self.merge_annotation(user, self.matched_annotation_key, login_protect)
+                if self.data.get('key') == 'login-protect' and self.data.get('value') == 'none' and not login_protect:
                     matched.append(user)
+                else:
+                    if self.match(login_protect):
+                        self.merge_annotation(user, self.matched_annotation_key, login_protect)
+                        matched.append(user)
         except exceptions.ClientRequestException as e:
             print(e.status_code)
             print(e.request_id)
@@ -449,10 +452,13 @@ class UserMfaDevice(ValueFilter):
 
             for user in resources:
                 devices = user.get(self.annotation_key, []) or []
-                matched_devices = [d for d in devices if self.match(d)]
-                self.merge_annotation(user, self.matched_annotation_key, matched_devices)
-                if matched_devices:
+                if self.data.get('key') == 'mfa-device' and self.data.get('value') == 'none' and len(devices) == 0:
                     matched.append(user)
+                else:
+                    matched_devices = [d for d in devices if self.match(d)]
+                    self.merge_annotation(user, self.matched_annotation_key, matched_devices)
+                    if matched_devices:
+                        matched.append(user)
         except exceptions.ClientRequestException as e:
             print(e.status_code)
             print(e.request_id)

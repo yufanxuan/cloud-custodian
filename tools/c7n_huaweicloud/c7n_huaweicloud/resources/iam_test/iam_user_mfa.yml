@@ -3,5 +3,5 @@ policies:
     resource: huaweicloud.iam-user
     filters:
       - type: mfa-device
-        key: enabled
-        value: false
+        key: mfa-device
+        value: none
