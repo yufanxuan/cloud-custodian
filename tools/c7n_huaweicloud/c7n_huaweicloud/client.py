@@ -14,8 +14,12 @@ from huaweicloudsdkevs.v2 import EvsClient, ListVolumesRequest
 from huaweicloudsdkevs.v2.region.evs_region import EvsRegion
 from huaweicloudsdkiam.v3 import IamClient
 from huaweicloudsdkiam.v3.region.iam_region import IamRegion
-from huaweicloudsdkvpc.v2 import VpcClient, ListVpcsRequest
-from huaweicloudsdkvpc.v2.region.vpc_region import VpcRegion
+from huaweicloudsdkvpc.v2 import ListSecurityGroupsRequest
+from huaweicloudsdkvpc.v2.vpc_client import VpcClient as VpcClientV2
+from huaweicloudsdkvpc.v3.region.vpc_region import VpcRegion
+from huaweicloudsdkvpc.v3.vpc_client import VpcClient as VpcClientV3
+from huaweicloudsdkfunctiongraph.v2 import FunctionGraphClient, ListFunctionsRequest
+from huaweicloudsdkfunctiongraph.v2.region.functiongraph_region import FunctionGraphRegion
 from huaweicloudsdktms.v1 import TmsClient
 from huaweicloudsdktms.v1.region.tms_region import TmsRegion
 from huaweicloudsdkdeh.v1 import DeHClient, ListDedicatedHostsRequest
@@ -26,6 +30,8 @@ from huaweicloudsdksmn.v2 import SmnClient
 from huaweicloudsdksmn.v2.region.smn_region import SmnRegion
 from huaweicloudsdkkms.v2 import KmsClient, ListKeysRequest, ListKeysRequestBody
 from huaweicloudsdkkms.v2.region.kms_region import KmsRegion
+from huaweicloudsdkeg.v1 import EgClient
+from huaweicloudsdkeg.v1.region.eg_region import EgRegion
 
 log = logging.getLogger('custodian.huaweicloud.client')
 
@@ -35,18 +41,25 @@ class Session:
 
     def __init__(self, options=None):
         self.region = os.getenv('HUAWEI_DEFAULT_REGION')
+        self.token = None
         if not self.region:
             log.error('No default region set. Specify a default via HUAWEI_DEFAULT_REGION')
             sys.exit(1)
 
-        self.ak = os.getenv('HUAWEI_ACCESS_KEY_ID')
+        if options is not None:
+            self.ak = options.get('SecurityAccessKey')
+            self.sk = options.get('SecuritySecretKey')
+            self.token = options.get('SecurityToken')
+        self.ak = os.getenv('HUAWEI_ACCESS_KEY_ID') or self.ak
         if self.ak is None:
-            log.error('No access key id set. Specify a default via HUAWEI_ACCESS_KEY_ID')
+            log.error('No access key id set. '
+                      'Specify a default via HUAWEI_ACCESS_KEY_ID or context')
             sys.exit(1)
 
-        self.sk = os.getenv('HUAWEI_SECRET_ACCESS_KEY')
+        self.sk = os.getenv('HUAWEI_SECRET_ACCESS_KEY') or self.sk
         if self.sk is None:
-            log.error('No secret access key set. Specify a default via HUAWEI_SECRET_ACCESS_KEY')
+            log.error('No secret access key set. '
+                      'Specify a default via HUAWEI_SECRET_ACCESS_KEY or context')
             sys.exit(1)
 
         self.tms_region = os.getenv('HUAWEI_DEFAULT_TMS_REGION')
@@ -54,9 +67,15 @@ class Session:
             self.tms_region = 'cn-north-4'
 
     def client(self, service):
-        credentials = BasicCredentials(self.ak, self.sk, os.getenv('HUAWEI_PROJECT_ID'))
+        credentials = BasicCredentials(self.ak, self.sk, os.getenv('HUAWEI_PROJECT_ID')) \
+            .with_security_token(self.token)
         if service == 'vpc':
-            client = VpcClient.new_builder() \
+            client = VpcClientV3.new_builder() \
+                .with_credentials(credentials) \
+                .with_region(VpcRegion.value_of(self.region)) \
+                .build()
+        elif service == 'vpc_v2':
+            client = VpcClientV2.new_builder() \
                 .with_credentials(credentials) \
                 .with_region(VpcRegion.value_of(self.region)) \
                 .build()
@@ -107,13 +126,22 @@ class Session:
             client = KmsClient.new_builder() \
                 .with_credentials(credentials) \
                 .with_region(KmsRegion.value_of(self.region)) \
+        elif service == 'functiongraph':
+            client = FunctionGraphClient.new_builder() \
+                .with_credentials(credentials) \
+                .with_region(FunctionGraphRegion.value_of(self.region)) \
+                .build()
+        elif service == 'eg':
+            client = EgClient.new_builder() \
+                .with_credentials(credentials) \
+                .with_region(EgRegion.value_of(self.region)) \
                 .build()
 
         return client
 
     def request(self, service):
-        if service == 'vpc':
-            request = ListVpcsRequest()
+        if service == 'vpc' or service == 'vpc_v2':
+            request = ListSecurityGroupsRequest()
         elif service == 'evs':
             request = ListVolumesRequest()
         elif service == 'config':
@@ -127,4 +155,7 @@ class Session:
             request.body = ListKeysRequestBody(
                 key_spec="ALL"
             )
+        elif service == 'functiongraph':
+            request = ListFunctionsRequest()
+
         return request
