@@ -5,7 +5,8 @@ import os
 
 from huaweicloudsdkcore.auth.credentials import GlobalCredentials
 from huaweicloudsdkcore.exceptions import exceptions
-from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectReq, UpdateLoginProject, IamClient as IamClientV3
+from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectReq, UpdateLoginProject, \
+    IamClient as IamClientV3, ShowUserLoginProtectRequest
 from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
 from huaweicloudsdkiam.v5 import *
 
@@ -320,6 +321,83 @@ class SetLoginProtect(HuaweiCloudBaseAction):
             print(f"Unexpected error: {e}")
 
 """------------------------------------filter---------------------------------------"""
+
+# Mfa-device filter for iam-users
+@User.filter_registry.register('login-protect')
+class UserLoginProtect(ValueFilter):
+    """Filter iam-users based on login-protect
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: login-protect-enabled-users
+            resource: huaweicloud.iam-user
+            filters:
+              - type: login-protect
+                key: enabled
+                value: true
+    """
+
+    schema = type_schema('login-protect', rinherit=ValueFilter.schema)
+    annotation_key = 'login_protect'
+    matched_annotation_key = 'c7n:matched_login_protect'
+    schema_alias = False
+
+    def _user_login_protect(self, resource):
+        try:
+            globalCredentials = GlobalCredentials(os.getenv('HUAWEI_ACCESS_KEY_ID'),
+                                                  os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
+            client = IamClientV3.new_builder() \
+                .with_credentials(globalCredentials) \
+                .with_region(iam_region_v3.IamRegion.value_of(os.getenv('HUAWEI_DEFAULT_REGION'))) \
+                .build()
+            request = ShowUserLoginProtectRequest(user_id=resource["id"])
+            response = client.show_user_login_protect(request)
+            login_protect = response.login_protect
+            resource[self.annotation_key] = {
+                    'verification_method': login_protect.verification_method,
+                    'user_id': login_protect.user_id,
+                    'enabled': login_protect.enabled
+            }
+        except exceptions.ClientRequestException as e:
+            if not (e.status_code == 404 & e.error_code == 'IAM.0004'):
+                print(e.status_code)
+                print(e.request_id)
+                print(e.error_code)
+                print(e.error_msg)
+            resource[self.annotation_key] = []
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            resource[self.annotation_key] = []
+
+    def process(self, resources, event=None):
+        matched = []
+        try:
+            with self.executor_factory(max_workers=2) as w:
+                query_resources = [
+                    r for r in resources if self.annotation_key not in r]
+                list(w.map(self._user_login_protect, query_resources))
+
+            for user in resources:
+                devices = user.get(self.annotation_key, []) or []
+                if not devices:
+                    matched.append(user)
+                    continue
+                matched_devices = [d for d in devices if self.match(d)]
+
+                self.merge_annotation(user, self.matched_annotation_key, matched_devices)
+                if matched_devices:
+                    matched.append(user)
+        except exceptions.ClientRequestException as e:
+            print(e.status_code)
+            print(e.request_id)
+            print(e.error_code)
+            print(e.error_msg)
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+        return matched or []
 
 # Mfa-device filter for iam-users
 @User.filter_registry.register('mfa-device')
