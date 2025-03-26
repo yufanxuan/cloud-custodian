@@ -371,7 +371,9 @@ class UserLoginProtect(ValueFilter):
                 print(e.request_id)
                 print(e.error_code)
                 print(e.error_msg)
+                resource[self.annotation_key] = {}
         except Exception as e:
+            resource[self.annotation_key] = {}
             print(f"Unexpected error: {e}")
 
     def process(self, resources, event=None):
@@ -384,7 +386,7 @@ class UserLoginProtect(ValueFilter):
 
             for user in resources:
                 print(f"user: {user}")
-                login_protect = user.get(self.annotation_key)
+                login_protect = user.get(self.annotation_key, {})
                 if not login_protect:
                     matched.append(user)
                     continue
