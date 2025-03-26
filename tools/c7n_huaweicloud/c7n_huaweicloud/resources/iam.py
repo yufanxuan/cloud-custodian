@@ -362,7 +362,7 @@ class UserLoginProtect(ValueFilter):
                     'enabled': login_protect.enabled
             }
         except exceptions.ClientRequestException as e:
-            if not (e.status_code == 404 & e.error_code == 'IAM.0004'):
+            if not (e.status_code == 404 and e.error_code == 'IAM.0004'):
                 print(e.status_code)
                 print(e.request_id)
                 print(e.error_code)
