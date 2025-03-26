@@ -5,3 +5,6 @@ policies:
       - type: login-protect
         key: login_protect
         value: null
+      - type: login-protect
+        key: enabled
+        value: false

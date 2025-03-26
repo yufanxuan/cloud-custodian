@@ -6,7 +6,6 @@ policies:
         - type: mfa-device
           key: mfa_devices
           value: []
-          op: eq
         - type: mfa-device
           key: enabled
           value: false
