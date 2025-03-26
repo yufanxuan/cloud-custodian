@@ -396,6 +396,7 @@ class UserLoginProtect(ValueFilter):
             print(e.error_msg)
         except Exception as e:
             print(f"Unexpected error: {e}")
+        print(f"matched: {matched}")
         return matched or []
 
 # Mfa-device filter for iam-users
@@ -459,6 +460,7 @@ class UserMfaDevice(ValueFilter):
             print(e.error_msg)
         except Exception as e:
             print(f"Unexpected error: {e}")
+        print(f"matched: {matched}")
         return matched or []
 
 @User.filter_registry.register('policy')
