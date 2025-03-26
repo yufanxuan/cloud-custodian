@@ -17,8 +17,8 @@ log = logging.getLogger("custodian.huaweicloud.resources.kms")
 
 
 @resources.register('kms')
-class Kms(QueryResourceManager) :
-    class resource_type(TypeInfo) :
+class Kms(QueryResourceManager):
+    class resource_type(TypeInfo):
         service = 'kms'
         enum_spec = ("list_keys", 'key_details', 'offset')
         id = 'key_id'
@@ -26,7 +26,7 @@ class Kms(QueryResourceManager) :
 
 
 @Kms.action_registry.register("enable_key_rotation")
-class rotationKey(HuaweiCloudBaseAction) :
+class rotationKey(HuaweiCloudBaseAction):
     """rotation kms key.
 
     :Example:
@@ -53,7 +53,7 @@ policies:
 
     schema = type_schema("enable_key_rotation")
 
-    def perform_action(self, resource) :
+    def perform_action(self, resource):
         client = self.manager.get_client()
         request = EnableKeyRotationRequest()
 
@@ -63,14 +63,14 @@ policies:
         )
         try:
             response = client.enable_key_rotation(request)
-        except Exception as e :
+        except Exception as e:
             raise e
 
         return response
 
 
 @Kms.action_registry.register("disable_key_rotation")
-class disableRotationKey(HuaweiCloudBaseAction) :
+class disableRotationKey(HuaweiCloudBaseAction):
     """rotation kms key.
 
     :Example:
@@ -97,7 +97,7 @@ policies:
 
     schema = type_schema("disable_key_rotation")
 
-    def perform_action(self, resource) :
+    def perform_action(self, resource):
         client = self.manager.get_client()
         request = DisableKeyRotationRequest()
         request.body = OperateKeyRequestBody(
@@ -106,13 +106,14 @@ policies:
         )
         try:
             response = client.disable_key_rotation(request)
-        except Exception as e :
+        except Exception as e:
             raise e
 
         return response
 
+
 @Kms.action_registry.register("enable_key")
-class enableKey(HuaweiCloudBaseAction) :
+class enableKey(HuaweiCloudBaseAction):
     """rotation kms key.
 
     :Example:
@@ -132,7 +133,7 @@ class enableKey(HuaweiCloudBaseAction) :
 
     schema = type_schema("enable_key")
 
-    def perform_action(self, resource) :
+    def perform_action(self, resource):
         client = self.manager.get_client()
 
         request = EnableKeyRequest()
@@ -142,13 +143,14 @@ class enableKey(HuaweiCloudBaseAction) :
         )
         try:
             response = client.enable_key(request)
-        except Exception as e :
+        except Exception as e:
             raise e
 
         return response
 
+
 @Kms.action_registry.register("disable_key")
-class disableKey(HuaweiCloudBaseAction) :
+class disableKey(HuaweiCloudBaseAction):
     """rotation kms key.
 
     :Example:
@@ -168,7 +170,7 @@ class disableKey(HuaweiCloudBaseAction) :
 
     schema = type_schema("disable_key")
 
-    def perform_action(self, resource) :
+    def perform_action(self, resource):
         client = self.manager.get_client()
         request = DisableKeyRequest()
         request.body = OperateKeyRequestBody(
@@ -177,14 +179,14 @@ class disableKey(HuaweiCloudBaseAction) :
         )
         try:
             response = client.disable_key(request)
-        except Exception as e :
+        except Exception as e:
             raise e
 
         return response
 
 
 @Kms.filter_registry.register("all_keys_disable")
-class instanceDisable(ValueFilter) :
+class instanceDisable(ValueFilter):
     '''
     policies:
       - name: all_keys_disable
@@ -196,9 +198,3 @@ class instanceDisable(ValueFilter) :
     '''
     schema = type_schema("all_keys_disable",
                          rinherit=ValueFilter.schema)
-
-
-
-
-
-
