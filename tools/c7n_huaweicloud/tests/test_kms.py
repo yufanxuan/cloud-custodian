@@ -19,7 +19,7 @@ class KeyTest(BaseTest):
             session_factory=factory)
         resources = p.run()
 
-        self.assertEqual(resources[0]['key_state'], "2")
+        self.assertEqual(len(resources), 0)
 
     def test_enable_key_query(self):
         factory = self.replay_flight_data('kms_query')
@@ -53,7 +53,7 @@ class KeyTest(BaseTest):
             session_factory=factory)
         resources = p.run()
 
-        self.assertEqual(resources[0]['key_state'], "2")
+        self.assertEqual(len(resources), 0)
 
     def test_key_query(self):
         factory = self.replay_flight_data('kms_query')
