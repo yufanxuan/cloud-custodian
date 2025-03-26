@@ -26,8 +26,6 @@ from huaweicloudsdkdeh.v1 import DeHClient, ListDedicatedHostsRequest
 from huaweicloudsdkdeh.v1.region.deh_region import DeHRegion
 from huaweicloudsdkces.v2 import CesClient, ListAlarmRulesRequest
 from huaweicloudsdkces.v2.region.ces_region import CesRegion
-from huaweicloudsdksmn.v2 import SmnClient
-from huaweicloudsdksmn.v2.region.smn_region import SmnRegion
 from huaweicloudsdkkms.v2 import KmsClient, ListKeysRequest, ListKeysRequestBody
 from huaweicloudsdkkms.v2.region.kms_region import KmsRegion
 from huaweicloudsdkeg.v1 import EgClient
