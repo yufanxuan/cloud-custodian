@@ -296,7 +296,8 @@ class SetLoginProtect(HuaweiCloudBaseAction):
     )
 
     def perform_action(self, resource):
-        globalCredentials = GlobalCredentials(os.getenv('HUAWEI_ACCESS_KEY_ID'), os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
+        globalCredentials = GlobalCredentials(
+            os.getenv('HUAWEI_ACCESS_KEY_ID'), os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
         client = IamClientV3.new_builder() \
             .with_credentials(globalCredentials) \
             .with_region(iam_region_v3.IamRegion.value_of(os.getenv('HUAWEI_DEFAULT_REGION'))) \
@@ -355,7 +356,8 @@ class UserLoginProtect(ValueFilter):
                                                   os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
             client = IamClientV3.new_builder() \
                 .with_credentials(globalCredentials) \
-                .with_region(iam_region_v3.IamRegion.value_of(os.getenv('HUAWEI_DEFAULT_REGION'))) \
+                .with_region(iam_region_v3.IamRegion.value_of(
+                os.getenv('HUAWEI_DEFAULT_REGION'))) \
                 .build()
             request = ShowUserLoginProtectRequest(user_id=resource["id"])
             response = client.show_user_login_protect(request)
@@ -386,7 +388,9 @@ class UserLoginProtect(ValueFilter):
 
             for user in resources:
                 login_protect = user.get(self.annotation_key, {})
-                if self.data.get('key') == 'login_protect' and self.data.get('value') == 'none' and not login_protect:
+                if (self.data.get('key') == 'login_protect'
+                        and self.data.get('value') == 'none'
+                        and not login_protect):
                     matched.append(user)
                 else:
                     if self.match(login_protect):
@@ -452,7 +456,9 @@ class UserMfaDevice(ValueFilter):
 
             for user in resources:
                 devices = user.get(self.annotation_key, []) or []
-                if self.data.get('key') == 'mfa_devices' and self.data.get('value') == 'none' and len(devices) == 0:
+                if (self.data.get('key') == 'mfa_devices'
+                        and self.data.get('value') == 'none'
+                        and len(devices) == 0):
                     matched.append(user)
                 else:
                     matched_devices = [d for d in devices if self.match(d)]
@@ -656,7 +662,8 @@ class AllowAllIamPolicies(ValueFilter):
     def has_allow_all_policy(self, client, resource):
         if resource['policy_type'] == 'custom':
             document = client.get_policy_version_v5(GetPolicyVersionV5Request(
-                policy_id=resource.get('policy_id'), version_id=resource.get('default_version_id'))
+                policy_id=resource.get('policy_id'),
+                version_id=resource.get('default_version_id'))
             ).policy_version.document
 
             statements = json.loads(document).get('Statement')
