@@ -13,39 +13,16 @@ from huaweicloudsdkiam.v5 import *
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema, chunks, jmespath_search
 from tools.c7n_huaweicloud.c7n_huaweicloud.actions import HuaweiCloudBaseAction
-from tools.c7n_huaweicloud.c7n_huaweicloud.pagination import Pagination
 from tools.c7n_huaweicloud.c7n_huaweicloud.provider import resources
 from tools.c7n_huaweicloud.c7n_huaweicloud.query import QueryResourceManager, TypeInfo
 
 log = logging.getLogger("custodian.huaweicloud.resources.iam")
-
-DEFAULT_LIMIT_SIZE = 100
-
-class IAMMarkerPagination(Pagination):
-    def get_first_page_params(self):
-        return {'limit': DEFAULT_LIMIT_SIZE}
-    
-    def get_next_page_params(self, response):
-        page_info = jmespath_search('page_info', eval(
-            str(response)
-            .replace('null', 'None')
-            .replace('true', 'True')
-            .replace('false', 'False')))
-
-        if not page_info:
-            return None
-        next_marker = page_info.get('next_marker')
-        if not next_marker:
-            return None
-        return {'limit': DEFAULT_LIMIT_SIZE, 'marker': next_marker}
-
 
 @resources.register('iam-user')
 class User(QueryResourceManager):
 
     class resource_type(TypeInfo):
         service = 'iam-user'
-        pagination = IAMMarkerPagination()
         enum_spec = ("list_users_v5", 'users', 'marker')
         id = 'user_id'
 
@@ -54,7 +31,6 @@ class Policy(QueryResourceManager):
 
     class resource_type(TypeInfo):
         service = 'iam-policy'
-        pagination = IAMMarkerPagination()
         enum_spec = ("list_policies_v5", 'policies', 'marker')
         id = 'policy_id'
 

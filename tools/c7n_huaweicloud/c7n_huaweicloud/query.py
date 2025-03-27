@@ -30,16 +30,6 @@ def _dict_map(obj, params_map):
     for k, v in params_map.items():
         obj.__dict__['_' + k] = v
 
-def _dict_map_pagination(obj, params_map):
-    if not params_map:
-        return obj
-    for k, v in params_map.items():
-        if hasattr(obj, k):
-            setattr(obj, k, v)
-        else:
-            print(f"Object {type(obj)} does not have att {k}")
-    return obj
-
 class ResourceQuery:
     def __init__(self, session_factory):
         self.session_factory = session_factory
@@ -72,8 +62,6 @@ class ResourceQuery:
             resources = self._non_pagination(m, enum_op, path)
         elif pagination == 'page':
             resources = self._pagination_limit_page(m, enum_op, path)
-        elif isinstance(pagination, Pagination):
-            resources = self._pagination_iam(m, enum_op, path, pagination)
         else:
             log.exception(f"Unsupported pagination type: {pagination}")
             sys.exit(1)
@@ -267,35 +255,6 @@ class ResourceQuery:
                     data["tag_resource_type"] = m.tag_resource_type
             resources.extend(res)
         return resources
-
-    def _pagination_iam(self, m, enum_op, path, pagination: Pagination):
-        session = local_session(self.session_factory)
-        client = session.client(m.service)
-
-        page_params = pagination.get_first_page_params()
-        request = session.request(m.service)
-        request = _dict_map_pagination(request, page_params)
-        resources = []
-
-        while 1:
-            response = self._invoke_client_enum(client, enum_op, request)
-            res = jmespath.search(path, eval(
-                str(response).replace('null', 'None').replace('false', 'False').replace('true', 'True')))
-            # replace id with the specified one
-            if res is None or len(res) == 0:
-                return resources
-            # re-set id
-            if 'id' not in res[0]:
-                for data in res:
-                    data['id'] = data[m.id]
-            # merge result
-            resources = resources + res
-            # get next page info
-            next_page_params = pagination.get_next_page_params(response)
-            if next_page_params:
-                request = _dict_map_pagination(request, next_page_params)
-            else:
-                return resources
 
 # abstract method for pagination
 class DefaultMarkerPagination(MarkerPagination):
