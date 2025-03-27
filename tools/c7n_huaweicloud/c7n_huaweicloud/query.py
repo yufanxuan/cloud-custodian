@@ -29,6 +29,7 @@ def _dict_map(obj, params_map):
     for k, v in params_map.items():
         obj.__dict__['_' + k] = v
 
+
 class ResourceQuery:
     def __init__(self, session_factory):
         self.session_factory = session_factory
@@ -254,6 +255,7 @@ class ResourceQuery:
                     data["tag_resource_type"] = m.tag_resource_type
             resources.extend(res)
         return resources
+
 
 # abstract method for pagination
 class DefaultMarkerPagination(MarkerPagination):

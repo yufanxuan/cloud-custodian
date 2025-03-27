@@ -18,17 +18,17 @@ from tools.c7n_huaweicloud.c7n_huaweicloud.query import QueryResourceManager, Ty
 
 log = logging.getLogger("custodian.huaweicloud.resources.iam")
 
+
 @resources.register('iam-user')
 class User(QueryResourceManager):
-
     class resource_type(TypeInfo):
         service = 'iam-user'
         enum_spec = ("list_users_v5", 'users', 'marker')
         id = 'user_id'
 
+
 @resources.register('iam-policy')
 class Policy(QueryResourceManager):
-
     class resource_type(TypeInfo):
         service = 'iam-policy'
         enum_spec = ("list_policies_v5", 'policies', 'marker')
@@ -68,6 +68,7 @@ class PolicyDelete(HuaweiCloudBaseAction):
             print(e.error_msg)
         except Exception as e:
             print(f"Unexpected error: {e}")
+
 
 @User.action_registry.register('delete')
 class UserDelete(HuaweiCloudBaseAction):
@@ -127,6 +128,7 @@ class UserDelete(HuaweiCloudBaseAction):
         except Exception as e:
             print(f"Unexpected error: {e}")
 
+
 @User.action_registry.register('set-group')
 class SetGroup(HuaweiCloudBaseAction):
     """Delete a user.
@@ -184,6 +186,7 @@ class SetGroup(HuaweiCloudBaseAction):
         except Exception as e:
             print(f"Unexpected error: {e}")
 
+
 @User.action_registry.register('remove-access-key')
 class UserRemoveAccessKey(HuaweiCloudBaseAction):
     """Delete a user.
@@ -238,6 +241,7 @@ class UserRemoveAccessKey(HuaweiCloudBaseAction):
             print(e.error_msg)
         except Exception as e:
             print(f"Unexpected error: {e}")
+
 
 @User.action_registry.register('set-login-protect')
 class SetLoginProtect(HuaweiCloudBaseAction):
@@ -297,7 +301,9 @@ class SetLoginProtect(HuaweiCloudBaseAction):
         except Exception as e:
             print(f"Unexpected error: {e}")
 
+
 """------------------------------------filter---------------------------------------"""
+
 
 # login-protect filter for iam-users
 @User.filter_registry.register('login-protect')
@@ -382,6 +388,7 @@ class UserLoginProtect(ValueFilter):
         print(f"matched: {matched}")
         return matched or []
 
+
 # Mfa-device filter for iam-users
 @User.filter_registry.register('mfa-device')
 class UserMfaDevice(ValueFilter):
@@ -450,6 +457,7 @@ class UserMfaDevice(ValueFilter):
             print(f"Unexpected error: {e}")
         print(f"matched: {matched}")
         return matched or []
+
 
 @User.filter_registry.register('policy')
 class UserPolicy(ValueFilter):
@@ -593,6 +601,7 @@ class UserAccessKey(ValueFilter):
 
         return matched
 
+
 @Policy.filter_registry.register('has-allow-all')
 class AllowAllIamPolicies(ValueFilter):
     """Check if IAM policy resource(s) have allow-all IAM policy statement block.
@@ -652,12 +661,12 @@ class AllowAllIamPolicies(ValueFilter):
                         'Action' in s and
                         isinstance(s['Action'], list) and
                         ("*" in s['Action'] or
-                        "*:*:*" in s['Action']) and
+                         "*:*:*" in s['Action']) and
                         ('Resource' not in s or
-                        'Resource' in s and
-                        isinstance(s['Resource'], list) and
-                        "*" in s['Resource'] or
-                        "*:*:*:*:*" in s['Resource']) and
+                         'Resource' in s and
+                         isinstance(s['Resource'], list) and
+                         "*" in s['Resource'] or
+                         "*:*:*:*:*" in s['Resource']) and
                         s['Effect'] == "Allow"):
                     return True
             return False
@@ -691,6 +700,7 @@ class UnusedIamPolicies(ValueFilter):
     def process(self, resources, event=None):
         return [r for r in resources if
                 r['attachment_count'] == 0]
+
 
 @Policy.filter_registry.register('used')
 class UnusedIamPolicies(ValueFilter):
