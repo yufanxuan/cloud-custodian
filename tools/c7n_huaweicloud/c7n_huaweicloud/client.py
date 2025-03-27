@@ -80,7 +80,6 @@ from huaweicloudsdksecmaster.v2 import ListWorkspacesRequest, SecMasterClient
 from huaweicloudsdksecmaster.v2.region.secmaster_region import SecMasterRegion
 
 log = logging.getLogger('custodian.huaweicloud.client')
-log = logging.getLogger("custodian.huaweicloud.client")
 
 
 class Session:
@@ -171,13 +170,19 @@ class Session:
                 .with_region(CbrRegion.value_of(self.region))
                 .build()
             )
+        elif service in ['iam-user', 'iam-policy']:
+            client = (
+                IamClientV5.new_builder()
+                .with_credentials(globalCredentials)
+                .with_region(iam_region_v5.IamRegion.value_of(self.region))
+                .build()
+            )
         elif service == "iam-v3":
             client = (
                 IamClientV3.new_builder()
                 .with_credentials(globalCredentials)
                 .with_region(iam_region_v3.value_of(self.region))
                 .build()
-            )
             )
         elif service == "config":
             client = (
@@ -339,16 +344,6 @@ class Session:
                 .with_credentials(globalCredentials) \
                 .with_region(OrganizationsRegion.CN_NORTH_4) \
                 .build()
-        elif service == 'iam-user':
-            client = IamClientV5.new_builder() \
-                .with_credentials(globalCredentials) \
-                .with_region(iam_region_v5.IamRegion.value_of(self.region)) \
-                .build()
-        elif service == 'iam-policy':
-            client = IamClientV5.new_builder() \
-                .with_credentials(globalCredentials) \
-                .with_region(iam_region_v5.IamRegion.value_of(self.region)) \
-                .build()
 
         return client
 
@@ -367,6 +362,10 @@ class Session:
             request = ListDedicatedHostsRequest()
         elif service == "obs":
             request = True
+        elif service == 'iam-user':
+            request = ListUsersV5Request()
+        elif service == 'iam-policy':
+            request = ListPoliciesV5Request()
         elif service == "ces":
             request = ListAlarmRulesRequest()
         elif service == 'org-policy':
@@ -413,9 +412,5 @@ class Session:
             request = ListSharesRequest()
         elif service == "coc":
             request = ListInstanceCompliantRequest()
-        elif service == 'iam-user':
-            request = ListUsersV5Request()
-        elif service == 'iam-policy':
-            request = ListPoliciesV5Request()
 
         return request
