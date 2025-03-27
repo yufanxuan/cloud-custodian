@@ -11,7 +11,7 @@ from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
 from huaweicloudsdkiam.v5 import *
 
 from c7n.filters import ValueFilter
-from c7n.utils import type_schema, chunks, jmespath_search
+from c7n.utils import type_schema, chunks
 from tools.c7n_huaweicloud.c7n_huaweicloud.actions import HuaweiCloudBaseAction
 from tools.c7n_huaweicloud.c7n_huaweicloud.provider import resources
 from tools.c7n_huaweicloud.c7n_huaweicloud.query import QueryResourceManager, TypeInfo

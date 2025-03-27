@@ -16,7 +16,6 @@ from c7n_huaweicloud.filters.tms import register_tms_filters
 from c7n_huaweicloud.marker_pagination import MarkerPagination
 
 from huaweicloudsdkcore.exceptions import exceptions
-from tools.c7n_huaweicloud.c7n_huaweicloud.pagination import Pagination
 
 log = logging.getLogger('custodian.huaweicloud.query')
 
