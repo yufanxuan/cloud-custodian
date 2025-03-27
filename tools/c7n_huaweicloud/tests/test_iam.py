@@ -1,5 +1,6 @@
 from huaweicloud_common import BaseTest
 
+
 class IamTest(BaseTest):
     def test_alarm_query(self):
         factory = self.replay_flight_data('iam_user_delete')

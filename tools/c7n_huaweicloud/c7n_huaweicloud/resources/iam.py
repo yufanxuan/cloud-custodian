@@ -8,7 +8,11 @@ from huaweicloudsdkcore.exceptions import exceptions
 from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectReq, \
     IamClient as IamClientV3, ShowUserLoginProtectRequest, UpdateLoginProject
 from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
-from huaweicloudsdkiam.v5 import *
+from huaweicloudsdkiam.v5 import DeletePolicyV5Request, ListAttachedUserPoliciesV5Request, DetachUserPolicyV5Request, \
+    DetachUserPolicyReqBody, DeleteUserV5Request, AddUserToGroupV5Request, AddUserToGroupReqBody, \
+    RemoveUserFromGroupV5Request, RemoveUserFromGroupReqBody, UpdateAccessKeyV5Request, UpdateAccessKeyReqBody, \
+    AccessKeyStatus, DeleteAccessKeyV5Request, ListMfaDevicesV5Request, ListAccessKeysV5Request, \
+    GetPolicyVersionV5Request
 
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema, chunks
@@ -118,7 +122,8 @@ class UserDelete(HuaweiCloudBaseAction):
             if response.status_code == 204:
                 print(f"Successfully deleted user: {resource['id']}")
             else:
-                print(f"Failed to delete user: {resource['id']}. Status code: {response.status_code}")
+                print(f"Failed to delete user: {resource['id']}. "
+                      f"Status code: {response.status_code}")
 
         except exceptions.ClientRequestException as e:
             print(e.status_code)
@@ -703,7 +708,7 @@ class UnusedIamPolicies(ValueFilter):
 
 
 @Policy.filter_registry.register('used')
-class UnusedIamPolicies(ValueFilter):
+class UsedIamPolicies(ValueFilter):
     """Filter IAM policies that are being used
 
     :example:
