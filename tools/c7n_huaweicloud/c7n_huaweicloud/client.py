@@ -31,6 +31,8 @@ from huaweicloudsdklts.v2 import LtsClient, ListTransfersRequest
 from huaweicloudsdklts.v2.region.lts_region import LtsRegion
 from huaweicloudsdkdeh.v1 import DeHClient, ListDedicatedHostsRequest
 from huaweicloudsdkdeh.v1.region.deh_region import DeHRegion
+from huaweicloudsdker.v3 import ErClient, ListEnterpriseRoutersRequest
+from huaweicloudsdker.v3.region.er_region import ErRegion
 from huaweicloudsdkobs.v1.region.obs_region import ObsRegion
 from obs import ObsClient
 from huaweicloudsdkces.v2 import CesClient, ListAlarmRulesRequest
@@ -78,6 +80,9 @@ from huaweicloudsdkorganizations.v1 import OrganizationsClient, ListAccountsRequ
 from huaweicloudsdkorganizations.v1.region.organizations_region import OrganizationsRegion
 from huaweicloudsdksecmaster.v2 import ListWorkspacesRequest, SecMasterClient
 from huaweicloudsdksecmaster.v2.region.secmaster_region import SecMasterRegion
+from huaweicloudsdkram.v1 import RamClient, SearchResourceShareAssociationsRequest, \
+    SearchResourceShareAssociationsReqBody
+from huaweicloudsdkram.v1.region.ram_region import RamRegion
 
 log = logging.getLogger('custodian.huaweicloud.client')
 
@@ -140,6 +145,13 @@ class Session:
                 EcsClient.new_builder()
                 .with_credentials(credentials)
                 .with_region(EcsRegion.value_of(self.region))
+                .build()
+            )
+        elif service == 'er':
+            client = (
+                ErClient.new_builder()
+                .with_credentials(credentials)
+                .with_region(ErRegion.value_of(self.region))
                 .build()
             )
         elif service == "evs":
@@ -344,6 +356,11 @@ class Session:
                 .with_credentials(globalCredentials) \
                 .with_region(OrganizationsRegion.CN_NORTH_4) \
                 .build()
+        elif service == 'ram':
+            client = RamClient.new_builder() \
+                .with_credentials(globalCredentials) \
+                .with_region(RamRegion.CN_NORTH_4) \
+                .build()
 
         return client
 
@@ -352,6 +369,8 @@ class Session:
             request = ListSecurityGroupsRequest()
         elif service == "evs":
             request = ListVolumesRequest()
+        elif service == 'er':
+            request = ListEnterpriseRoutersRequest()
         elif service == "lts-transfer":
             request = ListTransfersRequest()
         elif service == "config":
@@ -412,5 +431,10 @@ class Session:
             request = ListSharesRequest()
         elif service == "coc":
             request = ListInstanceCompliantRequest()
+        elif service == 'ram':
+            request = SearchResourceShareAssociationsRequest()
+            request.body = SearchResourceShareAssociationsReqBody(
+                association_type="principal",
+                association_status="associated")
 
         return request

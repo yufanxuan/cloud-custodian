@@ -5,6 +5,7 @@ ResourceMap = {
     "huaweicloud.volume": "c7n_huaweicloud.resources.volume.Volume",
     "huaweicloud.lts-transfer": "c7n_huaweicloud.resources.transfer.Transfer",
     "huaweicloud.evs-volume": "c7n_huaweicloud.resources.evs.Volume",
+    "huaweicloud.er": "c7n_huaweicloud.resources.er.ERInstance",
     "huaweicloud.deh": "c7n_huaweicloud.resources.deh.Deh",
     "huaweicloud.config-tracker": "c7n_huaweicloud.resources.config.ConfigTracker",
     "huaweicloud.obs": "c7n_huaweicloud.resources.obs.Obs",
@@ -38,5 +39,6 @@ ResourceMap = {
     "huaweicloud.coc": "c7n_huaweicloud.resources.coc.Coc",
     "huaweicloud.org-policy": "c7n_huaweicloud.resources.organizations.OrgPolicy",
     "huaweicloud.org-account": "c7n_huaweicloud.resources.organizations.OrgAccount",
-    "huaweicloud.org-unit": "c7n_huaweicloud.resources.organizations.OrgUnit"
+    "huaweicloud.org-unit": "c7n_huaweicloud.resources.organizations.OrgUnit",
+    "huaweicloud.ram-shared-principals": "c7n_huaweicloud.resources.ram.RAMSharedPrincipals"
 }
