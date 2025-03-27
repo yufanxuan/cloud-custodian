@@ -5,8 +5,8 @@ import os
 
 from huaweicloudsdkcore.auth.credentials import GlobalCredentials
 from huaweicloudsdkcore.exceptions import exceptions
-from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectReq, UpdateLoginProject, \
-    IamClient as IamClientV3, ShowUserLoginProtectRequest
+from huaweicloudsdkiam.v3 import UpdateLoginProtectRequest, UpdateLoginProjectReq, \
+    IamClient as IamClientV3, ShowUserLoginProtectRequest, UpdateLoginProject
 from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
 from huaweicloudsdkiam.v5 import *
 
