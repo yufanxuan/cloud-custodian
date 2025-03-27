@@ -12,8 +12,8 @@ from huaweicloudsdkecs.v2 import EcsClient, ListServersDetailsRequest
 from huaweicloudsdkecs.v2.region.ecs_region import EcsRegion
 from huaweicloudsdkevs.v2 import EvsClient, ListVolumesRequest
 from huaweicloudsdkevs.v2.region.evs_region import EvsRegion
-from huaweicloudsdkiam.v3 import IamClient
-from huaweicloudsdkiam.v3.region.iam_region import IamRegion
+from huaweicloudsdkiam.v3 import IamClient as IamClientV3
+from huaweicloudsdkiam.v3.region.iam_region import IamRegion as iam_region_v3
 from huaweicloudsdkvpc.v2 import ListSecurityGroupsRequest
 from huaweicloudsdkvpc.v2.vpc_client import VpcClient as VpcClientV2
 from huaweicloudsdkvpc.v3.region.vpc_region import VpcRegion
@@ -54,13 +54,8 @@ from huaweicloudsdkcts.v3.region.cts_region import CtsRegion
 from huaweicloudsdkcbr.v1 import ListBackupsRequest, ListVaultRequest
 
 from huaweicloudsdkiam.v5 import IamClient as IamClientV5, ListUsersV5Request, ListPoliciesV5Request
-
-LIST_POLICIES_V_REQUEST = ListPoliciesV5Request
-
-REQUEST = ListPoliciesV5Request
-
-V_REQUEST = ListPoliciesV5Request
 from huaweicloudsdkiam.v5.region import iam_region as iam_region_v5
+
 
 log = logging.getLogger('custodian.huaweicloud.client')
 
@@ -130,10 +125,10 @@ class Session:
                 .with_credentials(credentials) \
                 .with_region(CbrRegion.value_of(self.region)) \
                 .build()
-        elif service == 'iam':
-            client = IamClient.new_builder() \
+        elif service == 'iam-v3':
+            client = IamClientV3.new_builder() \
                 .with_credentials(globalCredentials) \
-                .with_region(IamRegion.value_of(self.region)) \
+                .with_region(iam_region_v3.value_of(self.region)) \
                 .build()
         elif service == 'config':
             client = ConfigClient.new_builder() \
@@ -224,13 +219,11 @@ class Session:
                 .with_region(CtsRegion.value_of(self.region)) \
                 .build()
         elif service == 'iam-user':
-            globalCredentials = GlobalCredentials(self.ak, self.sk)
             client = IamClientV5.new_builder() \
                 .with_credentials(globalCredentials) \
                 .with_region(iam_region_v5.IamRegion.value_of(self.region)) \
                 .build()
         elif service == 'iam-policy':
-            globalCredentials = GlobalCredentials(self.ak, self.sk)
             client = IamClientV5.new_builder() \
                 .with_credentials(globalCredentials) \
                 .with_region(iam_region_v5.IamRegion.value_of(self.region)) \

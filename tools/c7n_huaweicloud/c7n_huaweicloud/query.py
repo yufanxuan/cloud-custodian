@@ -30,7 +30,7 @@ def _dict_map(obj, params_map):
     for k, v in params_map.items():
         obj.__dict__['_' + k] = v
 
-def _dict_map(obj, params_map):
+def _dict_map_pagination(obj, params_map):
     if not params_map:
         return obj
     for k, v in params_map.items():
@@ -68,7 +68,7 @@ class ResourceQuery:
         elif pagination == 'page':
             resources = self._pagination_limit_page(m, enum_op, path)
         elif isinstance(pagination, Pagination):
-            resources = self._pagination(m, enum_op, path, pagination)
+            resources = self._pagination_iam(m, enum_op, path, pagination)
         else:
             log.exception(f"Unsupported pagination type: {pagination}")
             sys.exit(1)
@@ -261,13 +261,13 @@ class ResourceQuery:
             resources.extend(res)
         return resources
 
-    def _pagination(self, m, enum_op, path, pagination: Pagination):
+    def _pagination_iam(self, m, enum_op, path, pagination: Pagination):
         session = local_session(self.session_factory)
         client = session.client(m.service)
 
         page_params = pagination.get_first_page_params()
         request = session.request(m.service)
-        request = _dict_map(request, page_params)
+        request = _dict_map_pagination(request, page_params)
         resources = []
 
         while 1:
@@ -286,7 +286,7 @@ class ResourceQuery:
             # get next page info
             next_page_params = pagination.get_next_page_params(response)
             if next_page_params:
-                request = _dict_map(request, next_page_params)
+                request = _dict_map_pagination(request, next_page_params)
             else:
                 return resources
 
