@@ -308,7 +308,6 @@ class DefaultMarkerPagination(MarkerPagination):
         return {'limit': self.limit, 'marker': next_marker}
 
 
-
 @sources.register('describe-huaweicloud')
 class DescribeSource:
     def __init__(self, manager):

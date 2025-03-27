@@ -660,7 +660,6 @@ class ValueFilter(BaseValueFilter):
         else:
             v = self.v
 
-        print(f"---r---v---: {r} {v}")
         # Value match
         if r is None and v == 'absent':
             return True

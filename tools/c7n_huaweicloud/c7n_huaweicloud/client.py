@@ -53,7 +53,8 @@ from huaweicloudsdkcts.v3 import CtsClient, ListTrackersRequest, ListNotificatio
 from huaweicloudsdkcts.v3.region.cts_region import CtsRegion
 from huaweicloudsdkcbr.v1 import ListBackupsRequest, ListVaultRequest
 
-from huaweicloudsdkiam.v5 import IamClient as IamClientV5, ListUsersV5Request, ListPoliciesV5Request
+from huaweicloudsdkiam.v5 import IamClient as IamClientV5, \
+    ListUsersV5Request, ListPoliciesV5Request
 from huaweicloudsdkiam.v5.region import iam_region as iam_region_v5
 
 

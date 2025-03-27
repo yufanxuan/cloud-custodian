@@ -1,9 +1,0 @@
-policies:
-    - name: filter-for-encrypted-volume
-      resource: huaweicloud.volume
-      filters:
-        - type: value
-          key: metadata.__system__encrypted
-          value: "0"
-      actions:
-        - delete
