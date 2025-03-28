@@ -564,7 +564,7 @@ class UserAccessKey(ValueFilter):
                 key: status
                 value: active
               - type: access-key
-                key: length(access_keys)
+                key: size
                 value: 1
     """
 
@@ -605,7 +605,10 @@ class UserAccessKey(ValueFilter):
         matched = []
         for r in resources:
             keys = r[self.annotation_key]
-            if (self.data.get('key') == 'length(access_keys)'
+            print(f"keys: {keys}")
+            print(f"data.get('key'): {self.data.get('key')}")
+            print(f"len(keys): {len(keys)}")
+            if (self.data.get('key') == 'size'
                     and len(keys) == self.data.get('value')):
                 matched.append(r)
             else:

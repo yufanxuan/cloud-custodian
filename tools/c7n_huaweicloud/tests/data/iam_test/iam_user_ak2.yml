@@ -6,5 +6,5 @@ policies:
         key: status
         value: active
       - type: access-key
-        key: length(access_keys)
+        key: size
         value: 1
