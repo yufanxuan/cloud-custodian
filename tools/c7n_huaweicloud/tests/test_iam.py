@@ -10,11 +10,6 @@ class IamTest(BaseTest):
         p = self.load_policy({
             'name': 'delete-user',
             'resource': 'huaweicloud.iam-user',
-            "filters": [{
-                "type": "access-key",
-                "key": "status",
-                "value": "inactive"
-            }],
             "actions": ["delete"]
         },
             session_factory=factory)
