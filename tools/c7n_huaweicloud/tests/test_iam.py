@@ -5,7 +5,7 @@ from huaweicloud_common import BaseTest
 
 
 class IamTest(BaseTest):
-    def test_alarm_query(self):
+    def test_iam_delete(self):
         factory = self.replay_flight_data('iam_user_delete')
         p = self.load_policy({
             'name': 'delete-user',
