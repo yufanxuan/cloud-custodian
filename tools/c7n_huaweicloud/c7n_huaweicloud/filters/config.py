@@ -16,27 +16,23 @@ class ConfigCompliance(Filter):
     """Filter resources by their compliance with one or more Huawei config rules.
 
     An example of using the filter to find all resources that have
-    been registered as non compliant in the last 30 days against two
-    custom Huawei Config rules.
+    been registered as non compliant against a custom Huawei Config rule.
 
     :example:
 
     .. code-block:: yaml
 
        policies:
-         - name: non-compliant-ec2
-           resource: ec2
+         - name: non-compliant-config-tracker
+           resource: config-tracker
            filters:
             - type: config-compliance
               eval_filters:
                - type: value
-                 key: ResultRecordedTime
-                 value_type: age
-                 value: 30
-                 op: less-than
+                 key: resource_provider
+                 value: "config"
               rules:
-               - custodian-ec2-encryption-required
-               - custodian-ec2-tags-required
+               - test-rule
 
     """
     log = logging.getLogger("custodian.huaweicloud.actions.filters.ConfigCompliance")
@@ -57,6 +53,11 @@ class ConfigCompliance(Filter):
     def get_resource_map(self, filters):
         rule_names = self.data.get('rules')
         states = self.data.get('states', ['NonCompliant'])
+        if len(states) == 1:
+            state = states[0]
+        else:
+            state = None
+
         op = self.data.get('op', 'or') == 'or' and any or all
 
         client = local_session(self.manager.session_factory).client('config')
@@ -71,19 +72,18 @@ class ConfigCompliance(Filter):
                 continue
 
             state_request = ListPolicyStatesByAssignmentIdRequest(policy_assignment_id=policy_id,
-                                                                  compliance_state=states)
+                                                                  compliance_state=state)
             state_response = client.list_policy_states_by_assignment_id(request=state_request)
-            states = state_response.value
+            state_items = state_response.value
 
-            resource_map = {}
-            for state in states:
+            for state_item in state_items:
                 if not filters:
                     resource_map.setdefault(
-                        state.resource_id, []).append(state.resource_id)
+                        state_item.resource_id, []).append(state_item.to_dict())
                     continue
-                if op([f.match(state.to_dict()) for f in filters]):
+                if op([f.match(state_item.to_dict()) for f in filters]):
                     resource_map.setdefault(
-                        state.resource_id, []).append(state.resource_id)
+                        state_item.resource_id, []).append(state_item.to_dict())
 
         return resource_map
 
@@ -99,9 +99,12 @@ class ConfigCompliance(Filter):
         results = []
         for resource in resources:
             resource_id = resource["id"]
+            if 'retention_period_in_days' in resource.keys():
+                resource_id = "trackerconfig_" + resource_id
             if resource_id in resource_map:
                 resource[self.annotation_key] = resource_map[resource_id]
                 results.append(resource)
+
         return results
 
     @classmethod
@@ -112,7 +115,10 @@ class ConfigCompliance(Filter):
         supported by aws config, automatically, register the
         config-compliance filter.
         """
-        resource_class.filter_registry.register('config-compliance', klass)
+        resource_type = resource_class.resource_type
+        config_resource_support = getattr(resource_type, 'config_resource_support', None)
+        if config_resource_support:
+            resource_class.filter_registry.register('config-compliance', klass)
 
 
 resources.subscribe(ConfigCompliance.register_resources)

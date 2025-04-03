@@ -36,7 +36,7 @@ class FunctionGraph(QueryResourceManager):
         service = 'functiongraph'
         enum_spec = ("list_functions", 'functions', 'maxitems-marker')
         id = 'func_urn'
-        tag = True
+        tag_resource_type = 'functions'
 
     def get_resources(self, resource_ids):
         result = []
@@ -50,10 +50,16 @@ class FunctionGraph(QueryResourceManager):
                           f'error_msg[{e.error_msg}]')
                 return result
 
-            result.append(eval(str(response).
+            func_config = eval(str(response).
                                replace('null', 'None').
                                replace('false', 'False').
-                               replace('true', 'True')))
+                               replace('true', 'True'))
+            if "id" not in func_config:
+                func_config["id"] = func_config["func_urn"]
+            if "tag_resource_type" not in func_config:
+                func_config["tag_resource_type"] = "functions"
+
+            result.append(func_config)
 
         return result
 
@@ -73,7 +79,12 @@ class ReservedConcurrency(ValueFilter):
                   - type: reserved-concurrency
                     key: min_count # Number of reserved instances
                     value: 1
-                    key: qualifier_type # Limiting type. Options:
+                    key: qualifier_type # Limiting type. Options: version and alias.
+                    value: version
+                    key: qualifier_name # Limit value.
+                    value: v1
+                    key: idle_mode # Whether to enable the idle mode.
+                    value: true
 
         """
 
@@ -131,10 +142,13 @@ class FunctionTrigger(ValueFilter):
               - name: filter-function-by-reserved-concurrency
                 resource: huaweicloud.functiongraph
                 filters:
-                  - type: reserved-concurrency
-                    key: min_count # Number of reserved instances
-                    value: 1
-                    key: qualifier_type # Limiting type. Options:
+                  - type: trigger-type
+                    key: trigger_id # Trigger ID.
+                    value: xxx
+                    key: trigger_type_code # Trigger type.
+                    value: TIMER
+                    key: trigger_status
+                    value: ACTIVE # Trigger status.
 
         """
 
@@ -250,7 +264,7 @@ class DeleteFunction(HuaweiCloudBaseAction):
     def perform_action(self, resource):
         client = self.manager.get_client()
         func_urn = resource["func_urn"]
-        if resource["version"] == 'latest':
+        if func_urn.split(":")[-1] == 'latest':
             func_urn = ":".join(func_urn.split(":")[:-1])
         request = DeleteFunctionRequest(function_urn=func_urn)
         try:
@@ -399,11 +413,8 @@ class ModifySecurityGroups(UpdateFunctionConfig):
                 value: test_custodian
             actions:
               - type: modify-security-groups
-                properties: {
-                  timeout: 50,
-                  handler: "index.handler",
-                  memory_size: 128
-                }
+                security_groups: ["test"]
+                xrole: fgs_admin
     """
 
     schema = type_schema(
