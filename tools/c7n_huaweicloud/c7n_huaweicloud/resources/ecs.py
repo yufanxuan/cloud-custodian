@@ -865,8 +865,8 @@ class InstanceAttributeFilter(ValueFilter):
     .. code-block:: yaml
 
         policies:
-          - name: ec2-unoptimized-ebs
-            resource: ec2
+          - name: ecs-instances-attribute
+            resource: huaweicloud.ecs
             filters:
               - type: instance-attribute
                 attribute: OS-EXT-SRV-ATTR:user_data
@@ -1056,7 +1056,7 @@ def deserialize_user_data(user_data):
 
 @Ecs.filter_registry.register("instance-user-data")
 class InstanceUserData(ValueFilter):
-    """Filter on EC2 instances which have matching userdata.
+    """Filter on ECS instances which have matching userdata.
     Note: It is highly recommended to use regexes with the ?sm flags, since Custodian
     uses re.match() and userdata spans multiple lines.
 
@@ -1065,8 +1065,8 @@ class InstanceUserData(ValueFilter):
         .. code-block:: yaml
 
             policies:
-              - name: ecs_instance-user-data
-                resource: ec2
+              - name: ecs-instance-user-data
+                resource: huaweicloud.ecs
                 filters:
                   - type: instance-user-data
                     op: regex
@@ -1279,28 +1279,29 @@ class InstanceImageNotCompliance(Filter):
         if not image_ids and obs_url is None:
             log.error("image_ids or obs_url is required")
             return []
-        # 1. 提取第一个变量：从 "https://" 到最后一个 "obs" 的部分
-        protocol_end = len("https://")
-        # 去除协议头后的完整路径
-        path_without_protocol = obs_url[protocol_end:]
-        obs_bucket_name = self.get_obs_name(path_without_protocol)
-        obs_server = self.get_obs_server(path_without_protocol)
-        obs_file = self.get_file_path(path_without_protocol)
-        obs_client.server = obs_server
-        try:
-            resp = obs_client.getObject(bucketName=obs_bucket_name,
-                                        objectKey=obs_file,
-                                        loadStreamInMemory=True)
-            if resp.status < 300:
-                ids = json.loads(resp.body.buffer)['image_ids']
-                image_ids.extend(ids)
-                image_ids = list(set(image_ids))
-            else:
-                log.error("get obs object failed")
-                return []
-        except exceptions.ClientRequestException as e:
-            log.error(e.status_code, e.request_id, e.error_code, e.error_msg)
-            raise
+        if obs_url is not None:
+            # 1. 提取第一个变量：从 "https://" 到最后一个 "obs" 的部分
+            protocol_end = len("https://")
+            # 去除协议头后的完整路径
+            path_without_protocol = obs_url[protocol_end:]
+            obs_bucket_name = self.get_obs_name(path_without_protocol)
+            obs_server = self.get_obs_server(path_without_protocol)
+            obs_file = self.get_file_path(path_without_protocol)
+            obs_client.server = obs_server
+            try:
+                resp = obs_client.getObject(bucketName=obs_bucket_name,
+                                            objectKey=obs_file,
+                                            loadStreamInMemory=True)
+                if resp.status < 300:
+                    ids = json.loads(resp.body.buffer)['image_ids']
+                    image_ids.extend(ids)
+                    image_ids = list(set(image_ids))
+                else:
+                    log.error(f"get obs object failed: {resp.errorCode}, {resp.errorMessage}")
+                    return []
+            except exceptions.ClientRequestException as e:
+                log.error(e.status_code, e.request_id, e.error_code, e.error_msg)
+                raise
         instance_image_map = {}
         for r in resources:
             instance_image_map.setdefault(
