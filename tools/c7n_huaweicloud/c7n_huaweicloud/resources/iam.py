@@ -17,9 +17,9 @@ from huaweicloudsdkiam.v5 import (DeletePolicyV5Request, ListAttachedUserPolicie
 
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema, chunks
-from tools.c7n_huaweicloud.c7n_huaweicloud.actions import HuaweiCloudBaseAction
-from tools.c7n_huaweicloud.c7n_huaweicloud.provider import resources
-from tools.c7n_huaweicloud.c7n_huaweicloud.query import QueryResourceManager, TypeInfo
+from c7n_huaweicloud.actions import HuaweiCloudBaseAction
+from c7n_huaweicloud.provider import resources
+from c7n_huaweicloud.query import QueryResourceManager, TypeInfo
 
 log = logging.getLogger("custodian.huaweicloud.resources.iam")
 
