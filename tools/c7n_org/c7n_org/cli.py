@@ -117,12 +117,12 @@ CONFIG_SCHEMA = {
         },
         'domain': {
             'type': 'object',
-            'additionalProperties': False,
+            'additionalProperties': True,
             'required': ['domain_id'],
             'properties': {
                 'domain_id': {'type': 'string'},
                 'agency_urn': {'type': 'string'},
-                'duration_seconds': {'type': 'string'},
+                'duration_seconds': {'type': 'integer', 'minimum': 900},
                 'regions': {'type': 'array', 'items': {'type': 'string'}},
                 'tags': {'type': 'array', 'items': {'type': 'string'}},
                 'vars': {'type': 'object'},
@@ -618,6 +618,12 @@ def accounts_iterator(config):
              "vars": _update(a.get("vars", {}), org_vars)}
         yield d
     for a in config.get('domains', ()):
+        if a.get('provider') == 'huaweicloud':
+            if not a['agency_urn'].startswith('iam::'):
+                raise ValueError(f"Invalid agency_urn format in account {a['name']}")
+            if not 900 <= a['duration_seconds'] <= 43200:
+                raise ValueError("duration_seconds must be between 900 and 43200")
+
         d = {'account_id': a['domain_id'],
              'name': a.get('name', a['domain_id']),
              'regions': a.get('regions', ['cn-north-4']),
@@ -671,6 +677,10 @@ def run_account(account, region, policies_config, output_path,
         env_vars.update({"OCI_COMPARTMENTS": account.get("oci_compartments")})
 
     if account.get('agency_urn'):
+        log.info(
+            "Using Huawei Cloud agency: %s for domain: %s",
+            account['agency_urn'], account['domain_id']
+        )
         config['agency_urn'] = account['agency_urn']
         config['duration_seconds'] = account['duration_seconds']
         config['regions'] = account['regions']
