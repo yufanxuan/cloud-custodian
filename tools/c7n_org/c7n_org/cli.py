@@ -18,7 +18,8 @@ from concurrent.futures import (
     ProcessPoolExecutor,
     as_completed)
 import yaml
-
+from huaweicloudsdkcore.auth.credentials import BasicCredentials, GlobalCredentials
+from huaweicloudsdkiam.v3 import IamClient, CreateTemporaryAccessKeyByAgencyRequest
 from botocore.compat import OrderedDict
 from botocore.exceptions import ClientError
 import click
@@ -36,6 +37,8 @@ from c7n.utils import (
     CONN_CACHE, dumps, filter_empty, format_string_values, get_policy_provider, join_output_path)
 
 from c7n_org.utils import environ, account_tags
+
+from c7n_huaweicloud.provider import HuaWeiSessionFactory
 
 log = logging.getLogger('c7n_org')
 
@@ -114,16 +117,30 @@ CONFIG_SCHEMA = {
                 'tags': {'type': 'array', 'items': {'type': 'string'}},
                 'regions': {'type': 'array', 'items': {'type': 'string'}},
                 'vars': {'type': 'object'},
-                }
             }
         },
+        'domain': {
+            'type': 'object',
+            'additionalProperties': False,
+            'required': ['domain_id'],
+            'properties': {
+                'domain_id': {'type': 'string'},
+                'agency_urn': {'type': 'string'},
+                'duration_seconds': {'type': 'string'},
+                'regions': {'type': 'array', 'items': {'type': 'string'}},
+                'tags': {'type': 'array', 'items': {'type': 'string'}},
+                'vars': {'type': 'object'},
+            }
+        }
+    },
     'type': 'object',
     'additionalProperties': False,
     'oneOf': [
         {'required': ['accounts']},
         {'required': ['projects']},
         {'required': ['subscriptions']},
-        {'required': ['tenancies']}
+        {'required': ['tenancies']},
+        {'required': ['domains']}
         ],
     'properties': {
         'vars': {'type': 'object'},
@@ -142,8 +159,12 @@ CONFIG_SCHEMA = {
         'tenancies': {
             'type': 'array',
             'items': {'$ref': '#/definitions/tenancy'}
-            }
+        },
+        'domains': {
+            'type': 'array',
+            'items': {'$ref': '#/definitions/domain'}
         }
+    }
 }
 
 
@@ -600,6 +621,16 @@ def accounts_iterator(config):
              "oci_compartments": a.get("vars", {}).get("oci_compartments"),
              "vars": _update(a.get("vars", {}), org_vars)}
         yield d
+    for a in config.get('domains', ()):
+        d = {'account_id': a['domain_id'],
+             'name': a.get('name', a['domain_id']),
+             'regions': a.get('regions', ['cn-north-4']),
+             "agency_urn": a["agency_urn"],
+             "duration_seconds": a["duration_seconds"],
+             'provider': 'huaweicloud',
+             'tags': a.get('tags', ()),
+             'vars': _update(a.get('vars', {}), org_vars)}
+        yield d
 
 
 def _update(old, new):
@@ -642,6 +673,10 @@ def run_account(account, region, policies_config, output_path,
 
     if account.get("oci_compartments"):
         env_vars.update({"OCI_COMPARTMENTS": account.get("oci_compartments")})
+
+    if account.get('agency_urn'):
+        config['agency_urn'] = account['agency_urn']
+        config['duration_seconds'] = account['duration_seconds']
 
     policies = PolicyCollection.from_data(policies_config, config)
     policy_counts = {}
