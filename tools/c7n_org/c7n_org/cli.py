@@ -18,8 +18,6 @@ from concurrent.futures import (
     ProcessPoolExecutor,
     as_completed)
 import yaml
-from huaweicloudsdkcore.auth.credentials import BasicCredentials, GlobalCredentials
-from huaweicloudsdkiam.v3 import IamClient, CreateTemporaryAccessKeyByAgencyRequest
 from botocore.compat import OrderedDict
 from botocore.exceptions import ClientError
 import click
@@ -37,8 +35,6 @@ from c7n.utils import (
     CONN_CACHE, dumps, filter_empty, format_string_values, get_policy_provider, join_output_path)
 
 from c7n_org.utils import environ, account_tags
-
-from c7n_huaweicloud.provider import HuaWeiSessionFactory
 
 log = logging.getLogger('c7n_org')
 
@@ -677,6 +673,7 @@ def run_account(account, region, policies_config, output_path,
     if account.get('agency_urn'):
         config['agency_urn'] = account['agency_urn']
         config['duration_seconds'] = account['duration_seconds']
+        config['regions'] = account['regions']
 
     policies = PolicyCollection.from_data(policies_config, config)
     policy_counts = {}

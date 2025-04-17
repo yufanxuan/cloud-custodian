@@ -129,7 +129,7 @@ class HuaweiSessionFactory:
     def _build_assume_request(self, options) -> SdkRequest:
         return SdkRequest(
             method="POST",
-            host=f"https://sts.{options.region}.myhuaweicloud.com",
+            host=f"https://sts.{options.regions[0]}.myhuaweicloud.com",
             uri="/v5/agencies/assume",
             header_params={
                 "Content-Type": "application/json",
