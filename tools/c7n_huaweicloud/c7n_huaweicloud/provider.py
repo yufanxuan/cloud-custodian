@@ -105,8 +105,9 @@ class HuaweiSessionFactory:
             )
             print(f"sig:{sig}")
             req = self._build_assume_request(self.options)
+            print("构建的请求对象:", req.__dict__)
+            print("Signer对象信息:", sig.__dict__ if hasattr(sig, '__dict__') else str(sig))
             sig.sign(req)
-            print(f"req:{req}")
             resp = requests.post(
                 req.host + req.uri,
                 headers=req.header_params,
