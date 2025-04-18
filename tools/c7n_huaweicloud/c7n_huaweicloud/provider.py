@@ -99,15 +99,14 @@ class HuaweiSessionFactory:
     def _get_assumed_credentials(self) -> GlobalCredentials:
         try:
             ecs_ak, ecs_sk, ecs_token = self.credential_manager.get_valid_credentials()
-            print(f"ecs_ak: {ecs_ak}, ecs_sk: {ecs_sk}, ecs_token: {ecs_token}")
             sig = signer.Signer(
                 GlobalCredentials(ecs_ak, ecs_sk).with_security_token(ecs_token)
             )
-            print(f"sig:{sig}")
             req = self._build_assume_request(self.options)
-            print("构建的请求对象:", req.__dict__)
-            print("Signer对象信息:", sig.__dict__ if hasattr(sig, '__dict__') else str(sig))
+            print("req:", req.__dict__)
+            print("sig:", sig.__dict__ if hasattr(sig, '__dict__') else str(sig))
             sig.sign(req)
+            print("--sign end--")
             resp = requests.post(
                 req.host + req.uri,
                 headers=req.header_params,
