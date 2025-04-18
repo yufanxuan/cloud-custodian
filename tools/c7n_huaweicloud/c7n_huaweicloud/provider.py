@@ -78,7 +78,7 @@ class HuaweiSessionFactory:
 
     def _validate_credentials_config(self):
         self.use_assume = hasattr(self.options, 'agency_urn') and self.options.agency_urn
-        print("use_assume:", self.use_assume)
+        print("options:", self.options)
 
         self.ak = getattr(self.options, 'access_key_id', os.getenv('HUAWEI_ACCESS_KEY_ID'))
         self.sk = getattr(self.options, 'secret_access_key', os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
@@ -99,6 +99,7 @@ class HuaweiSessionFactory:
     def _get_assumed_credentials(self) -> GlobalCredentials:
         try:
             ecs_ak, ecs_sk, ecs_token = self.credential_manager.get_valid_credentials()
+            print(f"ecs_ak: {ecs_ak}, ecs_sk: {ecs_sk}, ecs_token: {ecs_token}")
             sig = signer.Signer(
                 GlobalCredentials(ecs_ak, ecs_sk).with_security_token(ecs_token)
             )
@@ -113,7 +114,7 @@ class HuaweiSessionFactory:
                 verify=True
             )
             resp.raise_for_status()
-
+            print(f"assumed role resp: {resp.json()}")
             return self._parse_assume_response(resp.json())
 
         except requests.exceptions.HTTPError as e:

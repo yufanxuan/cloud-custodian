@@ -645,13 +645,7 @@ def run_account(account, region, policies_config, output_path,
                 cache_period, cache_path, metrics, dryrun, debug):
     """Execute a set of policies on an account.
     """
-    print("Registered cloud providers:", cloud_providers.keys())
-    try:
-        print("Account data:", account)
-        domain_id = account['domain_id']
-    except Exception as e:
-        print("FATAL ERROR in account:", account.get('name'), "Error:", str(e))
-        raise
+    print("Account data:", account)
     logging.getLogger('custodian.output').setLevel(logging.ERROR + 1)
     CONN_CACHE.session = None
     CONN_CACHE.time = None
@@ -684,10 +678,7 @@ def run_account(account, region, policies_config, output_path,
         env_vars.update({"OCI_COMPARTMENTS": account.get("oci_compartments")})
 
     if account.get('agency_urn'):
-        log.info(
-            "Using Huawei Cloud agency: %s for domain: %s",
-            account['agency_urn'], account['domain_id']
-        )
+        log.info("Using Huawei Cloud agency: %s",account['agency_urn'])
         config['agency_urn'] = account['agency_urn']
         config['duration_seconds'] = account['duration_seconds']
         config['regions'] = account['regions']
