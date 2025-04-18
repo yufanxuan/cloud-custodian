@@ -183,7 +183,6 @@ class LogFilter:
     """
 
     def filter(self, r):
-        clouds.keys()
         if not r.name.startswith('custodian'):
             return 1
         elif r.levelno >= logging.WARNING:
