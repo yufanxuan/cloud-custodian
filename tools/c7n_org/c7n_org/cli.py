@@ -183,6 +183,7 @@ class LogFilter:
     """
 
     def filter(self, r):
+        clouds.keys()
         if not r.name.startswith('custodian'):
             return 1
         elif r.levelno >= logging.WARNING:
@@ -618,11 +619,10 @@ def accounts_iterator(config):
              "vars": _update(a.get("vars", {}), org_vars)}
         yield d
     for a in config.get('domains', ()):
-        if a.get('provider') == 'huaweicloud':
-            if not a['agency_urn'].startswith('iam::'):
-                raise ValueError(f"Invalid agency_urn format in account {a['name']}")
-            if not 900 <= a['duration_seconds'] <= 43200:
-                raise ValueError("duration_seconds must be between 900 and 43200")
+        if not a['agency_urn'].startswith('iam::'):
+            raise ValueError(f"Invalid agency_urn format in account {a['name']}")
+        if not 900 <= a['duration_seconds'] <= 43200:
+            raise ValueError("duration_seconds must be between 900 and 43200")
 
         d = {'account_id': a['domain_id'],
              'name': a.get('name', a['domain_id']),
@@ -645,6 +645,13 @@ def run_account(account, region, policies_config, output_path,
                 cache_period, cache_path, metrics, dryrun, debug):
     """Execute a set of policies on an account.
     """
+    print("Registered cloud providers:", cloud_providers.keys())
+    try:
+        print("Account data:", account)
+        domain_id = account['domain_id']
+    except Exception as e:
+        print("FATAL ERROR in account:", account.get('name'), "Error:", str(e))
+        raise
     logging.getLogger('custodian.output').setLevel(logging.ERROR + 1)
     CONN_CACHE.session = None
     CONN_CACHE.time = None
