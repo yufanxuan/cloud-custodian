@@ -5,16 +5,12 @@ import logging
 import os
 from datetime import datetime, timedelta
 from typing import Optional, Tuple
-
 import requests
 from huaweicloudsdkcore.auth.credentials import BasicCredentials, GlobalCredentials
-from huaweicloudsdkcore.sdk_request import SdkRequest
-from huaweicloudsdkcore.signer import signer
-
+from apig_sdk import signer
 from c7n.registry import PluginRegistry
 from c7n.provider import Provider, clouds
 
-from .resources.resource_map import ResourceMap
 
 log = logging.getLogger("custodian.huaweicloud.provider")
 
@@ -99,20 +95,21 @@ class HuaweiSessionFactory:
     def _get_assumed_credentials(self) -> GlobalCredentials:
         try:
             ecs_ak, ecs_sk, ecs_token = self.credential_manager.get_valid_credentials()
-            sig = signer.Signer(
-                GlobalCredentials(ecs_ak, ecs_sk).with_security_token(ecs_token)
-            )
-            req = self._build_assume_request(self.options)
-            print("req:", req.__dict__)
+            sig = signer.Signer()
+            sig.Key = ecs_ak
+            sig.Secret = ecs_sk
             print("sig:", sig.__dict__ if hasattr(sig, '__dict__') else str(sig))
-            sig.sign(req)
-            print("--sign end--")
-            resp = requests.post(
-                req.host + req.uri,
-                headers=req.header_params,
-                data=req.body,
-                verify=True
-            )
+            url = f"https://sts.{self.options.region}.myhuaweicloud.com/v5/agencies/assume"
+            request = signer.HttpRequest("POST", url)
+            request.headers = {"Content-Type": "application/json", "X-Security-Token": ecs_token}
+            request.body = json.dumps({
+                "duration_seconds": getattr(self.options, 'duration_seconds', 3600),
+                "agency_urn": self.options.agency_urn,
+                "agency_session_name": "custodian_agency_session",
+            })
+            print("req:", request.__dict__)
+            sig.Sign(request)
+            resp = requests.post(url, headers=request.headers, data=request.body)
             resp.raise_for_status()
             print(f"assumed role resp raw: {resp.text}")
             return self._parse_assume_response(resp.json())
@@ -126,22 +123,6 @@ class HuaweiSessionFactory:
         except Exception as e:
             log.error(f"Unexpected error during assume role: {str(e)}")
             raise
-
-    def _build_assume_request(self, options) -> SdkRequest:
-        return SdkRequest(
-            method="POST",
-            host=f"https://sts.{options.region}.myhuaweicloud.com",
-            uri="/v5/agencies/assume",
-            header_params={
-                "Content-Type": "application/json",
-                "X-Security-Token": self.credential_manager.ecs_token
-            },
-            body=json.dumps({
-                "duration_seconds": getattr(options, 'duration_seconds', 3600),
-                "agency_urn": options.agency_urn,
-                "agency_session_name": "custodian_agency_session",
-            })
-        )
 
     @staticmethod
     def _parse_assume_response(response: dict) -> GlobalCredentials:
@@ -160,7 +141,6 @@ class HuaweiCloud(Provider):
     display_name = "Huawei Cloud"
     resource_prefix = "huaweicloud"
     resources = PluginRegistry("%s.resources" % resource_prefix)
-    resource_map = ResourceMap
 
     def initialize(self, options):
         return options
@@ -172,5 +152,3 @@ class HuaweiCloud(Provider):
         session_factory = HuaweiSessionFactory(options)
 
         return lambda: session_factory.get_credentials()
-
-resources = HuaweiCloud.resources
