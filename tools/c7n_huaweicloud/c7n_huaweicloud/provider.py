@@ -103,10 +103,10 @@ class HuaweiSessionFactory:
             sig = signer.Signer(
                 GlobalCredentials(ecs_ak, ecs_sk).with_security_token(ecs_token)
             )
-
+            print(f"req:{sig}")
             req = self._build_assume_request(self.options)
             sig.sign(req)
-
+            print(f"req:{req}")
             resp = requests.post(
                 req.host + req.uri,
                 headers=req.header_params,
@@ -114,7 +114,7 @@ class HuaweiSessionFactory:
                 verify=True
             )
             resp.raise_for_status()
-            print(f"assumed role resp: {resp.json()}")
+            print(f"assumed role resp raw: {resp.text}")
             return self._parse_assume_response(resp.json())
 
         except requests.exceptions.HTTPError as e:
@@ -130,7 +130,7 @@ class HuaweiSessionFactory:
     def _build_assume_request(self, options) -> SdkRequest:
         return SdkRequest(
             method="POST",
-            host=f"https://sts.{options.regions[0]}.myhuaweicloud.com",
+            host=f"https://sts.{options.region}.myhuaweicloud.com",
             uri="/v5/agencies/assume",
             header_params={
                 "Content-Type": "application/json",
