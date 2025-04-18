@@ -624,6 +624,7 @@ def accounts_iterator(config):
             raise ValueError("duration_seconds must be between 900 and 43200")
 
         d = {'account_id': a['domain_id'],
+             'domain_id': a['domain_id'],
              'name': a.get('name', a['domain_id']),
              'regions': a.get('regions', ['cn-north-4']),
              "agency_urn": a["agency_urn"],
