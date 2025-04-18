@@ -103,7 +103,7 @@ class HuaweiSessionFactory:
             sig = signer.Signer(
                 GlobalCredentials(ecs_ak, ecs_sk).with_security_token(ecs_token)
             )
-            print(f"req:{sig}")
+            print(f"sig:{sig}")
             req = self._build_assume_request(self.options)
             sig.sign(req)
             print(f"req:{req}")
