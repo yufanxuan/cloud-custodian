@@ -16,7 +16,7 @@ from huaweicloudsdkiam.v5 import (DeletePolicyV5Request, ListAttachedUserPolicie
     GetPolicyVersionV5Request)
 
 from c7n.filters import ValueFilter
-from c7n.utils import type_schema, chunks
+from c7n.utils import type_schema, chunks, local_session
 from c7n_huaweicloud.actions import HuaweiCloudBaseAction
 from c7n_huaweicloud.provider import resources
 from c7n_huaweicloud.query import QueryResourceManager, TypeInfo
@@ -283,12 +283,7 @@ class SetLoginProtect(HuaweiCloudBaseAction):
     )
 
     def perform_action(self, resource):
-        globalCredentials = GlobalCredentials(
-            os.getenv('HUAWEI_ACCESS_KEY_ID'), os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
-        client = IamClientV3.new_builder() \
-            .with_credentials(globalCredentials) \
-            .with_region(iam_region_v3.IamRegion.value_of(os.getenv('HUAWEI_DEFAULT_REGION'))) \
-            .build()
+        client = local_session(self.manager.session_factory).client("iam-v3")
         try:
             request = UpdateLoginProtectRequest(user_id=resource["id"])
 
@@ -341,13 +336,7 @@ class UserLoginProtect(ValueFilter):
 
     def _user_login_protect(self, resource):
         try:
-            globalCredentials = GlobalCredentials(os.getenv('HUAWEI_ACCESS_KEY_ID'),
-                                                  os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
-            client = IamClientV3.new_builder() \
-                .with_credentials(globalCredentials) \
-                .with_region(iam_region_v3.IamRegion.value_of(
-                os.getenv('HUAWEI_DEFAULT_REGION'))) \
-                .build()
+            client = local_session(self.manager.session_factory).client("iam-v3")
             request = ShowUserLoginProtectRequest(user_id=resource["id"])
             response = client.show_user_login_protect(request)
             login_protect = response.login_protect
