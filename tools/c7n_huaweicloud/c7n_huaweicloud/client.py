@@ -123,14 +123,15 @@ class Session:
 
         self.ak = os.getenv("HUAWEI_ACCESS_KEY_ID") or self.ak
         self.sk = os.getenv("HUAWEI_SECRET_ACCESS_KEY") or self.sk
-        print("ak: ", self.ak)
-        print("sk: ", self.sk)
-        print("token: ", self.token)
+        self.domain_id = options.get("account_id")
 
 
     def client(self, service):
-        print("Session self:", self)
         print("service: ", service)
+        print("ak: ", self.ak)
+        print("sk: ", self.sk)
+        print("token: ", self.token)
+        print("domain_id: ", self.domain_id)
         if self.ak is None or self.sk is None:
             # basic
             basic_provider = (
@@ -147,9 +148,8 @@ class Session:
             credentials = BasicCredentials(
                 self.ak, self.sk, os.getenv("HUAWEI_PROJECT_ID")
             ).with_security_token(self.token)
-            globalCredentials = GlobalCredentials(self.ak, self.sk).with_security_token(
-                self.token
-            )
+            globalCredentials = (GlobalCredentials(self.ak, self.sk, self.domain_id)
+            .with_security_token(self.token))
 
         if service == "vpc":
             client = (
