@@ -129,9 +129,6 @@ class Session:
     def client(self, service):
         print("service: ", service)
         print("ak: ", self.ak)
-        print("sk: ", self.sk)
-        print("token: ", self.token)
-        print("domain_id: ", self.domain_id)
         if self.ak is None or self.sk is None:
             # basic
             basic_provider = (

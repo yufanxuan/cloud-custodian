@@ -87,7 +87,7 @@ class HuaweiSessionFactory:
                 "access_key_id/secret_access_key must be configured"
             )
 
-    def get_session(self):
+    def get_provider_session(self):
         (self.options['access_key_id'],
          self.options['secret_access_key'],
          self.options['security_token']) = self.get_credential()
@@ -151,6 +151,6 @@ class HuaweiCloud(Provider):
     def get_session_factory(self, options):
         session_factory = HuaweiSessionFactory(options)
 
-        return lambda: session_factory.get_session()
+        return lambda: session_factory.get_provider_session()
 
 resources = HuaweiCloud.resources
