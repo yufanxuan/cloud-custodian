@@ -123,8 +123,14 @@ class Session:
 
         self.ak = os.getenv("HUAWEI_ACCESS_KEY_ID") or self.ak
         self.sk = os.getenv("HUAWEI_SECRET_ACCESS_KEY") or self.sk
+        print("ak: ", self.ak)
+        print("sk: ", self.sk)
+        print("token: ", self.token)
+
 
     def client(self, service):
+        print("Session self:", self)
+        print("service: ", service)
         if self.ak is None or self.sk is None:
             # basic
             basic_provider = (
