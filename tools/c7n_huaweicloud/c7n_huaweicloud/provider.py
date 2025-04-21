@@ -83,7 +83,8 @@ class HuaweiSessionFactory:
 
         if not self.use_assume and not (self.ak and self.sk):
             raise ValueError(
-                "Either agency_urn (for assume role) or access_key_id/secret_access_key must be configured"
+                "Either agency_urn (for assume role) or "
+                "access_key_id/secret_access_key must be configured"
             )
 
     def get_session(self):
@@ -93,9 +94,9 @@ class HuaweiSessionFactory:
         return Session(self.options)
 
     def get_credential(self):
+        print("use_assume: ", self.use_assume)
         if self.use_assume:
-            log.info("Using assumed role credentials with agency_urn: %s",
-                     self.options.agency_urn)
+            print("Using assumed role credentials with agency_urn: %s",self.options.agency_urn)
             return self._get_assumed_credentials()
 
         log.info("Using direct AK/SK credentials")
