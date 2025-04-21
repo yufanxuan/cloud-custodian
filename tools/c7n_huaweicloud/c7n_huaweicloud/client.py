@@ -117,9 +117,9 @@ class Session:
             sys.exit(1)
 
         if options is not None:
-            self.ak = options.get("SecurityAccessKey")
-            self.sk = options.get("SecuritySecretKey")
-            self.token = options.get("SecurityToken")
+            self.ak = options.get("access_key_id")
+            self.sk = options.get("secret_access_key")
+            self.token = options.get("security_token")
 
         self.ak = os.getenv("HUAWEI_ACCESS_KEY_ID") or self.ak
         self.sk = os.getenv("HUAWEI_SECRET_ACCESS_KEY") or self.sk

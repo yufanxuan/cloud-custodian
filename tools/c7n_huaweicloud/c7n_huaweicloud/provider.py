@@ -6,10 +6,11 @@ import os
 from datetime import datetime, timedelta
 from typing import Optional, Tuple
 import requests
-from huaweicloudsdkcore.auth.credentials import BasicCredentials, GlobalCredentials
+from huaweicloudsdkcore.auth.credentials import BasicCredentials
 from c7n.registry import PluginRegistry
 from c7n.provider import Provider, clouds
 from .apig_sdk import signer
+from .client import Session
 
 from .resources.resource_map import ResourceMap
 
@@ -85,21 +86,27 @@ class HuaweiSessionFactory:
                 "Either agency_urn (for assume role) or access_key_id/secret_access_key must be configured"
             )
 
-    def get_credentials(self):
+    def get_session(self):
+        (self.options['access_key_id'],
+         self.options['secret_access_key'],
+         self.options['security_token']) = self.get_credential()
+        return Session(self.options)
+
+    def get_credential(self):
         if self.use_assume:
-            log.info("Using assumed role credentials with agency_urn: %s", self.options.agency_urn)
+            log.info("Using assumed role credentials with agency_urn: %s",
+                     self.options.agency_urn)
             return self._get_assumed_credentials()
 
         log.info("Using direct AK/SK credentials")
         return BasicCredentials(self.ak, self.sk)
 
-    def _get_assumed_credentials(self) -> GlobalCredentials:
+    def _get_assumed_credentials(self):
         try:
             ecs_ak, ecs_sk, ecs_token = self.credential_manager.get_valid_credentials()
             sig = signer.Signer()
             sig.Key = ecs_ak
             sig.Secret = ecs_sk
-            print("sig:", sig.__dict__ if hasattr(sig, '__dict__') else str(sig))
             url = f"https://sts.{self.options.region}.myhuaweicloud.com/v5/agencies/assume"
             request = signer.HttpRequest("POST", url)
             request.headers = {"Content-Type": "application/json", "X-Security-Token": ecs_token}
@@ -108,12 +115,15 @@ class HuaweiSessionFactory:
                 "agency_urn": self.options.agency_urn,
                 "agency_session_name": "custodian_agency_session",
             })
-            print("req:", request.__dict__)
             sig.Sign(request)
             resp = requests.post(url, headers=request.headers, data=request.body)
             resp.raise_for_status()
-            print(f"assumed role resp raw: {resp.text}")
-            return self._parse_assume_response(resp.json())
+            json_resp = resp.json()
+            print(f"assumed role resp raw: {json_resp}")
+            if not json_resp.get("credentials"):
+                raise ValueError("No credentials in assume role response")
+            creds = json_resp["credentials"]
+            return creds["access_key_id"], creds["secret_access_key"], creds["security_token"]
 
         except requests.exceptions.HTTPError as e:
             log.error(f"Assume role request failed with status {e.response.status_code}")
@@ -124,17 +134,6 @@ class HuaweiSessionFactory:
         except Exception as e:
             log.error(f"Unexpected error during assume role: {str(e)}")
             raise
-
-    @staticmethod
-    def _parse_assume_response(response: dict) -> GlobalCredentials:
-        if not response.get("credentials"):
-            raise ValueError("No credentials in assume role response")
-
-        creds = response["credentials"]
-        return GlobalCredentials(
-            creds["access_key_id"],
-            creds["secret_access_key"]
-        ).with_security_token(creds["security_token"])
 
 
 @clouds.register("huaweicloud")
@@ -153,6 +152,6 @@ class HuaweiCloud(Provider):
     def get_session_factory(self, options):
         session_factory = HuaweiSessionFactory(options)
 
-        return lambda: session_factory.get_credentials()
+        return lambda: session_factory.get_session()
 
 resources = HuaweiCloud.resources
