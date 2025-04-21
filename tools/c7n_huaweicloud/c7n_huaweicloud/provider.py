@@ -99,7 +99,7 @@ class HuaweiSessionFactory:
             return self._get_assumed_credentials()
 
         log.info("Using direct AK/SK credentials")
-        return BasicCredentials(self.ak, self.sk)
+        return self.ak, self.sk, None
 
     def _get_assumed_credentials(self):
         try:
