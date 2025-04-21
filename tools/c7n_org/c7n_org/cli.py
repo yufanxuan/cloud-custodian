@@ -645,7 +645,6 @@ def run_account(account, region, policies_config, output_path,
                 cache_period, cache_path, metrics, dryrun, debug):
     """Execute a set of policies on an account.
     """
-    print("Account data:", account)
     logging.getLogger('custodian.output').setLevel(logging.ERROR + 1)
     CONN_CACHE.session = None
     CONN_CACHE.time = None

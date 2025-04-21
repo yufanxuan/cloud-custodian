@@ -76,8 +76,6 @@ class HuaweiSessionFactory:
 
     def _validate_credentials_config(self):
         self.use_assume = hasattr(self.options, 'agency_urn') and self.options.agency_urn
-        print("options:", self.options)
-
         self.ak = getattr(self.options, 'access_key_id', os.getenv('HUAWEI_ACCESS_KEY_ID'))
         self.sk = getattr(self.options, 'secret_access_key', os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
 
