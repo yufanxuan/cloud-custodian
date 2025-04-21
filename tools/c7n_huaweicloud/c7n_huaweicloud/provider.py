@@ -149,6 +149,6 @@ class HuaweiCloud(Provider):
     def get_session_factory(self, options):
         session_factory = HuaweiSessionFactory(options)
 
-        return lambda: session_factory.get_provider_session()
+        return session_factory.get_provider_session()
 
 resources = HuaweiCloud.resources
