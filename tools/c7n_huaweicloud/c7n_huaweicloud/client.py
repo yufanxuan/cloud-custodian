@@ -108,7 +108,7 @@ class Session:
     """Session"""
 
     def __init__(self, options=None):
-        self.region = os.getenv("HUAWEI_DEFAULT_REGION")
+        self.region = os.getenv("HUAWEI_DEFAULT_REGION") or options.region
         self.token = None
         if not self.region:
             log.error(
