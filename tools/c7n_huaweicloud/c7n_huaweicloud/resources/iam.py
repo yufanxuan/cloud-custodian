@@ -681,10 +681,10 @@ class AllowAllIamPolicies(ValueFilter):
         client = self.manager.get_client()
         results = [r for r in resources if self.has_allow_all_policy(client, r)]
         self.log.info(
-            "%d of %d iam policies have allow all.",
+            "%s of %s iam policies have allow all.",
             len(results), len(resources))
         for res in results:
-            self.log.info("allow all iam policy id: %d", res['policy_id'])
+            self.log.info("allow all iam policy id: ", res['policy_id'])
         return results
 
 
