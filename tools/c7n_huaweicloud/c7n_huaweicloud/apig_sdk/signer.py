@@ -11,10 +11,8 @@ from datetime import datetime
 if sys.version_info.major < 3:
     from urllib import quote, unquote
 
-
     def hmacsha256(byte, msg):
         return hmac.new(byte, msg, digestmod=hashlib.sha256).digest()
-
 
     # Create a "String to Sign".
     def StringToSign(request, time):
@@ -24,12 +22,10 @@ if sys.version_info.major < 3:
 else:
     from urllib.parse import quote, unquote
 
-
     def hmacsha256(byte, msg):
         return hmac.new(byte.encode('utf-8'),
                         msg.encode('utf-8'),
                         digestmod=hashlib.sha256).digest()
-
 
     # Create a "String to Sign".
     def StringToSign(request, time):
