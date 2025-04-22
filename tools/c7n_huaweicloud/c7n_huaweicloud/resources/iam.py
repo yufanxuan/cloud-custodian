@@ -1,13 +1,10 @@
 import functools
 import json
 import logging
-import os
 
-from huaweicloudsdkcore.auth.credentials import GlobalCredentials
 from huaweicloudsdkcore.exceptions import exceptions
 from huaweicloudsdkiam.v3 import (UpdateLoginProtectRequest, UpdateLoginProjectReq,
-    IamClient as IamClientV3, ShowUserLoginProtectRequest, UpdateLoginProject)
-from huaweicloudsdkiam.v3.region import iam_region as iam_region_v3
+    ShowUserLoginProtectRequest, UpdateLoginProject)
 from huaweicloudsdkiam.v5 import (DeletePolicyV5Request, ListAttachedUserPoliciesV5Request,
     DetachUserPolicyV5Request, DetachUserPolicyReqBody, DeleteUserV5Request,
     AddUserToGroupV5Request, AddUserToGroupReqBody, RemoveUserFromGroupV5Request,

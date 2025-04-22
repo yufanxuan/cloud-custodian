@@ -11,8 +11,10 @@ from datetime import datetime
 if sys.version_info.major < 3:
     from urllib import quote, unquote
 
+
     def hmacsha256(byte, msg):
         return hmac.new(byte, msg, digestmod=hashlib.sha256).digest()
+
 
     # Create a "String to Sign".
     def StringToSign(request, time):
@@ -22,22 +24,29 @@ if sys.version_info.major < 3:
 else:
     from urllib.parse import quote, unquote
 
+
     def hmacsha256(byte, msg):
-        return hmac.new(byte.encode('utf-8'), msg.encode('utf-8'), digestmod=hashlib.sha256).digest()
+        return hmac.new(byte.encode('utf-8'),
+                        msg.encode('utf-8'),
+                        digestmod=hashlib.sha256).digest()
+
 
     # Create a "String to Sign".
     def StringToSign(request, time):
         b = HexEncodeSHA256Hash(request.encode('utf-8'))
         return "%s\n%s\n%s" % (Alg, datetime.strftime(time, DateFormat), b)
 
+
 def urlencode(str):
     return quote(str, safe='~')
+
 
 def findHeader(req, h):
     for header in req.headers:
         if header.lower() == h.lower():
             return req.headers[header]
     return None
+
 
 # HexEncodeSHA256Hash returns hexcode of sha256
 def HexEncodeSHA256Hash(d):
@@ -115,8 +124,10 @@ def CanonicalRequest(req, sHeaders):
     hencode = findHeader(req, HContentSha256)
     if hencode is None:
         hencode = HexEncodeSHA256Hash(req.body)
-    return "%s\n%s\n%s\n%s\n%s\n%s" % (req.method.upper(), CanonicalURI(req), CanonicalQueryString(req),
-                                       canonicalHeaders, ";".join(sHeaders), hencode)
+    return "%s\n%s\n%s\n%s\n%s\n%s" % (req.method.upper(), CanonicalURI(req),
+                                       CanonicalQueryString(req),
+                                       canonicalHeaders,
+                                       ";".join(sHeaders), hencode)
 
 
 def CanonicalURI(req):

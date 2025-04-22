@@ -7,6 +7,7 @@ from signer import *
 
 DateFormat = "%Y%m%dT%H%M%SZ"
 
+
 class Test(TestCase):
     def test_hmacsha256(self):
         ans = hmacsha256("abc", "abc")
@@ -36,7 +37,8 @@ class Test(TestCase):
 
     def test_findHeader(self):
         r = HttpRequest("POST",
-                               "https://30030113-3657-4fb6-a7ef-90764239b038.apigw.cn-north-1.huaweicloud.com/app1?a=1",
+                               "https://30030113-3657-4fb6-a7ef-90764239b038"
+                               ".apigw.cn-north-1.huaweicloud.com/app1?a=1",
                                {"x-stage": "RELEASE"},
                                "body")
         ans = findHeader(r, 'X-abc-Date')
@@ -46,7 +48,8 @@ class Test(TestCase):
 
     def test_CanonicalRequest(self):
         r = HttpRequest("POST",
-                        "https://30030113-3657-4fb6-a7ef-90764239b038.apigw.cn-north-1.huaweicloud.com/app1?a=1",
+                        "https://30030113-3657-4fb6-a7ef-90764239b038"
+                        ".apigw.cn-north-1.huaweicloud.com/app1?a=1",
                         {"x-stage": "RELEASE"},
                         "body")
         ans = CanonicalRequest(r, ['x-stage'])
@@ -60,7 +63,8 @@ x-stage
 
     def test_SignedHeaders(self):
         r = HttpRequest("POST",
-                        "https://30030113-3657-4fb6-a7ef-90764239b038.apigw.cn-north-1.huaweicloud.com/app1?a=1",
+                        "https://30030113-3657-4fb6-a7ef-90764239b038.\
+                        apigw.cn-north-1.huaweicloud.com/app1?a=1",
                         {"x-stage": "RELEASE"},
                         "body")
         ans = SignedHeaders(r)
@@ -68,11 +72,14 @@ x-stage
 
     def test_SignStringToSign(self):
         ans = SignStringToSign("abc", "abc")
-        self.assertEqual('2f02e24ae2e1fe880399f27600afa88364e6062bf9bbe114b32fa8f23d03608a', ans)
+        self.assertEqual('2f02e24ae2e1fe880399f27600afa88364e6062bf9bbe114b32fa8f23d03608a',
+                         ans)
 
     def test_AuthHeaderValue(self):
-        ans = AuthHeaderValue('abcdefghijklmnopqrst1234567890', 'ABCDE12345', ['content-length', 'host', 'x-sdk-date', 'x-stage'])
-        self.assertEqual('SDK-HMAC-SHA256 Access=ABCDE12345, SignedHeaders=content-length;host;x-sdk-date;x-stage, Signature=abcdefghijklmnopqrst1234567890', ans)
+        ans = AuthHeaderValue('abcdefghijklmnopqrst1234567890', 'ABCDE12345',
+                              ['content-length', 'host', 'x-sdk-date', 'x-stage'])
+        self.assertEqual('SDK-HMAC-SHA256 Access=ABCDE12345, SignedHeaders=content-length;'
+                         'host;x-sdk-date;x-stage, Signature=abcdefghijklmnopqrst1234567890', ans)
 
     @mock.patch.object(signer, 'findHeader', mock.Mock(return_value='20240326T030801Z'))
     @mock.patch.object(signer, 'CanonicalQueryString', mock.Mock(return_value='abc'))
@@ -83,7 +90,8 @@ x-stage
     @mock.patch.object(signer, 'AuthHeaderValue', mock.Mock(return_value='abcde'))
     def test_Sign(self):
         r = HttpRequest("POST",
-                        "https://30030113-3657-4fb6-a7ef-90764239b038.apigw.cn-north-1.huaweicloud.com/app1?a=1",
+                        "https://30030113-3657-4fb6-a7ef-90764239b038\
+                        .apigw.cn-north-1.huaweicloud.com/app1?a=1",
                         {"x-stage": "RELEASE"},
                         "body")
         sig = Signer()
@@ -93,7 +101,9 @@ x-stage
         self.assertEqual('abcde', r.headers["Authorization"])
         self.assertEqual('/app1?abc', r.uri)
         self.assertEqual(b'body', r.body)
-        self.assertEqual('30030113-3657-4fb6-a7ef-90764239b038.apigw.cn-north-1.huaweicloud.com', r.headers["host"])
+        self.assertEqual(
+            '30030113-3657-4fb6-a7ef-90764239b038.apigw.cn-north-1.huaweicloud.com',
+            r.headers["host"])
         self.assertEqual('4', r.headers["content-length"])
 
     @mock.patch.object(signer, 'findHeader', mock.Mock(return_value='20240326T030801Z'))
@@ -104,7 +114,8 @@ x-stage
     @mock.patch.object(signer, 'AuthHeaderValue', mock.Mock(return_value='abcde'))
     def test_Verify(self):
         r = HttpRequest("POST",
-                        "https://30030113-3657-4fb6-a7ef-90764239b038.apigw.cn-north-1.huaweicloud.com/app1?a=1",
+                        "https://30030113-3657-4fb6-a7ef-90764239b038\
+                        .apigw.cn-north-1.huaweicloud.com/app1?a=1",
                         {"x-stage": "RELEASE"},
                         "body")
         sig = Signer()

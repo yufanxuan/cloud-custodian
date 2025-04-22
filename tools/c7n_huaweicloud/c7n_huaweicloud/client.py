@@ -100,7 +100,6 @@ from huaweicloudsdkram.v1 import (
 )
 from huaweicloudsdkram.v1.region.ram_region import RamRegion
 
-
 log = logging.getLogger("custodian.huaweicloud.client")
 
 
@@ -125,7 +124,6 @@ class Session:
         self.sk = os.getenv("HUAWEI_SECRET_ACCESS_KEY") or self.sk
         self.domain_id = options.get("account_id")
 
-
     def client(self, service):
         if self.ak is None or self.sk is None:
             # basic
@@ -144,7 +142,7 @@ class Session:
                 self.ak, self.sk, os.getenv("HUAWEI_PROJECT_ID")
             ).with_security_token(self.token)
             globalCredentials = (GlobalCredentials(self.ak, self.sk, self.domain_id)
-            .with_security_token(self.token))
+                                 .with_security_token(self.token))
 
         if service == "vpc":
             client = (
@@ -296,7 +294,7 @@ class Session:
                 .build()
             )
         elif (
-            service == "cbr-backup" or service == "cbr-vault" or service == "cbr-policy"
+                service == "cbr-backup" or service == "cbr-vault" or service == "cbr-policy"
         ):
             client = (
                 CbrClient.new_builder()

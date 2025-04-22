@@ -6,7 +6,6 @@ import os
 from datetime import datetime, timedelta
 from typing import Optional, Tuple
 import requests
-from huaweicloudsdkcore.auth.credentials import BasicCredentials
 from c7n.registry import PluginRegistry
 from c7n.provider import Provider, clouds
 from .apig_sdk import signer
@@ -146,5 +145,6 @@ class HuaweiCloud(Provider):
 
     def get_session_factory(self, options):
         return HuaweiSessionFactory(options)
+
 
 resources = HuaweiCloud.resources

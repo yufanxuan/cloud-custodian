@@ -678,7 +678,7 @@ def run_account(account, region, policies_config, output_path,
         env_vars.update({"OCI_COMPARTMENTS": account.get("oci_compartments")})
 
     if account.get('agency_urn'):
-        log.info("Using Huawei Cloud agency: %s",account['agency_urn'])
+        log.info("Using Huawei Cloud agency: %s", account['agency_urn'])
         config['agency_urn'] = account['agency_urn']
         config['duration_seconds'] = account['duration_seconds']
         config['regions'] = account['regions']
