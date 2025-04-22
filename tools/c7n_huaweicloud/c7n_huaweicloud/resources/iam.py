@@ -283,9 +283,7 @@ class SetLoginProtect(HuaweiCloudBaseAction):
     )
 
     def perform_action(self, resource):
-        print("-- action begin --")
         client = local_session(self.manager.session_factory).client("iam-v3")
-        print("-- action end --")
         try:
             request = UpdateLoginProtectRequest(user_id=resource["id"])
 
@@ -338,9 +336,7 @@ class UserLoginProtect(ValueFilter):
 
     def _user_login_protect(self, resource):
         try:
-            print("-- filter begin --")
             client = local_session(self.manager.session_factory).client("iam-v3")
-            print("-- filter end --")
             request = ShowUserLoginProtectRequest(user_id=resource["id"])
             response = client.show_user_login_protect(request)
             login_protect = response.login_protect

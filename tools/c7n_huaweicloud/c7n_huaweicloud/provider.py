@@ -94,7 +94,6 @@ class HuaweiSessionFactory:
     def get_credential(self):
         if self.use_assume:
             return self._get_assumed_credentials()
-
         log.info("Using direct AK/SK credentials")
         return self.ak, self.sk, None
 
@@ -116,7 +115,6 @@ class HuaweiSessionFactory:
             resp = requests.post(url, headers=request.headers, data=request.body)
             resp.raise_for_status()
             json_resp = resp.json()
-            print(f"assumed role resp raw: {json_resp}")
             if not json_resp.get("credentials"):
                 raise ValueError("No credentials in assume role response")
             creds = json_resp["credentials"]
