@@ -120,7 +120,8 @@ class HuaweiSessionFactory:
             return creds["access_key_id"], creds["secret_access_key"], creds["security_token"]
 
         except requests.exceptions.HTTPError as e:
-            log.error(f"Assume role request failed with status {e.response.status_code}")
+            log.error(f"Assume role request failed with status:{e.response.status_code}, "
+                      f"exception: {str(e)}")
             raise ValueError(f"Assume role failed: {str(e)}")
         except (KeyError, ValueError) as e:
             log.error(f"Invalid assume role response: {str(e)}")

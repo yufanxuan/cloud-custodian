@@ -107,23 +107,25 @@ class Session:
     """Session"""
 
     def __init__(self, options=None):
-        self.region = os.getenv("HUAWEI_DEFAULT_REGION") or options.region
         self.token = None
         self.domain_id = None
-        if not self.region:
-            log.error(
-                "No default region set. Specify a default via HUAWEI_DEFAULT_REGION"
-            )
-            sys.exit(1)
 
         if options is not None:
             self.ak = options.get("access_key_id")
             self.sk = options.get("secret_access_key")
             self.token = options.get("security_token")
             self.domain_id = options.get("account_id")
+            self.region = options.get("region")
 
         self.ak = os.getenv("HUAWEI_ACCESS_KEY_ID") or self.ak
         self.sk = os.getenv("HUAWEI_SECRET_ACCESS_KEY") or self.sk
+        self.region = os.getenv("HUAWEI_DEFAULT_REGION") or self.region
+
+        if not self.region:
+            log.error(
+                "No default region set. Specify a default via HUAWEI_DEFAULT_REGION"
+            )
+            sys.exit(1)
 
     def client(self, service):
         if self.ak is None or self.sk is None:
