@@ -684,7 +684,7 @@ class AllowAllIamPolicies(ValueFilter):
             "%s of %s iam policies have allow all.",
             len(results), len(resources))
         for res in results:
-            self.log.info("allow all iam policy id: ", res['policy_id'])
+            self.log.info("allow all iam policy id: %s", res['policy_id'])
         return results
 
 
