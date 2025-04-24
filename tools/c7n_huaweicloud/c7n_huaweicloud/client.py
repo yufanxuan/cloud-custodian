@@ -132,6 +132,9 @@ class Session:
             sys.exit(1)
 
     def client(self, service):
+        log.warning(f"region11: {self.region}")
+        log.warning(f"ak1: {self.ak}")
+        log.warning(f"sk1: {self.sk}")
         if self.ak is None or self.sk is None:
             # basic
             basic_provider = (
