@@ -388,13 +388,11 @@ class QueryResourceManager(ResourceManager, metaclass=QueryMeta):
         return self.resource_type.get(self.get_client(), resource_info)
 
     def get_resources(self, resource_ids):
-        print(f"resource_ids: {resource_ids}")
         resources = self.augment(self.source.get_resources(self.get_resource_query())) or []
         result = []
         for resource in resources:
             if resource["id"] in resource_ids:
                 result.append(resource)
-        print(f"resource: {result}")
         return result
 
     @property
