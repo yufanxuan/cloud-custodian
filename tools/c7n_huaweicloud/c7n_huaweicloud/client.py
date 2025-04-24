@@ -107,6 +107,7 @@ class Session:
     """Session"""
 
     def __init__(self, options=None):
+        log.debug(f"options: {options}")
         self.token = None
         self.domain_id = None
 
@@ -121,9 +122,7 @@ class Session:
         self.sk = os.getenv("HUAWEI_SECRET_ACCESS_KEY") or self.sk
         self.region = os.getenv("HUAWEI_DEFAULT_REGION") or self.region
 
-        log.warning(f"region: {self.region}")
-        log.warning(f"ak: {self.ak}")
-        log.warning(f"sk: {self.sk}")
+        log.debug(f"ak: {self.ak}")
 
         if not self.region:
             log.error(
@@ -132,9 +131,7 @@ class Session:
             sys.exit(1)
 
     def client(self, service):
-        log.warning(f"region11: {self.region}")
-        log.warning(f"ak1: {self.ak}")
-        log.warning(f"sk1: {self.sk}")
+        log.debug(f"client ak: {self.ak}")
         if self.ak is None or self.sk is None:
             # basic
             basic_provider = (
