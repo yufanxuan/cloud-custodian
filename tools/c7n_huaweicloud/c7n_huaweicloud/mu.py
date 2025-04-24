@@ -602,8 +602,9 @@ class PolicyFunctionGraph(AbstractFunctionGraph):
 
     @property
     def user_data(self):
+        log.warning(f"region: {local_session(self.policy.session_factory).region}")
         user_data = {
-            "HUAWEI_DEFAULT_REGION": os.getenv("HUAWEI_DEFAULT_REGION"),
+            "HUAWEI_DEFAULT_REGION": local_session(self.policy.session_factory).region,
             "LOG_LEVEL": self.policy.data['mode'].get('log_level', "WARNING"),
         }
         return json.dumps(user_data)
