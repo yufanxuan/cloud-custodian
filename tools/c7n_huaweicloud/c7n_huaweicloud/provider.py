@@ -117,7 +117,7 @@ class HuaweiSessionFactory:
             if not json_resp.get("credentials"):
                 raise ValueError("No credentials in assume role response")
             creds = json_resp["credentials"]
-            log.debug(f"get v5 assume ak is: {creds["access_key_id"]}")
+            log.warning(f"get v5 assume ak is: {creds["access_key_id"]}")
             return creds["access_key_id"], creds["secret_access_key"], creds["security_token"]
 
         except requests.exceptions.HTTPError as e:

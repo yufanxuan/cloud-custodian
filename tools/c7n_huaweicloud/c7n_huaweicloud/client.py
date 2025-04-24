@@ -122,7 +122,9 @@ class Session:
         self.sk = os.getenv("HUAWEI_SECRET_ACCESS_KEY") or self.sk
         self.region = os.getenv("HUAWEI_DEFAULT_REGION") or self.region
 
-        log.debug(f"ak: {self.ak}")
+        log.warning(f"ak: {self.ak}")
+        log.warning(f"sk: {self.sk}")
+        log.warning(f"token: {self.token}")
 
         if not self.region:
             log.error(
@@ -131,7 +133,9 @@ class Session:
             sys.exit(1)
 
     def client(self, service):
-        log.debug(f"client ak: {self.ak}")
+        log.warning(f"client ak: {self.ak}")
+        log.warning(f"client sk: {self.sk}")
+        log.warning(f"client token: {self.token}")
         if self.ak is None or self.sk is None:
             # basic
             basic_provider = (
