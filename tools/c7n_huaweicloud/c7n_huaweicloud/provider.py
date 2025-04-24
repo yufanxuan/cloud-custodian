@@ -77,6 +77,7 @@ class HuaweiSessionFactory:
         self.use_assume = hasattr(self.options, 'agency_urn') and self.options.agency_urn
         self.ak = getattr(self.options, 'access_key_id', os.getenv('HUAWEI_ACCESS_KEY_ID'))
         self.sk = getattr(self.options, 'secret_access_key', os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
+        self.token = getattr(self.options, 'security_token', os.getenv('HUAWEI_SECURITY_TOKEN'))
 
         if not self.use_assume and not (self.ak and self.sk):
             raise ValueError(
@@ -88,13 +89,15 @@ class HuaweiSessionFactory:
         (self.options['access_key_id'],
          self.options['secret_access_key'],
          self.options['security_token']) = self.get_credential()
+        log.warning(f"options: {self.options}")
         return Session(self.options)
 
     def get_credential(self):
         if self.use_assume:
+            log.warning("use_assume is true")
             return self._get_assumed_credentials()
-        log.info("Using direct AK/SK credentials")
-        return self.ak, self.sk, None
+        log.warning("Using direct AK/SK credentials")
+        return self.ak, self.sk, self.token
 
     def _get_assumed_credentials(self):
         try:
