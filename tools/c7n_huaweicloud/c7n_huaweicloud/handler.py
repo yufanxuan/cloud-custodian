@@ -42,6 +42,9 @@ def run(event, context=None):
     options_overrides['secret_access_key'] = context.getSecuritySecretKey()
     options_overrides['security_token'] = context.getSecurityToken()
 
+    log.warning(f"ak: {context.getSecurityAccessKey()}")
+    log.warning(f"sk: {context.getSecuritySecretKey()}")
+
     # merge all our options in
     options = Config.empty(**options_overrides)
 

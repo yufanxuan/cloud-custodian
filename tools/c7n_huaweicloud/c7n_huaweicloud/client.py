@@ -121,6 +121,10 @@ class Session:
         self.sk = os.getenv("HUAWEI_SECRET_ACCESS_KEY") or self.sk
         self.region = os.getenv("HUAWEI_DEFAULT_REGION") or self.region
 
+        log.warning(f"region: {self.region}")
+        log.warning(f"ak: {self.ak}")
+        log.warning(f"sk: {self.sk}")
+
         if not self.region:
             log.error(
                 "No default region set. Specify a default via HUAWEI_DEFAULT_REGION"
