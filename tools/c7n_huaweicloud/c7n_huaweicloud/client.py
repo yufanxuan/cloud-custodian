@@ -117,6 +117,8 @@ class Session:
             self.token = options.get("security_token")
             self.domain_id = options.get("account_id")
             self.region = options.get("region")
+            if hasattr(options, 'agency_urn'):
+                os.putenv("HUAWEI_DEFAULT_REGION", options.get("region"))
 
         self.ak = os.getenv("HUAWEI_ACCESS_KEY_ID") or self.ak
         self.sk = os.getenv("HUAWEI_SECRET_ACCESS_KEY") or self.sk
