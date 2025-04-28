@@ -8,8 +8,6 @@ from huaweicloudsdkorganizations.v1 import ListAccountsRequest
 from c7n.utils import yaml_dump
 from tools.c7n_huaweicloud.c7n_huaweicloud.client import Session
 
-NAME_TEMPLATE = "{name}"
-
 
 def get_next_page_params(response=None):
     if not response:
@@ -21,32 +19,33 @@ def get_next_page_params(response=None):
 
 @click.command()
 @click.option(
-    '-f', '--output', type=click.File('w'),
+    '-f', '--output',
+    type=click.File('w'), required=True,
     help="File to store the generated config (default stdout)")
 @click.option(
-    '-s', '--state', multiple=True, type=click.Choice(
-        ['Enabled', 'Warned', 'PastDue', 'Disabled', 'Deleted']),
-    default=('Enabled',),
-    help="File to store the generated config (default stdout)")
+    '-n', '--agency_name',
+    type=str, default='custodian_agency',
+    help="trust agency name")
 @click.option(
-    '--name',
-    default=NAME_TEMPLATE,
-    help="Name template for subscriptions in the config, defaults to %s" % NAME_TEMPLATE)
-def main(output, agency_name, duration_seconds):
+    '-d', '--duration_seconds',
+    default=900, type=int,
+    help="assume session duration second.")
+@click.option(
+'-r', '--regions', multiple = True, type = str,
+default = ('cn-north-4',),
+help = "File to store the generated config (default stdout)")
+def main(output, agency_name, duration_seconds, regions):
     """
     Generate a c7n-org huawei cloud accounts config file
     """
-    if not duration_seconds:
-        duration_seconds = 900
-    if not agency_name:
-        agency_name = "custodian_agency"
-
+    print(f"regions: {regions}")
     accounts = []
     marker = None
     while True:
         client = Session().client("org-account")
         request = ListAccountsRequest(limit=1000, marker=marker)
         response = client.list_accounts(request)
+        print(f"response: {response}")
         marker = get_next_page_params(response)
         for account in response.accounts:
             accounts.append(account.id)
@@ -59,8 +58,8 @@ def main(output, agency_name, duration_seconds):
             'name': account['name'],
             'domain_id': account['id'],
             'agency_urn': f"iam::{account['id']}:agency:{agency_name}",
-            'duration_seconds': duration_seconds
-
+            'duration_seconds': duration_seconds,
+            'regions': regions
         }
         results.append(acc_info)
 
