@@ -39,10 +39,12 @@ def main(output, agency_name, duration_seconds, regions):
     Generate a c7n-org huawei cloud accounts config file
     """
     print(f"regions: {regions}")
+    options = {"region": regions[0]}
+    print(f"options: {options}")
     accounts = []
     marker = None
     while True:
-        client = Session().client("org-account")
+        client = Session(options).client("org-account")
         request = ListAccountsRequest(limit=1000, marker=marker)
         response = client.list_accounts(request)
         print(f"response: {response}")
