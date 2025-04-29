@@ -113,7 +113,6 @@ class Session:
     def __init__(self, options=None):
         self.token = None
         self.domain_id = None
-        print(f"options1")
         print(f"options1: {options}")
 
         if options is not None:
@@ -153,7 +152,7 @@ class Session:
             ).with_security_token(self.token)
             globalCredentials = (GlobalCredentials(self.ak, self.sk, self.domain_id)
                                  .with_security_token(self.token))
-
+        client = None
         if service == "vpc":
             client = (
                 VpcClientV3.new_builder()
