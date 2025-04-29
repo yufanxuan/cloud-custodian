@@ -6,7 +6,7 @@ import jmespath
 from huaweicloudsdkorganizations.v1 import ListAccountsRequest
 
 from c7n.utils import yaml_dump
-from tools.c7n_huaweicloud.c7n_huaweicloud.client import Session
+from c7n_huaweicloud.client import Session
 
 
 def get_next_page_params(response=None):
