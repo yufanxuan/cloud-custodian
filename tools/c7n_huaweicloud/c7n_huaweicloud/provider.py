@@ -37,12 +37,6 @@ class HuaweiSessionFactory:
         self.sk = getattr(self.options, 'secret_access_key', os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
         self.token = getattr(self.options, 'security_token', os.getenv('HUAWEI_SECURITY_TOKEN'))
 
-        if not self.use_assume and not (self.ak and self.sk):
-            raise ValueError(
-                "Either agency_urn (for assume role) or "
-                "access_key_id/secret_access_key must be configured"
-            )
-
     def __call__(self, assume=True, region=None):
         (self.options['access_key_id'],
          self.options['secret_access_key'],
@@ -53,7 +47,6 @@ class HuaweiSessionFactory:
         if self.use_assume:
             log.info("get v5 assume credential.")
             return self._get_assumed_credentials()
-        log.info("Using direct AK/SK credentials")
         return self.ak, self.sk, self.token
 
     def _get_assumed_credentials(self):
