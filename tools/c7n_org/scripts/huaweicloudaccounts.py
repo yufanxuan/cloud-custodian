@@ -43,8 +43,8 @@ def main(output, agency_name, duration_seconds, regions):
     print(f"options: {options}")
     accounts = []
     marker = None
+    client = Session(options).client("org-account")
     while True:
-        client = Session(options).client("org-account")
         request = ListAccountsRequest(limit=1000, marker=marker)
         response = client.list_accounts(request)
         print(f"response: {response}")
