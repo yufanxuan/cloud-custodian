@@ -43,6 +43,7 @@ def main(output, agency_name, duration_seconds, regions):
     print(f"options: {options}")
     accounts = []
     marker = None
+    print("----")
     session = Session(options)
     print(f"session: {session}")
     client = session.client("org-account")

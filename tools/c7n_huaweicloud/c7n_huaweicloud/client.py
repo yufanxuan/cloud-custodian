@@ -113,6 +113,7 @@ class Session:
     def __init__(self, options=None):
         self.token = None
         self.domain_id = None
+        print("--111--")
         print(f"options1: {options}")
 
         if options is not None:
