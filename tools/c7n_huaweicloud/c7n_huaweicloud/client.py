@@ -129,8 +129,9 @@ class Session:
         self.region = os.getenv("HUAWEI_DEFAULT_REGION") or self.region
 
         if not self.region:
+            print("222")
             log.error(
-                "No default region set. Specify a default via HUAWEI_DEFAULT_REGION"
+                "No default region set. Specify a default via HUAWEI_DEFAULT_REGION."
             )
             sys.exit(1)
 
