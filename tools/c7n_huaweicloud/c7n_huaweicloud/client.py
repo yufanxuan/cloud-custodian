@@ -113,15 +113,12 @@ class Session:
     def __init__(self, options=None):
         self.token = None
         self.domain_id = None
-        print("--111--")
-        print(f"options1: {options}")
 
         if options is not None:
             self.ak = options.get("access_key_id")
             self.sk = options.get("secret_access_key")
             self.token = options.get("security_token")
             self.domain_id = options.get("domain_id")
-            print(f"options.get('region'): {options.get("region")}")
             self.region = options.get("region")
 
         self.ak = os.getenv("HUAWEI_ACCESS_KEY_ID") or self.ak
@@ -129,7 +126,6 @@ class Session:
         self.region = os.getenv("HUAWEI_DEFAULT_REGION") or self.region
 
         if not self.region:
-            print("222")
             log.error(
                 "No default region set. Specify a default via HUAWEI_DEFAULT_REGION."
             )

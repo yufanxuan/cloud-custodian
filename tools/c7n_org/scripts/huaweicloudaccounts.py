@@ -38,14 +38,10 @@ def main(output, agency_name, duration_seconds, regions):
     """
     Generate a c7n-org huawei cloud accounts config file
     """
-    print(f"regions: {regions}")
-    options = {"region": regions[0]}
-    print(f"options: {options}")
+    options = {"region": 'cn-north-4'}
     accounts = []
     marker = None
-    print("----")
     session = Session(options)
-    print(f"session: {session}")
     client = session.client("org-account")
     print(f"client: {client}")
     while True:
