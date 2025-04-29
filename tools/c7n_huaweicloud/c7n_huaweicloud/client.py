@@ -113,7 +113,8 @@ class Session:
     def __init__(self, options=None):
         self.token = None
         self.domain_id = None
-        print(f"options: {options}")
+        print(f"options1")
+        print(f"options1: {options}")
 
         if options is not None:
             self.ak = options.get("access_key_id")
