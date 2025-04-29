@@ -112,12 +112,14 @@ class Session:
 
     def __init__(self, options=None):
         self.token = None
+        self.domain_id = None
         print(f"options: {options}")
 
         if options is not None:
             self.ak = options.get("access_key_id")
             self.sk = options.get("secret_access_key")
             self.token = options.get("security_token")
+            self.domain_id = options.get("domain_id")
             print(f"options.get('region'): {options.get("region")}")
             self.region = options.get("region")
 
@@ -148,7 +150,7 @@ class Session:
             credentials = BasicCredentials(
                 self.ak, self.sk, os.getenv("HUAWEI_PROJECT_ID")
             ).with_security_token(self.token)
-            globalCredentials = (GlobalCredentials(self.ak, self.sk)
+            globalCredentials = (GlobalCredentials(self.ak, self.sk, self.domain_id)
                                  .with_security_token(self.token))
 
         if service == "vpc":
