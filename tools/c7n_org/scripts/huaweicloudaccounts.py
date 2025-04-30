@@ -17,6 +17,7 @@ def get_next_page_params(response=None):
         return None
     return page_info.get("next_marker")
 
+
 @click.command()
 @click.option(
     '-f', '--output',
@@ -31,9 +32,9 @@ def get_next_page_params(response=None):
     default=900, type=int,
     help="assume session duration second.")
 @click.option(
-'-r', '--regions', multiple = True, type = str,
-default = ('cn-north-4',),
-help = "File to store the generated config (default stdout)")
+'-r', '--regions', multiple=True, type=str,
+default=('cn-north-4',),
+help="File to store the generated config (default stdout)")
 def main(output, agency_name, duration_seconds, regions):
     """
     Generate a c7n-org huawei cloud accounts config file
