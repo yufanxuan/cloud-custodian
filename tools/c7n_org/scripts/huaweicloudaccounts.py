@@ -43,19 +43,21 @@ def main(output, agency_name, duration_seconds, regions):
     marker = None
     session = Session(options)
     client = session.client("org-account")
-    print(f"client: {client}")
     while True:
         request = ListAccountsRequest(limit=1000, marker=marker)
         response = client.list_accounts(request)
         print(f"response: {response}")
         marker = get_next_page_params(response)
         for account in response.accounts:
-            accounts.append(account.id)
+            accounts.append(account)
         if not marker:
             break
-
+    print(f"accounts:{accounts}")
+    print(f"response.accounts:{response.accounts}")
     results = []
     for account in accounts:
+        print(f"account['name']:{account['name']}")
+        print(f"account.get('name'):{account.get('name')}")
         acc_info = {
             'name': account['name'],
             'domain_id': account['id'],

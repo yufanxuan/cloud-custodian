@@ -144,8 +144,6 @@ class Session:
                 MetadataCredentialProvider.get_global_credential_metadata_provider()
             )
             globalCredentials = global_provider.get_credentials()
-            print(f"globalCredentials, {globalCredentials.ak}, {globalCredentials.sk}, "
-                  f"{globalCredentials.domain_id}, {globalCredentials.security_token}")
         else:
             credentials = BasicCredentials(
                 self.ak, self.sk, os.getenv("HUAWEI_PROJECT_ID")
