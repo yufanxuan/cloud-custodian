@@ -114,6 +114,7 @@ class Session:
         self.token = None
         self.domain_id = None
 
+        print(f"options: {options}")
         if options is not None:
             self.ak = options.get("access_key_id")
             self.sk = options.get("secret_access_key")

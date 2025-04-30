@@ -18,6 +18,7 @@ log = logging.getLogger("custodian.huaweicloud.provider")
 
 credential = Credentials()
 
+
 def get_credentials():
     if (not credential.security_token or
             credential._expired_at - time_utils.get_timestamp_utc() < 60):
