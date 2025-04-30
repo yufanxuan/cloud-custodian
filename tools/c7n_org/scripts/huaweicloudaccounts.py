@@ -22,7 +22,7 @@ def get_next_page_params(response=None):
 @click.option(
     '-f', '--output',
     type=click.File('w'), default='accounts.yml',
-    help="File to store the generated config (default stdout)")
+    help="File to store the generated config. default: ./accounts.yml")
 @click.option(
     '-n', '--agency_name',
     type=str, default='custodian_agency',
