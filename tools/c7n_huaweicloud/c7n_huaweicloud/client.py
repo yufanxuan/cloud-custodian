@@ -111,15 +111,22 @@ class Session:
     """Session"""
 
     def __init__(self, options=None):
-        self.ak = (options.get("access_key_id") if "access_key_id" in options
-                   else os.getenv("HUAWEI_ACCESS_KEY_ID"))
-        self.sk = (options.get("secret_access_key") if "secret_access_key" in options
-                   else os.getenv("HUAWEI_SECRET_ACCESS_KEY"))
-        self.token = (options.get("security_token") if "security_token" in options
-                   else os.getenv("HUAWEI_SECURITY_TOKEN"))
-        self.region = (options.get("region") if "region" in options
-                   else os.getenv("HUAWEI_DEFAULT_REGION"))
-        self.domain_id = options.get("domain_id")
+        self.token = None
+        self.domain_id = None
+        self.region = None
+        self.ak = None
+        self.sk = None
+
+        if options is not None:
+            self.ak = options.get("access_key_id")
+            self.sk = options.get("secret_access_key")
+            self.token = options.get("security_token")
+            self.domain_id = options.get("domain_id")
+            self.region = options.get("region")
+
+        self.ak = self.ak or os.getenv("HUAWEI_ACCESS_KEY_ID")
+        self.sk = self.sk or os.getenv("HUAWEI_SECRET_ACCESS_KEY")
+        self.region = self.region or os.getenv("HUAWEI_DEFAULT_REGION")
 
         if not self.region:
             log.error(
