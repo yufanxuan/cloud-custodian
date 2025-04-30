@@ -62,7 +62,7 @@ def main(output, agency_name, duration_seconds, regions):
         }
         results.append(acc_info)
 
-    print(yaml_dump({'accounts': results}), file=output)
+    print(yaml_dump({'domains': results}), file=output)
 
 
 if __name__ == '__main__':
