@@ -56,12 +56,11 @@ def main(output, agency_name, duration_seconds, regions):
     print(f"response.accounts:{response.accounts}")
     results = []
     for account in accounts:
-        print(f"account['name']:{account['name']}")
         print(f"account.get('name'):{account.get('name')}")
         acc_info = {
-            'name': account['name'],
-            'domain_id': account['id'],
-            'agency_urn': f"iam::{account['id']}:agency:{agency_name}",
+            'name': account.get('name'),
+            'domain_id': account.get('id'),
+            'agency_urn': f"iam::{account.get('id')}:agency:{agency_name}",
             'duration_seconds': duration_seconds,
             'regions': regions
         }
