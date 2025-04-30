@@ -113,6 +113,7 @@ class Session:
     def __init__(self, options=None):
         self.token = None
         self.domain_id = None
+        self.region = None
 
         if options is not None:
             self.ak = options.get("access_key_id")
@@ -120,6 +121,8 @@ class Session:
             self.token = options.get("security_token")
             self.domain_id = options.get("domain_id")
             self.region = options.get("region")
+        if not self.region:
+            self.region = os.getenv("HUAWEI_DEFAULT_REGION")
 
         if not self.region:
             log.error(
