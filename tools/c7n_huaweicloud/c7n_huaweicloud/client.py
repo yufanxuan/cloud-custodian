@@ -122,10 +122,6 @@ class Session:
             self.domain_id = options.get("domain_id")
             self.region = options.get("region")
 
-        self.ak = os.getenv("HUAWEI_ACCESS_KEY_ID") or self.ak
-        self.sk = os.getenv("HUAWEI_SECRET_ACCESS_KEY") or self.sk
-        self.region = os.getenv("HUAWEI_DEFAULT_REGION") or self.region
-
         if not self.region:
             log.error(
                 "No default region set. Specify a default via HUAWEI_DEFAULT_REGION."

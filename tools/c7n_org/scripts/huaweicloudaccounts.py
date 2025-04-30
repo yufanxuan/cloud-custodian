@@ -21,20 +21,20 @@ def get_next_page_params(response=None):
 @click.command()
 @click.option(
     '-f', '--output',
-    type=click.File('w'), required=True,
+    type=click.File('w'), default='accounts.yml',
     help="File to store the generated config (default stdout)")
 @click.option(
     '-n', '--agency_name',
     type=str, default='custodian_agency',
-    help="trust agency name")
+    help="trust agency name. default:custodian_agency")
 @click.option(
     '-d', '--duration_seconds',
     default=900, type=int,
-    help="assume session duration second.")
+    help="assume session duration second. default:900")
 @click.option(
-'-r', '--regions', multiple=True, type=str,
-default=('cn-north-4',),
-help="File to store the generated config (default stdout)")
+'-r', '--regions',
+    multiple=True, type=str, default=('cn-north-4',),
+    help="huaweicloud region for executing policy. default:cn-north-4")
 def main(output, agency_name, duration_seconds, regions):
     """
     Generate a c7n-org huawei cloud accounts config file

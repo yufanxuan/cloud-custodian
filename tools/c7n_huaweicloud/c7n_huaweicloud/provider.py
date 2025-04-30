@@ -38,10 +38,13 @@ class HuaweiSessionFactory:
         self.sk = getattr(self.options, 'secret_access_key', os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
         self.token = getattr(self.options, 'security_token', os.getenv('HUAWEI_SECURITY_TOKEN'))
 
-    def __call__(self, assume=True, region=None):
+    def __call__(self):
         (self.options['access_key_id'],
          self.options['secret_access_key'],
          self.options['security_token']) = self.get_credential()
+        if not self.options['region']:
+            self.options['region'] = os.getenv("HUAWEI_DEFAULT_REGION")
+
         return Session(self.options)
 
     def get_credential(self):
