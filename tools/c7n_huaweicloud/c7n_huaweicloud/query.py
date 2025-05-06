@@ -13,7 +13,7 @@ from c7n.utils import local_session
 from c7n_huaweicloud.actions.tms import register_tms_actions
 from c7n_huaweicloud.filters.tms import register_tms_filters
 
-from c7n_huaweicloud.marker_pagination import MarkerPagination
+from .utils.marker_pagination import MarkerPagination
 
 from huaweicloudsdkcore.exceptions import exceptions
 
