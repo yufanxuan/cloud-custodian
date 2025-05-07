@@ -24,9 +24,21 @@ def get_next_page_params(response=None):
     type=click.File('w'), default='accounts.yml',
     help="File to store the generated config. default: ./accounts.yml")
 @click.option(
-    '-n', '--agency_name',
+    '-a', '--agency_name',
     type=str, default='custodian_agency',
     help="trust agency name. default:custodian_agency")
+@click.option(
+'-n', '--name',
+    multiple=True, type=str,
+    help="The account name specified for the query")
+@click.option(
+'o', '--ou_ids',
+    multiple=True, type=str,
+    help="The Organizational Unit id specified for the query")
+@click.option(
+'-s', '--status',
+    multiple=True, type=str,
+    help="The account status specified for the query")
 @click.option(
     '-d', '--duration_seconds',
     default=900, type=int,
@@ -35,7 +47,7 @@ def get_next_page_params(response=None):
 '-r', '--regions',
     multiple=True, type=str, default=('cn-north-4',),
     help="huaweicloud region for executing policy. default:cn-north-4")
-def main(output, agency_name, duration_seconds, regions):
+def main(output, agency_name, name, ou_id, status, duration_seconds, regions):
     """
     Generate a c7n-org huawei cloud accounts config file
     """
@@ -44,14 +56,28 @@ def main(output, agency_name, duration_seconds, regions):
     marker = None
     session = Session(options)
     client = session.client("org-account")
+    print(f"name:{name}")
+    print(f"ou_id:{ou_id}")
+    ou_id_len = len(ou_id)
     while True:
-        request = ListAccountsRequest(limit=1000, marker=marker)
-        response = client.list_accounts(request)
-        marker = get_next_page_params(response)
-        for account in response.accounts:
-            accounts.append(account)
-        if not marker:
+        ou_id_len = ou_id_len - 1
+        while True:
+            request = ListAccountsRequest(limit=1000, marker=marker)
+            response = client.list_accounts(request)
+            marker = get_next_page_params(response)
+
+            for account in response.accounts:
+                if name and account.name not in name:
+                    continue
+                if status and account.status not in status:
+                    continue
+                accounts.append(account)
+
+            if not marker:
+                break
+        if ou_id_len <= 0:
             break
+
     results = []
     for account in accounts:
         acc_info = {
