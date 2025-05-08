@@ -12,11 +12,14 @@ from c7n_huaweicloud.client import Session
 def get_next_page_params(response=None):
     if not response:
         return None
-    page_info = jmespath.search("page_info", response)
+    page_info = response.page_info
     print(f"page_info:{page_info}")
     if not page_info:
         return None
-    return page_info.get("next_marker")
+    next_marker = page_info.next_marker
+    if not next_marker:
+        return None
+    return next_marker
 
 
 @click.command()
