@@ -53,23 +53,18 @@ def main(output, agency_name, name, ou_ids, status, duration_seconds, regions):
     """
     Generate a c7n-org huawei cloud accounts config file
     """
-    options = {"region": 'cn-north-4'}
     accounts = []
     marker = None
+    index = 0
+    ou_id_len = len(ou_ids)
+    options = {"region": 'cn-north-4'}
     session = Session(options)
     client = session.client("org-account")
-    print(f"ou_ids:{ou_ids}")
-    ou_id_len = len(ou_ids)
-    index = 0
-    print(f"ou_id:{ou_ids[index]}")
     while True:
-        print(f"ou_id_len:{ou_id_len}")
         while True:
             parent_id = None if ou_id_len == 0 else ou_ids[index]
-            print(f"parent_id{parent_id}")
             request = ListAccountsRequest(parent_id=parent_id, limit=1000, marker=marker)
             response = client.list_accounts(request)
-            print(f"response{response}")
             marker = get_next_page_params(response)
             for account in response.accounts:
                 if name and account.name not in name:
@@ -84,7 +79,7 @@ def main(output, agency_name, name, ou_ids, status, duration_seconds, regions):
         if ou_id_len - index <= 0:
             break
 
-    print(f"3{accounts}")
+    print(f"accounts{accounts}")
     results = []
     for account in accounts:
         acc_info = {
