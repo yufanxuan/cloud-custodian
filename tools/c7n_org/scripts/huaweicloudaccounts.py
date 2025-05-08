@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import click
-import jmespath
 from huaweicloudsdkorganizations.v1 import ListAccountsRequest
 
 from c7n.utils import yaml_dump
@@ -13,7 +12,6 @@ def get_next_page_params(response=None):
     if not response:
         return None
     page_info = response.page_info
-    print(f"page_info:{page_info}")
     if not page_info:
         return None
     next_marker = page_info.next_marker
@@ -60,18 +58,19 @@ def main(output, agency_name, name, ou_ids, status, duration_seconds, regions):
     marker = None
     session = Session(options)
     client = session.client("org-account")
-    print(f"name:{name}")
-    print(f"ou_id:{ou_ids}")
+    print(f"ou_ids:{ou_ids}")
     ou_id_len = len(ou_ids)
+    index = 0
+    print(f"ou_id:{ou_ids[index]}")
     while True:
-        ou_id_len = ou_id_len - 1
         print(f"ou_id_len:{ou_id_len}")
         while True:
-            request = ListAccountsRequest(limit=1000, marker=marker)
+            parent_id = None if ou_id_len == 0 else ou_ids[index]
+            print(f"parent_id{parent_id}")
+            request = ListAccountsRequest(parent_id=parent_id, limit=1000, marker=marker)
             response = client.list_accounts(request)
             print(f"response{response}")
             marker = get_next_page_params(response)
-            print(f"marker{marker}")
             for account in response.accounts:
                 if name and account.name not in name:
                     continue
@@ -81,8 +80,10 @@ def main(output, agency_name, name, ou_ids, status, duration_seconds, regions):
 
             if not marker:
                 break
-        if ou_id_len <= 0:
+        index += 1
+        if ou_id_len - index <= 0:
             break
+
     print(f"3{accounts}")
     results = []
     for account in accounts:
