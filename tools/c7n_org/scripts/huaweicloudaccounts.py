@@ -32,7 +32,7 @@ def get_next_page_params(response=None):
     multiple=True, type=str,
     help="The account name specified for the query")
 @click.option(
-'o', '--ou_ids',
+'-o', '--ou_ids',
     multiple=True, type=str,
     help="The Organizational Unit id specified for the query")
 @click.option(
@@ -47,7 +47,7 @@ def get_next_page_params(response=None):
 '-r', '--regions',
     multiple=True, type=str, default=('cn-north-4',),
     help="huaweicloud region for executing policy. default:cn-north-4")
-def main(output, agency_name, name, ou_id, status, duration_seconds, regions):
+def main(output, agency_name, name, ou_ids, status, duration_seconds, regions):
     """
     Generate a c7n-org huawei cloud accounts config file
     """
@@ -57,8 +57,8 @@ def main(output, agency_name, name, ou_id, status, duration_seconds, regions):
     session = Session(options)
     client = session.client("org-account")
     print(f"name:{name}")
-    print(f"ou_id:{ou_id}")
-    ou_id_len = len(ou_id)
+    print(f"ou_id:{ou_ids}")
+    ou_id_len = len(ou_ids)
     while True:
         ou_id_len = ou_id_len - 1
         while True:
@@ -93,4 +93,4 @@ def main(output, agency_name, name, ou_id, status, duration_seconds, regions):
 
 
 if __name__ == '__main__':
-    main()
+    main(,
