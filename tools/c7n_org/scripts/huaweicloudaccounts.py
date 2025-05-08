@@ -79,7 +79,6 @@ def main(output, agency_name, name, ou_ids, status, duration_seconds, regions):
         if ou_id_len - index <= 0:
             break
 
-    print(f"accounts{accounts}")
     results = []
     for account in accounts:
         acc_info = {
