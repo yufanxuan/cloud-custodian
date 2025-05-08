@@ -13,6 +13,7 @@ def get_next_page_params(response=None):
     if not response:
         return None
     page_info = jmespath.search("page_info", response)
+    print(f"page_info:{page_info}")
     if not page_info:
         return None
     return page_info.get("next_marker")
@@ -61,11 +62,13 @@ def main(output, agency_name, name, ou_ids, status, duration_seconds, regions):
     ou_id_len = len(ou_ids)
     while True:
         ou_id_len = ou_id_len - 1
+        print(f"ou_id_len:{ou_id_len}")
         while True:
             request = ListAccountsRequest(limit=1000, marker=marker)
             response = client.list_accounts(request)
+            print(f"response{response}")
             marker = get_next_page_params(response)
-
+            print(f"marker{marker}")
             for account in response.accounts:
                 if name and account.name not in name:
                     continue
@@ -77,7 +80,7 @@ def main(output, agency_name, name, ou_ids, status, duration_seconds, regions):
                 break
         if ou_id_len <= 0:
             break
-
+    print(f"3{accounts}")
     results = []
     for account in accounts:
         acc_info = {
@@ -93,4 +96,4 @@ def main(output, agency_name, name, ou_ids, status, duration_seconds, regions):
 
 
 if __name__ == '__main__':
-    main(,
+    main()
