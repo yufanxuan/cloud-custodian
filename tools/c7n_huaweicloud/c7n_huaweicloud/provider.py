@@ -9,10 +9,10 @@ from huaweicloudsdkcore.utils import time_utils
 
 from c7n.registry import PluginRegistry
 from c7n.provider import Provider, clouds
-from .client import Session
+from c7n_huaweicloud.client import Session
 
-from .resources.resource_map import ResourceMap
-from .utils.signer import Signer, HttpRequest
+from c7n_huaweicloud.resources.resource_map import ResourceMap
+from c7n_huaweicloud.utils.signer import Signer, HttpRequest
 
 log = logging.getLogger("custodian.huaweicloud.provider")
 
