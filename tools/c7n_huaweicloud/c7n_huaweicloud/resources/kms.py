@@ -23,6 +23,7 @@ class Kms(QueryResourceManager):
         enum_spec = ("list_keys", 'key_details', 'offset')
         id = 'key_id'
         tag_resource_type = 'kms'
+        config_resource_support = True
 
 
 @Kms.action_registry.register("enable_key_rotation")
