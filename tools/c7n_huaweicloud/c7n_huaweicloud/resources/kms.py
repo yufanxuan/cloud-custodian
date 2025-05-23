@@ -6,7 +6,7 @@ import uuid
 
 from huaweicloudsdkkms.v2 import (EnableKeyRotationRequest, OperateKeyRequestBody,
                                   DisableKeyRotationRequest, EnableKeyRequest,
-                                  DisableKeyRequest)
+                                  DisableKeyRequest, CreateKeyRequest, CreateKeyRequestBody)
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema
 from c7n_huaweicloud.actions.base import HuaweiCloudBaseAction
@@ -180,6 +180,42 @@ class disableKey(HuaweiCloudBaseAction):
         )
         try:
             response = client.disable_key(request)
+        except Exception as e:
+            raise e
+
+        return response
+
+
+@Kms.action_registry.register("create-key")
+class createKey(HuaweiCloudBaseAction):
+    """rotation kms key.
+
+    :Example:
+
+    .. code-block:: yaml
+
+policies:
+  - name: create-key
+    resource: huaweicloud.kms
+    filters:
+      - not:
+        - type: value
+          key: key_alias
+          value: "aaa"
+    actions:
+      - create-key
+    """
+
+    schema = type_schema("create-key")
+
+    def perform_action(self, resource):
+        client = self.manager.get_client()
+        request = CreateKeyRequest()
+        request.body = CreateKeyRequestBody(
+            key_alias=resource["key_alias"]
+        )
+        try:
+            response = client.create_key(request)
         except Exception as e:
             raise e
 
