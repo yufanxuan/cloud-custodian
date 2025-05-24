@@ -6,8 +6,8 @@ import uuid
 
 from huaweicloudsdkkms.v2 import (EnableKeyRotationRequest, OperateKeyRequestBody,
                                   DisableKeyRotationRequest, EnableKeyRequest,
-                                  DisableKeyRequest, CreateKeyRequest, CreateKeyRequestBody, ListKeysRequest,
-                                  ListKeysRequestBody)
+                                  DisableKeyRequest, CreateKeyRequest, CreateKeyRequestBody,
+                                  ListKeysRequest, ListKeysRequestBody)
 from c7n.filters import ValueFilter
 from c7n.utils import type_schema
 from c7n_huaweicloud.actions.base import HuaweiCloudBaseAction
@@ -213,7 +213,7 @@ policies:
         client = self.manager.get_client()
         flag = True
         request = ListKeysRequest()
-        request.body = ListKeysRequestBody(key_spec="ALL",limit=1000)
+        request.body = ListKeysRequestBody(key_spec="ALL", limit=1000)
         response = client.list_keys()
         for data in response.key_details:
             if data.key_alias != resource["key_alias"]:
