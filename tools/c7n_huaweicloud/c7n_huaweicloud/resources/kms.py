@@ -231,7 +231,6 @@ policies:
                 except Exception as e:
                     raise e
 
-
     def perform_action(self, resource):
         return super().perform_action(resource)
 
