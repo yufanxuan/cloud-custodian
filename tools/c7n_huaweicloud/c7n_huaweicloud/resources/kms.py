@@ -53,8 +53,8 @@ policies:
 
     def perform_action(self, resource):
 
-        notSupportList = {"RSA_2048", "RSA_3072", "RSA_4096", "EC_P256", "EC_P384", "SM2", "ML_DSA_44",
-                          "ML_DSA_65", "ML_DSA_87"}
+        notSupportList = {"RSA_2048", "RSA_3072", "RSA_4096", "EC_P256", "EC_P384",
+                          "SM2", "ML_DSA_44", "ML_DSA_65", "ML_DSA_87"}
         if resource["default_key_flag"] == "1":
             return 0
         if resource["key_spec"] in notSupportList:
@@ -104,7 +104,8 @@ policies:
 
     def perform_action(self, resource):
 
-        notSupportList = {"RSA_2048", "RSA_3072", "RSA_4096", "EC_P256", "EC_P384", "SM2", "ML_DSA_44",
+        notSupportList = {"RSA_2048", "RSA_3072", "RSA_4096", "EC_P256",
+                          "EC_P384", "SM2", "ML_DSA_44",
                           "ML_DSA_65", "ML_DSA_87"}
         if resource["default_key_flag"] == "1":
             return 0
