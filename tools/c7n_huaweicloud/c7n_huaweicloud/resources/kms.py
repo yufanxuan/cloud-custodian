@@ -70,8 +70,9 @@ policies:
 
         notSupportList = {"RSA_2048", "RSA_3072", "RSA_4096", "EC_P256", "EC_P384",
                           "SM2", "ML_DSA_44", "ML_DSA_65", "ML_DSA_87"}
-        if resource["default_key_flag"] == "0" and resource["key_spec"] not in notSupportList and resource[
-            "keystore_id"] == "0" and resource["key_state"] in {"2", "3", "4"}:
+        if (resource["default_key_flag"] == "0" and resource["key_spec"]
+                not in notSupportList and resource["keystore_id"] == "0"
+                and resource["key_state"] in {"2", "3", "4"}):
 
             client = self.manager.get_client()
             request = EnableKeyRotationRequest()
@@ -84,7 +85,6 @@ policies:
                 client.enable_key_rotation(request)
             except Exception as e:
                 raise e
-
 
 
 @Kms.action_registry.register("disable_key_rotation")
@@ -114,8 +114,9 @@ policies:
     def perform_action(self, resource):
         notSupportList = {"RSA_2048", "RSA_3072", "RSA_4096", "EC_P256", "EC_P384",
                           "SM2", "ML_DSA_44", "ML_DSA_65", "ML_DSA_87"}
-        if resource["default_key_flag"] == "0" and resource["key_spec"] not in notSupportList and resource[
-            "keystore_id"] == "0" and resource["key_state"] in {"2", "3", "4"}:
+        if (resource["default_key_flag"] == "0" and resource["key_spec"]
+                not in notSupportList and resource["keystore_id"] == "0"
+                and resource["key_state"] in {"2", "3", "4"}):
             client = self.manager.get_client()
             request = DisableKeyRotationRequest()
             request.body = OperateKeyRequestBody(
@@ -126,7 +127,6 @@ policies:
                 client.disable_key_rotation(request)
             except Exception as e:
                 raise e
-
 
 
 @Kms.action_registry.register("enable_key")
@@ -300,7 +300,6 @@ policies:
         remaining_after_obs = obs_url[last_obs_index:]
         split_res = remaining_after_obs.split("/", 1)
         return split_res[1]
-
 
 
 @Kms.filter_registry.register("all_keys_disable")
