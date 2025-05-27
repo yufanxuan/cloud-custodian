@@ -57,7 +57,7 @@ def main(output, agency_name, name, ou_ids, status, duration_seconds, regions):
     marker = None
     index = 0
     ou_id_len = len(ou_ids)
-    options = {"region": 'cn-north-4'}
+    options = {"region": 'cn-north-4', "domain_id": 'a2cd82a33fb043dc9304bf72a0f38f00'}
     session = Session(options)
     client = session.client("org-account")
     while True:

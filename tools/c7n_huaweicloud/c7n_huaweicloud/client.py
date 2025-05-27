@@ -116,7 +116,7 @@ class Session:
         self.region = None
         self.ak = None
         self.sk = None
-
+        log.info(f"options:{options}")
         if options is not None:
             self.ak = options.get("access_key_id")
             self.sk = options.get("secret_access_key")
@@ -135,6 +135,7 @@ class Session:
             sys.exit(1)
 
     def client(self, service):
+        log.info(f"self.domain_id:{self.domain_id}")
         if self.ak is None or self.sk is None:
             # basic
             basic_provider = (
