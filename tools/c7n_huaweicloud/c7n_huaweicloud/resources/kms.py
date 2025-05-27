@@ -54,7 +54,19 @@ policies:
     schema = type_schema("enable_key_rotation")
 
     def perform_action(self, resource):
-        session = local_session(self.manager.session_factory)
+
+        notSupportList = {"RSA_2048", "RSA_3072", "RSA_4096", "EC_P256", "EC_P384",
+                          "SM2", "ML_DSA_44", "ML_DSA_65", "ML_DSA_87"}
+        if resource["default_key_flag"] == "1":
+            return 0
+        if resource["key_spec"] in notSupportList:
+            return 0
+        if resource["keystore_id"] != 0:
+            return 0
+        if resource["key_state"] not in {"2", "3", "4"}:
+            return 0
+        client = self.manager.get_client()
+        request = EnableKeyRotationRequest()
 
         notSupportList = {"RSA_2048", "RSA_3072", "RSA_4096", "EC_P256", "EC_P384",
                           "SM2", "ML_DSA_44", "ML_DSA_65", "ML_DSA_87"}
@@ -100,8 +112,6 @@ policies:
     schema = type_schema("disable_key_rotation")
 
     def perform_action(self, resource):
-
-
         notSupportList = {"RSA_2048", "RSA_3072", "RSA_4096", "EC_P256", "EC_P384",
                           "SM2", "ML_DSA_44", "ML_DSA_65", "ML_DSA_87"}
         if resource["default_key_flag"] == "0" and resource["key_spec"] not in notSupportList and resource[
@@ -207,6 +217,7 @@ policies:
       - type: create-key
         key_aliases: ["dd"]
         obs_url: "https://custodian0527.obs.sa-brazil-1.myhuaweicloud.com/kms.txt"
+
     """
 
     schema = type_schema("create-key",
@@ -246,11 +257,13 @@ policies:
             except exceptions.ClientRequestException as e:
                 log.error(e.status_code, e.request_id, e.error_code, e.error_msg)
                 raise
+
         request = ListKeysRequest()
         request.body = ListKeysRequestBody(
             key_spec="ALL",
             limit="1000")
         listKeyResponse = client.list_keys(request)
+
         arr = set()
         for data in listKeyResponse.key_details:
             arr.add(data.key_alias)
@@ -287,6 +300,7 @@ policies:
         remaining_after_obs = obs_url[last_obs_index:]
         split_res = remaining_after_obs.split("/", 1)
         return split_res[1]
+
 
 
 @Kms.filter_registry.register("all_keys_disable")
