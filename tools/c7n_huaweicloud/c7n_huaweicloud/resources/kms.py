@@ -46,7 +46,7 @@ policies:
           value: "False"
         - type: value
           key: domain_id
-          value: "aaaaaaa"
+          value: "537f650fb2be4ca3a511f25d8defd3b0"
     actions:
       - enable_key_rotation
     """
@@ -83,6 +83,7 @@ policies:
                         client.enable_key_rotation(request)
                     except Exception as e:
                         raise e
+
 
 
 @Kms.action_registry.register("disable_key_rotation")
