@@ -85,7 +85,6 @@ policies:
                         raise e
 
 
-
 @Kms.action_registry.register("disable_key_rotation")
 class disableRotationKey(HuaweiCloudBaseAction):
     """rotation kms key.
