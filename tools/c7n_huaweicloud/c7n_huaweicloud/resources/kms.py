@@ -63,17 +63,17 @@ policies:
             "keystore_id"] == "0" and resource["key_state"] in {"2", "3", "4"}:
             client = self.manager.get_client()
             request = EnableKeyRotationRequest()
-            if domain==None:
+            if domain == None:
                 request.body = OperateKeyRequestBody(
                     key_id=resource["key_id"],
                     sequence=uuid.uuid4().hex
                 )
                 try:
-                 client.enable_key_rotation(request)
+                    client.enable_key_rotation(request)
                 except Exception as e:
                     raise e
             else:
-                if domain==resource["domain_id"]:
+                if domain == resource["domain_id"]:
                     request.body = OperateKeyRequestBody(
                         key_id=resource["key_id"],
                         sequence=uuid.uuid4().hex
@@ -82,7 +82,6 @@ policies:
                         client.enable_key_rotation(request)
                     except Exception as e:
                         raise e
-
 
 
 @Kms.action_registry.register("disable_key_rotation")
