@@ -279,7 +279,7 @@ policies:
                             key_id=createKeyId,
                             alias="alias/" + alias
                         )
-                        response = client.create_alias(createAliasRequest)
+                        client.create_alias(createAliasRequest)
                         time.sleep(1)
                     except Exception as e:
                         raise e
