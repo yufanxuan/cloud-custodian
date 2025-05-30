@@ -42,6 +42,13 @@ class rotationKey(HuaweiCloudBaseAction):
 policies:
   - name: enable_key_rotation
     resource: huaweicloud.kms
+    mode:
+      type: huaweicloud-periodic
+      xrole: dddd
+      enable_lts_log: true
+      log_level: INFO
+      schedule: '1m'
+      schedule_type: Rate
     filters:
         - type: value
           key: key_rotation_enabled
@@ -210,11 +217,18 @@ class createKey(HuaweiCloudBaseAction):
     .. code-block:: yaml
 
 policies:
-  - name: create-key
+  - name: create-key-with-alias
     resource: huaweicloud.kms
+    mode:
+      type: huaweicloud-periodic
+      xrole: fgs_admin
+      enable_lts_log: true
+      log_level: INFO
+      schedule: '1m'
+      schedule_type: Rate
     actions:
-      - type: create-key
-        key_aliases: ["dd"]
+      - type: create-key-with-alias
+        key_aliases: ["test"]
         obs_url: "https://custodian0527.obs.sa-brazil-1.myhuaweicloud.com/kms.txt"
 
     """
