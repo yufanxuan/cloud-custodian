@@ -20,6 +20,7 @@ def get_next_page_params(response=None):
     return next_marker
 
 
+
 @click.command()
 @click.option(
     '-f', '--output',
