@@ -152,7 +152,7 @@ class Session:
         self.region = None
         self.ak = None
         self.sk = None
-
+        print(f"options:{options}")
         if options is not None:
             self.ak = options.get("access_key_id")
             self.sk = options.get("secret_access_key")

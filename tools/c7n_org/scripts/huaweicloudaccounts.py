@@ -116,10 +116,10 @@ def main(output, agency_name, name, exclude_name, ou_ids, status, duration_secon
             print(f"list_tag_resources: {response}")
             marker = get_next_page_params(response)
             print(f"marker: {marker}")
-            if account.tags:
-                account.tags.append(response.tags)
+            if hasattr(account, 'tags'):
+                [account.tags.append(tag) for tag in response.tags]
             else:
-                account.tags = response.tags
+                setattr(account, 'tags', response.tags)
 
             if not marker:
                 break
