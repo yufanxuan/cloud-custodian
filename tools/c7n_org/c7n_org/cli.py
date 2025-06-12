@@ -126,7 +126,7 @@ CONFIG_SCHEMA = {
                 'agency_urn': {'type': 'string'},
                 'duration_seconds': {'type': 'integer', 'minimum': 900},
                 'regions': {'type': 'array', 'items': {'type': 'string'}},
-                'tags': {'type': 'array', 'items': {'type': 'string'}},
+                'tags': {'type': 'object'},
                 'vars': {'type': 'object'},
             }
         }
