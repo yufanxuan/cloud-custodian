@@ -387,7 +387,8 @@ class UserMfaDevice(ValueFilter):
                 value: true
     """
 
-    schema = type_schema('mfa-device', rinherit=ValueFilter.schema)
+    schema = type_schema('mfa-device',
+                         key={'enum': ['enabled', 'serial_number']})
     annotation_key = 'mfa_devices'
     matched_annotation_key = 'c7n:matched_mfa_devices'
     schema_alias = False
@@ -400,7 +401,6 @@ class UserMfaDevice(ValueFilter):
             resource[self.annotation_key] = [
                 {
                     'serial_number': mfa.serial_number,
-                    'user_id': mfa.user_id,
                     'enabled': mfa.enabled
                 }
                 for mfa in mfa_devices
@@ -452,7 +452,8 @@ class UserPolicy(ValueFilter):
                 key: Policy_id
                 value: xxxx
     """
-    schema = type_schema('policy', rinherit=ValueFilter.schema)
+    schema = type_schema('policy',
+                         key={'enum': ['policy_name', 'policy_id', 'urn', 'attached_at']})
     annotation_key = 'attached_policies'
     matched_annotation_key = 'c7n:matched_attached_policies'
     schema_alias = False
@@ -540,9 +541,8 @@ class UserAccessKey(ValueFilter):
                 value: 1
     """
 
-    schema = type_schema(
-        'access-key',
-        rinherit=ValueFilter.schema)
+    schema = type_schema('access-key',
+                         key={'enum': ['access_key_id', 'status', 'created_at']})
     schema_alias = False
     annotation_key = 'access_keys'
     matched_annotation_key = 'c7n:matched_keys'
@@ -637,31 +637,29 @@ class AllowAllIamPolicies(ValueFilter):
     schema = type_schema('has-allow-all')
 
     def has_allow_all_policy(self, client, resource):
-        if resource['policy_type'] == 'custom':
-            document = client.get_policy_version_v5(GetPolicyVersionV5Request(
-                policy_id=resource.get('policy_id'),
-                version_id=resource.get('default_version_id'))
-            ).policy_version.document
+        document = client.get_policy_version_v5(GetPolicyVersionV5Request(
+            policy_id=resource.get('policy_id'),
+            version_id=resource.get('default_version_id'))
+        ).policy_version.document
 
-            statements = json.loads(document).get('Statement')
-            if isinstance(statements, dict):
-                statements = [statements]
+        statements = json.loads(document).get('Statement')
+        if isinstance(statements, dict):
+            statements = [statements]
 
-            for s in statements:
-                if ('Condition' not in s and
-                        'NotResource' not in s and
-                        'Action' in s and
-                        isinstance(s['Action'], list) and
-                        ("*" in s['Action'] or
-                         "*:*:*" in s['Action']) and
-                        ('Resource' not in s or
-                         'Resource' in s and
-                         isinstance(s['Resource'], list) and
-                         "*" in s['Resource'] or
-                         "*:*:*:*:*" in s['Resource']) and
-                        s['Effect'] == "Allow"):
-                    return True
-            return False
+        for s in statements:
+            if ('Condition' not in s and
+                    'NotResource' not in s and
+                    'Action' in s and
+                    isinstance(s['Action'], list) and
+                    ("*" in s['Action'] or
+                     "*:*:*" in s['Action']) and
+                    ('Resource' not in s or
+                     'Resource' in s and
+                     isinstance(s['Resource'], list) and
+                     "*" in s['Resource'] or
+                     "*:*:*:*:*" in s['Resource']) and
+                    s['Effect'] == "Allow"):
+                return True
         return False
 
     def process(self, resources, event=None):
