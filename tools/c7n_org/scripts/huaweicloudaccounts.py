@@ -60,11 +60,11 @@ def get_next_page_params(response=None):
     type=str, default=None,
     help="Account ID of the executing machine.")
 @click.option(
-    '-t', '--set_tags',
+    '-t', '--is_set_tags',
     type=bool, default=False,
     help="Set account tags or not.")
 def main(output, agency_name, name, exclude_name, ou_ids, status, duration_seconds, regions,
-         domain_id, set_tags):
+         domain_id, is_set_tags):
     """
     Generate a c7n-org huawei cloud accounts config file
     """
@@ -108,7 +108,7 @@ def main(output, agency_name, name, exclude_name, ou_ids, status, duration_secon
     results = []
     for account in accounts:
         marker = None
-        while set_tags:
+        while is_set_tags:
             request = ListTagResourcesRequest(
                 resource_type='organizations:accounts', resource_id=account.id,
                 limit=200, marker=marker)
