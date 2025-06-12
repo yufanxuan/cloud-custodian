@@ -108,7 +108,7 @@ def main(output, agency_name, name, exclude_name, ou_ids, status, duration_secon
     results = []
     for account in accounts:
         marker = None
-        while True:
+        while is_tags:
             request = ListTagResourcesRequest(
                 resource_type='organizations:accounts', resource_id=account.id,
                 limit=200, marker=marker)
