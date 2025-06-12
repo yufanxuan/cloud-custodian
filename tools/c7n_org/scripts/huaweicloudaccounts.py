@@ -3,7 +3,8 @@
 
 import click
 from huaweicloudsdkcore.auth.provider import MetadataCredentialProvider
-from huaweicloudsdkorganizations.v1 import ListAccountsRequest, OrganizationsClient
+from huaweicloudsdkorganizations.v1 import ListAccountsRequest, OrganizationsClient, \
+    ListTagResourcesRequest
 from huaweicloudsdkorganizations.v1.region.organizations_region import OrganizationsRegion
 from c7n.utils import yaml_dump
 
@@ -58,8 +59,12 @@ def get_next_page_params(response=None):
     '--domain_id',
     type=str, default=None,
     help="Account ID of the executing machine.")
+@click.option(
+    '-t', '--tags',
+    type=bool, default=False,
+    help="Set account tags or not.")
 def main(output, agency_name, name, exclude_name, ou_ids, status, duration_seconds, regions,
-         domain_id):
+         domain_id, is_tags):
     """
     Generate a c7n-org huawei cloud accounts config file
     """
@@ -82,7 +87,7 @@ def main(output, agency_name, name, exclude_name, ou_ids, status, duration_secon
     while True:
         while True:
             parent_id = None if ou_id_len == 0 else ou_ids[index]
-            request = ListAccountsRequest(parent_id=parent_id, limit=1000, marker=marker)
+            request = ListAccountsRequest(parent_id=parent_id, limit=500, marker=marker)
             response = client.list_accounts(request)
             marker = get_next_page_params(response)
             for account in response.accounts:
@@ -102,9 +107,29 @@ def main(output, agency_name, name, exclude_name, ou_ids, status, duration_secon
 
     results = []
     for account in accounts:
+        marker = None
+        while True:
+            request = ListTagResourcesRequest(
+                resource_type='organizations:accounts', resource_id=account.id,
+                limit=200, marker=marker)
+            response = client.list_tag_resources(request)
+            print(f"list_tag_resources: {response}")
+            marker = get_next_page_params(response)
+            print(f"marker: {marker}")
+            if account.tags:
+                account.tags.append(response.tags)
+            else:
+                account.tags = response.tags
+
+            if not marker:
+                break
+
+
         acc_info = {
             'name': account.name,
             'domain_id': account.id,
+            'status': account.status,
+            'tags': account.tags,
             'agency_urn': f"iam::{account.id}:agency:{agency_name}",
             'duration_seconds': duration_seconds,
             'regions': regions
