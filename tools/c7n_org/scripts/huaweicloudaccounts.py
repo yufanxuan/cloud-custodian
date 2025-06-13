@@ -124,16 +124,19 @@ def main(output, agency_name, name, exclude_name, ou_ids, status, duration_secon
             if not marker:
                 break
 
-        tags_dict = {tag.key: tag['value'] for tag in account.tags} if account.tags else {}
         acc_info = {
             'name': account.name,
             'domain_id': account.id,
             'status': account.status,
-            'tags': tags_dict,
             'agency_urn': f"iam::{account.id}:agency:{agency_name}",
             'duration_seconds': duration_seconds,
             'regions': regions
         }
+
+        if hasattr(account, 'tags'):
+            tags_dict = {tag.key: tag['value'] for tag in account.tags} if account.tags else {}
+            acc_info['tags'] = tags_dict
+
         results.append(acc_info)
 
     print(f"results: {results}")
