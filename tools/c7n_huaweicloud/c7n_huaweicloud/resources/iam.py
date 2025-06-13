@@ -270,7 +270,7 @@ class SetLoginProtect(HuaweiCloudBaseAction):
     schema = type_schema(
         'set-login-protect',
         enabled={'type': 'boolean'},
-        verification_method={'enum': ['vmfa', 'sms', 'email']},
+        verification_method={'type': 'string'},
     )
 
     def perform_action(self, resource):

@@ -134,7 +134,7 @@ def main(output, agency_name, name, exclude_name, ou_ids, status, duration_secon
         }
 
         if hasattr(account, 'tags'):
-            tags_dict = {tag.key: tag['value'] for tag in account.tags} if account.tags else {}
+            tags_dict = {tag.key: tag.value for tag in account.tags} if account.tags else {}
             acc_info['tags'] = tags_dict
 
         results.append(acc_info)
