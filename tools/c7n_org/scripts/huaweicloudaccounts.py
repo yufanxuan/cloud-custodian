@@ -21,7 +21,6 @@ def get_next_page_params(response=None):
     return next_marker
 
 
-
 @click.command()
 @click.option(
     '-f', '--output',
@@ -136,7 +135,6 @@ def main(output, agency_name, name, exclude_name, ou_ids, status, duration_secon
             acc_info['tags'] = tags_dict
 
         results.append(acc_info)
-
 
     print(yaml_dump({'domains': results}), file=output)
 
