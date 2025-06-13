@@ -113,9 +113,7 @@ def main(output, agency_name, name, exclude_name, ou_ids, status, duration_secon
                 resource_type='organizations:accounts', resource_id=account.id,
                 limit=200, marker=marker)
             response = client.list_tag_resources(request)
-            print(f"list_tag_resources: {response}")
             marker = get_next_page_params(response)
-            print(f"marker: {marker}")
             if hasattr(account, 'tags'):
                 [account.tags.append(tag) for tag in response.tags]
             else:
@@ -139,7 +137,6 @@ def main(output, agency_name, name, exclude_name, ou_ids, status, duration_secon
 
         results.append(acc_info)
 
-    print(f"results: {results}")
 
     print(yaml_dump({'domains': results}), file=output)
 
