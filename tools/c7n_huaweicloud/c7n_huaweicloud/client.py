@@ -159,7 +159,10 @@ class Session:
             self.token = options.get("security_token")
             self.domain_id = options.get("domain_id")
             self.region = options.get("region")
-
+            self.domain_name = options.get("name")
+            self.status = options.get("status")
+            self.tags = options.get("tags")
+        print(f"self.tags:{self.tags}")
         self.ak = self.ak or os.getenv("HUAWEI_ACCESS_KEY_ID")
         self.sk = self.sk or os.getenv("HUAWEI_SECRET_ACCESS_KEY")
         self.region = self.region or os.getenv("HUAWEI_DEFAULT_REGION")
