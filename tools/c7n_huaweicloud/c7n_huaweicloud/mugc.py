@@ -115,7 +115,7 @@ def setup_parser():
         "--profile", default=os.environ.get('HuaweiCloud_PROFILE'),
         help="HuaweiCloud Account Config File Profile to utilize")
     parser.add_argument(
-        "--prefix", default="c7n-",
+        "--prefix", default="custodian-",
         help="The FunctionGraph name prefix to use for clean-up")
     parser.add_argument(
         "--policy-regex", default="",
