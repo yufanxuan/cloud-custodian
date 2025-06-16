@@ -64,6 +64,17 @@ class FunctionGraphMode(ServerlessExecutionMode):
             'eg_agency': {'type': 'string'},
             'enable_lts_log': {'type': 'boolean'},
             'log_config': {'type': 'object'},
+            'func_tags': {
+                'type': 'array',
+                'items': {
+                    'type': 'object',
+                    'required': ['key', 'value'],
+                    'properties': {
+                        'key': {'type': 'string'},
+                        'value': {'type': 'string'},
+                    }
+                }
+            },
             'async_invoke_config': {
                 'type': "object",
                 'additionalProperties': False,

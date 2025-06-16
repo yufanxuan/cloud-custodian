@@ -37,6 +37,11 @@ from huaweicloudsdkfunctiongraph.v2 import (
     FuncAsyncDestinationConfig,
     FuncDestinationConfig,
     DeleteFunctionAsyncInvokeConfigRequest,
+    ListFunctionTagsRequest,
+    DeleteTagsRequest,
+    UpdateFunctionTagsRequestBody,
+    KvItem,
+    CreateTagsRequest,
 )
 from huaweicloudsdkeg.v1 import (
     ListChannelsRequest,
@@ -357,6 +362,8 @@ class FunctionGraphManager:
 
         if result:
             self.process_async_invoke_config(func, result.func_urn)
+            if func.func_tags:
+                self.process_function_tags(func.func_tags, result.func_urn)
         else:
             raise PolicyExecutionError("Create or update failed.")
 
@@ -374,8 +381,9 @@ class FunctionGraphManager:
         if old_config.get('user_data', ""):
             old_user_data = json.loads(old_config['user_data'])
         for param in params:
-            # 跳过异步配置、环境变量、vpc配置、网络控制配置
-            if param in ["async_invoke_config", "user_data", "func_vpc", "network_controller"]:
+            # 跳过异步配置、环境变量、vpc配置、网络控制配置、func_tags
+            if param in ["async_invoke_config", "user_data", "func_vpc", "network_controller",
+                         "func_tags"]:
                 continue
             if params[param] != old_config.get(param):
                 need_update_params[param] = params[param]
@@ -472,6 +480,82 @@ class FunctionGraphManager:
                           f'error code:[{e.error_code}], '
                           f'error message:[{e.error_msg}].')
                 return
+
+    def process_function_tags(self, func_tags, func_urn):
+        new_tags = func_tags
+        new_tags_map = {}
+        for tag in new_tags:
+            new_tags_map[tag['key']] = tag['value']
+        list_function_tags_request = ListFunctionTagsRequest(
+            resource_type='functions',
+            resource_id=func_urn
+        )
+        try:
+            old_tags = self.client.list_function_tags(list_function_tags_request).tags
+        except exceptions.ClientRequestException as e:
+            log.error(f'List function tags failed, request id:[{e.request_id}], '
+                      f'status code:[{e.status_code}], '
+                      f'error code:[{e.error_code}], '
+                      f'error message:[{e.error_msg}].')
+            return
+        need_delete_tags = []
+        if old_tags is None or len(old_tags) == 0:
+            pass
+        else:
+            for tag in old_tags:
+                if tag.key in new_tags_map.keys() and tag.value == new_tags_map[tag.key]:
+                    # tag已存在时跳过
+                    pass
+                else:
+                    need_delete_tags.append(tag)
+
+        if need_delete_tags:
+            delete_tags_request = DeleteTagsRequest(
+                resource_type='functions',
+                resource_id=func_urn,
+            )
+            delete_tags_request.body = UpdateFunctionTagsRequestBody(
+                action='delete',
+                tags=need_delete_tags,
+            )
+            try:
+                log.warning(f'Delete function tags{need_delete_tags}...')
+                _ = self.client.delete_tags(delete_tags_request)
+            except exceptions.ClientRequestException as e:
+                log.error(f'Delete function tags failed, request id:[{e.request_id}], '
+                          f'status code:[{e.status_code}], '
+                          f'error code:[{e.error_code}], '
+                          f'error message:[{e.error_msg}].')
+                return
+
+        create_tags = []
+        for key, value in new_tags_map.items():
+            create_tags.append(KvItem(
+                key=key,
+                value=value
+            ))
+
+        if create_tags == old_tags:
+            # tags无需更新
+            return
+
+        create_tags_request = CreateTagsRequest(
+            resource_type='functions',
+            resource_id=func_urn,
+        )
+        create_tags_request.body = UpdateFunctionTagsRequestBody(
+            action='create',
+            tags=create_tags,
+        )
+        try:
+            log.warning(f'Create function tags{create_tags}...')
+            _ = self.client.create_tags(create_tags_request)
+        except exceptions.ClientRequestException as e:
+            log.error(f'Create function tags failed, request id:[{e.request_id}], '
+                      f'status code:[{e.status_code}], '
+                      f'error code:[{e.error_code}], '
+                      f'error message:[{e.error_msg}].')
+            return
 
     @staticmethod
     def calculate_sha512(archive, buffer_size=65536) -> str:
@@ -588,6 +672,11 @@ class AbstractFunctionGraph:
     def code_encrypt_kms_key_id(self):
         """KMS key id for encrypt function code"""
 
+    @property
+    @abc.abstractmethod
+    def func_tags(self):
+        """Function tags"""
+
     @abc.abstractmethod
     def get_events(self, session_factory):
         """ """
@@ -613,6 +702,7 @@ class AbstractFunctionGraph:
             'async_invoke_config': self.async_invoke_config,
             'user_data_encrypt_kms_key_id': self.user_data_encrypt_kms_key_id,
             'code_encrypt_kms_key_id': self.code_encrypt_kms_key_id,
+            'func_tags': self.func_tags,
         }
         if conf["func_vpc"]:
             conf["network_controller"] = {
@@ -701,6 +791,10 @@ class FunctionGraph(AbstractFunctionGraph):
     @property
     def code_encrypt_kms_key_id(self):
         return self.func_data.get('code_encrypt_kms_key_id', "")
+
+    @property
+    def func_tags(self):
+        return self.func_data.get('func_tags', None)
 
     def get_events(self, session_factory):
         return self.func_data.get('events', ())
@@ -821,6 +915,10 @@ class PolicyFunctionGraph(AbstractFunctionGraph):
     @property
     def code_encrypt_kms_key_id(self):
         return self.policy.data['mode'].get('code_encrypt_kms_key_id', None)
+
+    @property
+    def func_tags(self):
+        return self.policy.data['mode'].get('func_tags', None)
 
     def get_events(self, session_factory):
         events = []
