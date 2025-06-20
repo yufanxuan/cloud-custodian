@@ -301,6 +301,7 @@ def get_session(account, session_name, region):
                   'domain_id': account['domain_id'],
                   'name': account['name'],
                   'status': account['status']}
+        print(f"config:{config}")
         return HuaweiSessionFactory(config)()
     else:
         return None

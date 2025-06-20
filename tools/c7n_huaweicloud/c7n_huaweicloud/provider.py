@@ -48,6 +48,7 @@ class HuaweiSessionFactory:
 
     def get_credential(self):
         if self.use_assume:
+            print("get v5 assume credential.")
             log.info("get v5 assume credential.")
             return self._get_assumed_credentials()
         return self.ak, self.sk, self.token
@@ -73,6 +74,7 @@ class HuaweiSessionFactory:
             if not json_resp.get("credentials"):
                 raise ValueError("No credentials in assume role response")
             creds = json_resp["credentials"]
+            print(f"creds:{creds}")
             return creds["access_key_id"], creds["secret_access_key"], creds["security_token"]
 
         except requests.exceptions.HTTPError as e:
