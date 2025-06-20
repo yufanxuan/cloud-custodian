@@ -33,15 +33,12 @@ class HuaweiSessionFactory:
         self._validate_credentials_config()
 
     def _validate_credentials_config(self):
-        print(f"hasattr(self.options, 'agency_urn'):{hasattr(self.options, 'agency_urn')}")
-        print(f"self.options.agency_urn:{self.options.agency_urn}")
         self.use_assume = hasattr(self.options, 'agency_urn') and self.options.agency_urn
         self.ak = getattr(self.options, 'access_key_id', os.getenv('HUAWEI_ACCESS_KEY_ID'))
         self.sk = getattr(self.options, 'secret_access_key', os.getenv('HUAWEI_SECRET_ACCESS_KEY'))
         self.token = getattr(self.options, 'security_token', os.getenv('HUAWEI_SECURITY_TOKEN'))
 
     def __call__(self):
-        print("call method")
         (self.options['access_key_id'],
          self.options['secret_access_key'],
          self.options['security_token']) = self.get_credential()
@@ -52,7 +49,6 @@ class HuaweiSessionFactory:
         if self.use_assume:
             log.info("get v5 assume credential.")
             return self._get_assumed_credentials()
-        print(f"self.sue_assume:{self.use_assume}")
         return self.ak, self.sk, self.token
 
     def _get_assumed_credentials(self):

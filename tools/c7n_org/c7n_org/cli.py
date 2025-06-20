@@ -301,7 +301,6 @@ def get_session(account, session_name, region):
                   domain_id=account['domain_id'],
                   name=account['name'],
                   status=account['status'])
-        print(f"config:{config}")
         return HuaweiSessionFactory(config)()
     else:
         return None
@@ -506,8 +505,6 @@ def _get_env_creds(account, session, region, env=None):
         env['GOOGLE_CLOUD_PROJECT'] = account["account_id"]
         env['CLOUDSDK_CORE_PROJECT'] = account["account_id"]
     elif account["provider"] == 'huaweicloud':
-        print(f"session:{session}")
-        print(f"session.ak:{session.ak}")
         env['HUAWEICLOUD_ACCESS_KEY_ID'] = session.ak
         env['HUAWEICLOUD_SECRET_ACCESS_KEY'] = session.sk
         env['HUAWEICLOUD_SECURITY_TOKEN'] = session.token

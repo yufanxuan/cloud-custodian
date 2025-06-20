@@ -155,7 +155,6 @@ class Session:
         self.region = None
         self.ak = None
         self.sk = None
-        print(f"options:{options}")
         if options is not None:
             self.ak = options.get("access_key_id")
             self.sk = options.get("secret_access_key")
@@ -165,7 +164,6 @@ class Session:
             self.domain_name = options.get("name")
             self.status = options.get("status")
             self.tags = options.get("tags")
-        print(f"self.ak:{self.ak}")
         self.ak = self.ak or os.getenv("HUAWEI_ACCESS_KEY_ID")
         self.sk = self.sk or os.getenv("HUAWEI_SECRET_ACCESS_KEY")
         self.region = self.region or os.getenv("HUAWEI_DEFAULT_REGION")
