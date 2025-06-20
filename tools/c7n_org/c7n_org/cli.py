@@ -296,11 +296,11 @@ def get_session(account, session_name, region):
                 "No profile or role assume specified for account %s" % account)
 
     elif account.get('provider') == 'huaweicloud':
-        config = {'region': region,
-                  'agency_urn': account['agency_urn'],
-                  'domain_id': account['domain_id'],
-                  'name': account['name'],
-                  'status': account['status']}
+        config = Config.empty(region=region,
+                  agency_urn=account['agency_urn'],
+                  domain_id=account['domain_id'],
+                  name=account['name'],
+                  status=account['status'])
         print(f"config:{config}")
         return HuaweiSessionFactory(config)()
     else:

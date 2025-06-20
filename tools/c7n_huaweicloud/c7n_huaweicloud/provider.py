@@ -33,7 +33,6 @@ class HuaweiSessionFactory:
         self._validate_credentials_config()
 
     def _validate_credentials_config(self):
-        print(f"self.options:{self.options}")
         print(f"hasattr(self.options, 'agency_urn'):{hasattr(self.options, 'agency_urn')}")
         print(f"self.options.agency_urn:{self.options.agency_urn}")
         self.use_assume = hasattr(self.options, 'agency_urn') and self.options.agency_urn
@@ -51,7 +50,6 @@ class HuaweiSessionFactory:
 
     def get_credential(self):
         if self.use_assume:
-            print("get v5 assume credential.")
             log.info("get v5 assume credential.")
             return self._get_assumed_credentials()
         print(f"self.sue_assume:{self.use_assume}")
@@ -78,7 +76,6 @@ class HuaweiSessionFactory:
             if not json_resp.get("credentials"):
                 raise ValueError("No credentials in assume role response")
             creds = json_resp["credentials"]
-            print(f"creds:{creds}")
             return creds["access_key_id"], creds["secret_access_key"], creds["security_token"]
 
         except requests.exceptions.HTTPError as e:
