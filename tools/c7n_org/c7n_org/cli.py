@@ -300,8 +300,7 @@ def get_session(account, session_name, region):
                   'agency_urn': account['agency_urn'],
                   'domain_id': account['domain_id'],
                   'name': account['name'],
-                  'status': account['status'],
-                  'tags': account['tags']}
+                  'status': account['status']}
         return HuaweiSessionFactory(config)()
     else:
         return None
@@ -525,7 +524,6 @@ def run_account_script(account, region, output_dir, debug, script_args):
         session = get_session(account, "org-script", region)
     except ClientError:
         return 1
-    [print(f"session attr:{a}") for a in dir(session)]
 
     env = _get_env_creds(account, session, region, dict(os.environ))
     log.info("running script on account:%s region:%s script: `%s`",

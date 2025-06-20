@@ -39,6 +39,7 @@ class HuaweiSessionFactory:
         self.token = getattr(self.options, 'security_token', os.getenv('HUAWEI_SECURITY_TOKEN'))
 
     def __call__(self):
+        print("call method")
         (self.options['access_key_id'],
          self.options['secret_access_key'],
          self.options['security_token']) = self.get_credential()
