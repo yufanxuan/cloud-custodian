@@ -514,7 +514,6 @@ def _get_env_creds(account, session, region, env=None):
         env['HUAWEICLOUD_DOMAIN_ID'] = session.domain_id
         env['HUAWEICLOUD_DOMAIN_NAME'] = session.domain_name
         env['HUAWEICLOUD_DOMAIN_STATUS'] = session.status
-        env['HUAWEICLOUD_DOMAIN_TAGS'] = session.tags
     return filter_empty(env)
 
 
