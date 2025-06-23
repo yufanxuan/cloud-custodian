@@ -44,7 +44,7 @@ policies:
     resource: huaweicloud.kms
     mode:
       type: huaweicloud-periodic
-      xrole: dddd
+      xrole: fgs_admin
       enable_lts_log: true
       log_level: INFO
       schedule: '1m'
@@ -109,7 +109,7 @@ policies:
           value: "False"
         - type: value
           key: domain_id
-          value: "aaaaaaa"
+          value: "537f650fb2be4ca3a511f25d8defd3b0"
     actions:
       - disable_key_rotation
     """
