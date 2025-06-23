@@ -65,10 +65,9 @@ policies:
     def perform_action(self, resource):
         session = local_session(self.manager.session_factory)
         domain = session.domain_id
-        notSupportList = {"RSA_2048", "RSA_3072", "RSA_4096", "EC_P256", "EC_P384",
-                          "SM2", "ML_DSA_44", "ML_DSA_65", "ML_DSA_87"}
+        supportList = {"AES_256", "SM4"}
         if (resource["default_key_flag"] == "0" and resource["key_spec"]
-                not in notSupportList and resource["keystore_id"] == "0"
+                in supportList and resource["keystore_id"] == "0"
                 and resource["key_state"] in {"2"}):
             client = self.manager.get_client()
             request = EnableKeyRotationRequest()
@@ -120,6 +119,7 @@ policies:
     def perform_action(self, resource):
         notSupportList = {"RSA_2048", "RSA_3072", "RSA_4096", "EC_P256", "EC_P384",
                           "SM2", "ML_DSA_44", "ML_DSA_65", "ML_DSA_87"}
+
         if (resource["default_key_flag"] == "0" and resource["key_spec"]
                 not in notSupportList and resource["keystore_id"] == "0"
                 and resource["key_state"] in {"2", "3", "4"}):
