@@ -554,7 +554,7 @@ def run_account_script(account, region, output_dir, debug, script_args):
 @click.option('--serial', default=False, is_flag=True)
 @click.argument('script_args', nargs=-1, type=click.UNPROCESSED)
 def run_script(config, output_dir, accounts, tags, region, echo, serial, script_args):
-    """run an aws/azure/gcp script across accounts"""
+    """run an aws/azure/gcp/HWC script across accounts"""
     # TODO count up on success / error / error list by account
     accounts_config, _, executor = init(
         config, None, serial, True, accounts, tags, (), ())
