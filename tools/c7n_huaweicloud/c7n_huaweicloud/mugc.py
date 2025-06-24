@@ -23,10 +23,10 @@ def load_policies(options, config):
     return policies
 
 
-def region_gc(options, region, policies):
+def region_gc(options, policy_options, region, policies):
     log.info("Region:%s Starting garbage collection", region)
     options.region = region
-    session_factory = HuaweiCloud().get_session_factory(options)
+    session_factory = HuaweiCloud().get_session_factory(policy_options)
     manager = mu.FunctionGraphManager(session_factory)
     funcs = list(manager.list_functions(options.prefix))
 
@@ -74,7 +74,7 @@ def region_gc(options, region, policies):
         log.info("Region:%s Removed %s", region, function['func_name'])
 
 
-def resources_gc_prefix(options, policy_config, policy_collection):
+def resources_gc_prefix(options, policy_options, policy_collection):
     """Garbage collect old custodian policies based on prefix.
 
     We attempt to introspect to find the event sources for a policy
@@ -86,12 +86,12 @@ def resources_gc_prefix(options, policy_config, policy_collection):
     for p in policy_collection:
         policy_regions.setdefault(p.options.region, []).append(p)
 
-    regions = get_gc_regions(options.regions, policy_config)
+    regions = get_gc_regions(options.regions, policy_options)
     for r in regions:
-        region_gc(options, r, policy_regions.get(r, []))
+        region_gc(options, policy_options, r, policy_regions.get(r, []))
 
 
-def get_gc_regions(regions, policy_config):
+def get_gc_regions(regions, policy_options):
     if 'all' in regions:
         # TODO: 当前只支持圣保罗一局点，后续实现all模式
         pass
@@ -145,7 +145,7 @@ def main():
     logging.getLogger('c7n.cache').setLevel(logging.WARNING)
 
     if not options.regions:
-        options.regions = [os.environ.get('HUAWEI_DEFAULT_REGION', 'sa-brazil-1')]
+        options.regions = [os.environ.get('HUAWEICLOUD_REGION', 'sa-brazil-1')]
 
     files = []
     files.extend(itertools.chain(*options.config_files))
@@ -156,21 +156,27 @@ def main():
         parser.print_help()
         sys.exit(1)
 
-    policy_config = Config.empty(
+    policy_options = Config.empty(
         regions=options.regions,
-        profile=options.profile,
-        assume_role=options.assume_role)
+        access_key_id=os.environ.get('HUAWEICLOUD_ACCESS_KEY_ID', ''),
+        secret_access_key=os.environ.get('HUAWEICLOUD_SECRET_ACCESS_KEY', ''),
+        security_token=os.environ.get('HUAWEICLOUD_SECURITY_TOKEN', ''),
+        region=os.environ.get('HUAWEICLOUD_REGION', ''),
+        domain_id=os.environ.get('HUAWEICLOUD_DOMAIN_ID', ''),
+        name=os.environ.get('HUAWEICLOUD_DOMAIN_NAME', ''),
+        status=os.environ.get('HUAWEICLOUD_DOMAIN_STATUS', ''),
+    )
 
     # use cloud provider to initialize policies to get region expansion
     policies = HuaweiCloud().initialize_policies(
         PolicyCollection([
             p for p in load_policies(
-                options, policy_config)
+                options, policy_options)
             if p.provider_name == 'huaweicloud'],
-            policy_config),
-        policy_config)
+            policy_options),
+        policy_options)
 
-    resources_gc_prefix(options, policy_config, policies)
+    resources_gc_prefix(options, policy_options, policies)
 
 
 if __name__ == '__main__':
