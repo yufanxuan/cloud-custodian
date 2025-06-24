@@ -532,7 +532,7 @@ class Session:
             client = (
                 CcmClient.new_builder()
                 .with_credentials(globalCredentials)
-                .with_region(CcmRegion.value_of("ap-southeast-3"))
+                .with_region(CcmRegion.value_of("sa-brazil-1"))
                 .build()
             )
         elif service == 'vpcep-ep':
@@ -611,9 +611,9 @@ class Session:
         elif service == "functiongraph":
             request = ListFunctionsRequest()
         elif service == "elb_loadbalancer":
-            request = ListLoadBalancersRequest()
+            request = ListLoadBalancersRequest(enterprise_project_id=["all_granted_eps"])
         elif service == "elb_listener":
-            request = ListListenersRequest()
+            request = ListListenersRequest(enterprise_project_id=["all_granted_eps"])
         elif service == "eip":
             request = ListPublicipsRequest()
         elif service == "ims":
