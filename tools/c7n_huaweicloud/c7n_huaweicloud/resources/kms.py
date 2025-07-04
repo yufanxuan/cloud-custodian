@@ -42,13 +42,6 @@ class rotationKey(HuaweiCloudBaseAction):
 policies:
   - name: enable_key_rotation
     resource: huaweicloud.kms
-    mode:
-      type: huaweicloud-periodic
-      xrole: fgs_admin
-      enable_lts_log: true
-      log_level: INFO
-      schedule: '1m'
-      schedule_type: Rate
     filters:
         - type: value
           key: key_rotation_enabled
@@ -56,6 +49,15 @@ policies:
         - type: value
           key: domain_id
           value: "537f650fb2be4ca3a511f25d8defd3b0"
+        - type: value
+          key: default_key_flag
+          value: "0"
+        - type: value
+          key: keystore_id
+          value: "0"
+        - type: value
+          key: key_state
+          value: "2"
     actions:
       - enable_key_rotation
     """
@@ -67,10 +69,10 @@ policies:
         domain = session.domain_id
         supportList = {"AES_256", "SM4"}
         resourceId = resource["key_id"]
+        log.info("begin enable_key_rotation resourceId={}".format(resourceId))
         if (resource["default_key_flag"] == "0" and resource["key_spec"]
                 in supportList and resource["keystore_id"] == "0"
                 and resource["key_state"] in {"2"}):
-            log.error("begin enable_key_rotation resourceId={}".format(resourceId))
             client = self.manager.get_client()
             request = EnableKeyRotationRequest()
             if domain is None:
@@ -94,8 +96,14 @@ policies:
                         client.enable_key_rotation(request)
                         log.info("enable_key_rotation the resourceType:KMS resourceId={},success".format(resourceId))
                     except Exception as e:
-                        log.error("enable_key_rotation the resourceType:KMS with:resourceId={},is failed".format(resourceId))
+                        log.error(
+                            "enable_key_rotation the resourceType:KMS with:resourceId={},is failed".format(resourceId))
                         raise e
+        else:
+            log.info(
+                "skip enable_key_rotation the resourceType:KMS resourceId={},The key does not meet the conditions for "
+                "enabling rotation.The conditions for ending the key are:the key is not the default key,is not a shared "
+                "key,and the algorithm is SM4 or AES_256".format(resourceId))
 
 
 @Kms.action_registry.register("disable_key_rotation")
