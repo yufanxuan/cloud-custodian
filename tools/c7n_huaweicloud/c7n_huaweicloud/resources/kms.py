@@ -82,9 +82,11 @@ policies:
                 )
                 try:
                     client.enable_key_rotation(request)
-                    log.info("enable_key_rotation the resourceType:KMS resourceId={},success".format(resourceId))
+                    log.info("enable_key_rotation the resourceType:KMS resourceId={},success"
+                             .format(resourceId))
                 except Exception as e:
-                    log.error("enable_key_rotation the resourceType:KMS resourceId={}，is failed".format(resourceId))
+                    log.error("enable_key_rotation the resourceType:KMS resourceId={}，is failed"
+                              .format(resourceId))
                     raise e
             else:
                 if domain == resource["domain_id"]:
@@ -94,15 +96,18 @@ policies:
                     )
                     try:
                         client.enable_key_rotation(request)
-                        log.info("enable_key_rotation the resourceType:KMS resourceId={},success".format(resourceId))
+                        log.info("enable_key_rotation the resourceType:KMS resourceId={},success"
+                                 .format(resourceId))
                     except Exception as e:
                         log.error(
-                            "enable_key_rotation the resourceType:KMS with:resourceId={},is failed".format(resourceId))
+                            "enable_key_rotation the resourceType:KMS with:resourceId={},is failed"
+                            .format(resourceId))
                         raise e
         else:
             log.info(
                 "skip enable_key_rotation the resourceType:KMS resourceId={},The key does not meet the conditions for "
-                "enabling rotation.The conditions for ending the key are:the key is not the default key,is not a shared "
+                "enabling rotation.The conditions for ending the key are:"
+                "the key is not the default key,is not a shared "
                 "key,and the algorithm is SM4 or AES_256".format(resourceId))
 
 
