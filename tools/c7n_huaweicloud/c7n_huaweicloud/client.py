@@ -164,7 +164,6 @@ class Session:
             self.domain_name = options.get("name")
             self.status = options.get("status")
             self.tags = options.get("tags")
-
         self.ak = self.ak or os.getenv("HUAWEI_ACCESS_KEY_ID")
         self.sk = self.sk or os.getenv("HUAWEI_SECRET_ACCESS_KEY")
         self.region = self.region or os.getenv("HUAWEI_DEFAULT_REGION")
@@ -533,7 +532,7 @@ class Session:
             client = (
                 CcmClient.new_builder()
                 .with_credentials(globalCredentials)
-                .with_region(CcmRegion.value_of("ap-southeast-3"))
+                .with_region(CcmRegion.value_of("sa-brazil-1"))
                 .build()
             )
         elif service == 'vpcep-ep':
