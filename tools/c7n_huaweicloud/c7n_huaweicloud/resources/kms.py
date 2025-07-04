@@ -105,7 +105,8 @@ policies:
                         raise e
         else:
             log.info(
-                "skip enable_key_rotation the resourceType:KMS resourceId={},The key does not meet the conditions for "
+                "skip enable_key_rotation the resourceType:KMS resourceId={},"
+                "The key does not meet the conditions for "
                 "enabling rotation.The conditions for ending the key are:"
                 "the key is not the default key,is not a shared "
                 "key,and the algorithm is SM4 or AES_256".format(resourceId))
