@@ -66,9 +66,11 @@ policies:
         session = local_session(self.manager.session_factory)
         domain = session.domain_id
         supportList = {"AES_256", "SM4"}
+        resourceId = resource["key_id"]
         if (resource["default_key_flag"] == "0" and resource["key_spec"]
                 in supportList and resource["keystore_id"] == "0"
                 and resource["key_state"] in {"2"}):
+            log.error("begin enable_key_rotation resourceId={}".format(resourceId))
             client = self.manager.get_client()
             request = EnableKeyRotationRequest()
             if domain is None:
@@ -78,7 +80,9 @@ policies:
                 )
                 try:
                     client.enable_key_rotation(request)
+                    log.info("enable_key_rotation the resourceType:KMS resourceId={},success".format(resourceId))
                 except Exception as e:
+                    log.error("enable_key_rotation the resourceType:KMS resourceId={}，is failed".format(resourceId))
                     raise e
             else:
                 if domain == resource["domain_id"]:
@@ -88,7 +92,9 @@ policies:
                     )
                     try:
                         client.enable_key_rotation(request)
+                        log.info("enable_key_rotation the resourceType:KMS resourceId={},success".format(resourceId))
                     except Exception as e:
+                        log.error("enable_key_rotation the resourceType:KMS with:resourceId={},is failed".format(resourceId))
                         raise e
 
 
