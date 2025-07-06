@@ -50,14 +50,14 @@ policies:
           key: domain_id
           value: "537f650fb2be4ca3a511f25d8defd3b0"
         - type: value
-          key: default_key_flag
-          value: "0"
-        - type: value
           key: keystore_id
           value: "0"
         - type: value
           key: key_state
           value: "2"
+        - type: value
+          key: default_key_flag
+          value: "0"
     actions:
       - enable_key_rotation
     """
@@ -85,9 +85,12 @@ policies:
                     log.info("enable_key_rotation the resourceType:KMS resourceId={},success"
                              .format(resourceId))
                 except Exception as e:
-                    log.error("enable_key_rotation the resourceType:KMS resourceId={}，is failed"
-                              .format(resourceId))
-                    raise e
+                    if e.status_code == 400:
+                        log.info("the key rotation fail,resourceId={},error_msg={}".format(resourceId, e.error_msg))
+                    else:
+                        log.error("enable_key_rotation the resourceType:KMS resourceId={}，is failed"
+                                  .format(resourceId))
+                    raise
             else:
                 if domain == resource["domain_id"]:
                     request.body = OperateKeyRequestBody(
@@ -99,10 +102,12 @@ policies:
                         log.info("enable_key_rotation the resourceType:KMS resourceId={},success"
                                  .format(resourceId))
                     except Exception as e:
-                        log.error(
-                            "enable_key_rotation the resourceType:KMS with:resourceId={},is failed"
-                            .format(resourceId))
-                        raise e
+                        if e.status_code == 400:
+                            log.info("the key rotation fail,resourceId={},error_msg={}".format(resourceId, e.error_msg))
+                        else:
+                            log.error("enable_key_rotation the resourceType:KMS resourceId={}，is failed"
+                                      .format(resourceId))
+                        raise
         else:
             log.info(
                 "skip enable_key_rotation the resourceType:KMS resourceId={},"
