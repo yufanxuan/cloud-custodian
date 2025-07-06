@@ -74,7 +74,6 @@ policies:
     def perform_action(self, resource):
         supportList = {"AES_256", "SM4"}
         resourceId = resource["key_id"]
-        log.info("begin enable_key_rotation resourceId={}".format(resourceId))
         if (resource["default_key_flag"] == "0" and resource["key_spec"]
                 in supportList and resource["keystore_id"] == "0"
                 and resource["key_state"] in {"2"}):
