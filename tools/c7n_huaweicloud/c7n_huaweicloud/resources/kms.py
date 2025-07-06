@@ -93,9 +93,10 @@ policies:
                              .format(resourceId))
                 except Exception as e:
                     if e.status_code == 400:
-                        log.info("the key rotation fail,resourceId={},error_msg={}".format(resourceId, e.error_msg))
+                        log.info("the key rotation enabled or key is not supported for rotation,resourceId={},msg={}".format(
+                            resourceId, e.error_msg))
                     else:
-                        log.error("enable_key_rotation the resourceType:KMS resourceId={}，is failed"
+                        log.error("enable_key_rotation the resourceType:KMS resourceId={} is failed"
                                   .format(resourceId))
                     raise
             else:
@@ -110,9 +111,9 @@ policies:
                                  .format(resourceId))
                     except Exception as e:
                         if e.status_code == 400:
-                            log.info("the key rotation fail,resourceId={},error_msg={}".format(resourceId, e.error_msg))
+                            log.info("the key rotation enabled or key is not supported for rotation, resourceId={},msg={}".format(resourceId, e.error_msg))
                         else:
-                            log.error("enable_key_rotation the resourceType:KMS resourceId={}，is failed"
+                            log.error("enable_key_rotation the resourceType:KMS resourceId={} is failed"
                                       .format(resourceId))
                         raise
         else:
