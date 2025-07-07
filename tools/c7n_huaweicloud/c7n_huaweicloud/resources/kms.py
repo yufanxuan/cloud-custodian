@@ -9,7 +9,8 @@ from huaweicloudsdkkms.v2 import (EnableKeyRotationRequest, OperateKeyRequestBod
                                   DisableKeyRotationRequest, EnableKeyRequest,
                                   DisableKeyRequest, CreateKeyRequest, CreateKeyRequestBody,
                                   ListAliasesRequest, CreateAliasRequest,
-                                  CreateAliasRequestBody)
+                                  CreateAliasRequestBody, ListKeysRequest, ListKmsByTagsRequest,
+                                  ListKmsByTagsRequestBody)
 
 from c7n import exceptions
 from c7n.filters import ValueFilter
@@ -29,6 +30,61 @@ class Kms(QueryResourceManager):
         id = 'key_id'
         tag_resource_type = 'kms'
         config_resource_support = True
+
+    def get_resources(self, query):
+        return self.get_api_resources(query)
+
+    def _fetch_resources(self, query):
+        return self.get_api_resources(query)
+
+    def get_api_resources(self, resource_ids):
+        session = local_session(self.session_factory)
+        client = session.client(self.resource_type.service)
+        resources = []
+        resourceTagDict = {}
+        offset, limit = 0, 1000
+        while True:
+
+            requestTag = ListKmsByTagsRequest()
+            requestTag.resource_instances = "resource_instances"
+            requestTag.body = ListKmsByTagsRequestBody(
+                action="filter",
+                offset=str(offset),
+                limit=str(limit)
+            )
+
+            try:
+                responseTag = client.list_kms_by_tags(requestTag)
+                tagResources = responseTag.resources
+                for tagResource in tagResources:
+                    resourceTagDict[tagResource.resource_id] = tagResource.to_dict().get('tags')
+
+            except Exception as e:
+                log.error(
+                    f"Failed to query API list: {str(e)}")
+                break
+
+            offset += limit
+
+            if not responseTag.total_count or offset >= len(responseTag.resources):
+                break
+
+        request = ListKeysRequest()
+        request.key_spec = "ALL"
+        try:
+            response = client.list_keys(request)
+            details = response.key_details
+            default = []
+            for detail in details:
+                dict = detail.to_dict()
+                dict["tags"] = resourceTagDict.get(detail.key_id, default)
+                dict["id"] = detail.key_id
+                resources.append(dict)
+        except Exception as e:
+            log.error(
+                f"Failed to query API list: {str(e)}")
+            raise e
+        return resources
 
 
 @Kms.action_registry.register("enable_key_rotation")
@@ -74,6 +130,7 @@ policies:
     def perform_action(self, resource):
         supportList = {"AES_256", "SM4"}
         resourceId = resource["key_id"]
+        print(resource)
         if (resource["default_key_flag"] == "0" and resource["key_spec"]
                 in supportList and resource["keystore_id"] == "0"
                 and resource["key_state"] in {"2"}):
