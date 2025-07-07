@@ -98,13 +98,6 @@ class rotationKey(HuaweiCloudBaseAction):
 policies:
   - name: enable_key_rotation
     resource: huaweicloud.kms
-    mode:
-      type: huaweicloud-periodic
-      xrole: fgs_admin
-      enable_lts_log: true
-      log_level: INFO
-      schedule: '1m'
-      schedule_type: Rate
     filters:
         - type: value
           key: key_rotation_enabled
@@ -130,7 +123,6 @@ policies:
     def perform_action(self, resource):
         supportList = {"AES_256", "SM4"}
         resourceId = resource["key_id"]
-        print(resource)
         if (resource["default_key_flag"] == "0" and resource["key_spec"]
                 in supportList and resource["keystore_id"] == "0"
                 and resource["key_state"] in {"2"}):
