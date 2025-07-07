@@ -31,8 +31,13 @@ class Kms(QueryResourceManager):
         tag_resource_type = 'kms'
         config_resource_support = True
 
-    def get_resources(self, query):
-        return self.get_api_resources(query)
+    def get_resources(self, resource_ids):
+        allResources = self.get_api_resources(resource_ids)
+        resources = []
+        for resource in allResources:
+            if resource["key_id"] in resource_ids:
+                resources.append(resource)
+        return resources
 
     def _fetch_resources(self, query):
         return self.get_api_resources(query)
