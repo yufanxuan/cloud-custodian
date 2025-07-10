@@ -48,48 +48,57 @@ class Kms(QueryResourceManager):
         resources = []
         resourceTagDict = {}
         offset, limit = 0, 1000
-        while True:
-
-            requestTag = ListKmsByTagsRequest()
-            requestTag.resource_instances = "resource_instances"
-            requestTag.body = ListKmsByTagsRequestBody(
-                action="filter",
-                offset=str(offset),
-                limit=str(limit)
-            )
-
-            try:
-                responseTag = client.list_kms_by_tags(requestTag)
-                tagResources = responseTag.resources
-                for tagResource in tagResources:
-                    resourceTagDict[tagResource.resource_id] = tagResource.to_dict().get('tags')
-
-            except Exception as e:
-                log.error(
-                    f"Failed to query API list: {str(e)}")
-                break
-
-            offset += limit
-
-            if not responseTag.total_count or offset >= len(responseTag.resources):
-                break
+        isQueryTags = True
 
         request = ListKeysRequest()
         request.key_spec = "ALL"
         try:
             response = client.list_keys(request)
             details = response.key_details
+            if len(details) == 0 or hasattr(details[0], "tags"):
+                isQueryTags = False
+        except Exception as e:
+            isQueryTags = False
+            log.error(
+                f"Failed to query API list: {str(e)}")
+
+
+        if isQueryTags:
+            while True:
+                requestTag = ListKmsByTagsRequest()
+                requestTag.resource_instances = "resource_instances"
+                requestTag.body = ListKmsByTagsRequestBody(
+                    action="filter",
+                    offset=str(offset),
+                    limit=str(limit)
+                )
+
+                try:
+                    responseTag = client.list_kms_by_tags(requestTag)
+                    tagResources = responseTag.resources
+                    if len(tagResources) == 0:
+                        log.info("tagResources is empty")
+                    for tagResource in tagResources:
+                        resourceTagDict[tagResource.resource_id] = tagResource.to_dict().get('tags')
+
+                except Exception as e:
+                    log.error(
+                        f"Failed to query API list: {str(e)}")
+                    break
+
+                offset += limit
+
+                if not responseTag.total_count or offset >= len(responseTag.resources):
+                    break
             default = []
             for detail in details:
                 dict = detail.to_dict()
                 dict["tags"] = resourceTagDict.get(detail.key_id, default)
                 dict["id"] = detail.key_id
                 resources.append(dict)
-        except Exception as e:
-            log.error(
-                f"Failed to query API list: {str(e)}")
-            raise e
-        return resources
+            return resources
+        else :
+            return details
 
 
 @Kms.action_registry.register("enable_key_rotation")
