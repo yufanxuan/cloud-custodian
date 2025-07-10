@@ -112,6 +112,13 @@ class rotationKey(HuaweiCloudBaseAction):
 policies:
   - name: enable_key_rotation
     resource: huaweicloud.kms
+    mode:
+      type: huaweicloud-periodic
+      xrole: fgs_admin
+      enable_lts_log: true
+      log_level: INFO
+      schedule: '1m'
+      schedule_type: Rate
     filters:
         - type: value
           key: key_rotation_enabled
