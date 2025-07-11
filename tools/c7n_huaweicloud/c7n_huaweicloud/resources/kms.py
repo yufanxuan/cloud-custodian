@@ -155,12 +155,14 @@ policies:
             )
             try:
                 client.enable_key_rotation(request)
-                log.info("[action]-enable_key_rotation the resource:resourceType:KMS with resourceId={},success"
+                log.info("[action]-enable_key_rotation the resource:resourceType:KMS with resourceId={},"
+                         "success"
                          .format(resourceId))
             except Exception as e:
                 if e.status_code == 400:
                     log.warning(
-                        "[action]-enable_key_rotation the resource:resourceType:KMS with resourceId={} "
+                        "[action]-enable_key_rotation the resource:resourceType:KMS with "
+                        "resourceId={} "
                         "is failed, cause={}".format(resourceId, e.error_msg))
                 else:
                     log.error(
