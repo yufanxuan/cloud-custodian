@@ -366,7 +366,7 @@ policies:
                     return []
             except exceptions.ClientRequestException as e:
                 log.error("[action]-create-key-with-alias:query obs url getobject failded,msg={}"
-                          .format( e.error_msg))
+                          .format(e.error_msg))
                 raise
 
         try:
@@ -402,7 +402,8 @@ policies:
                         log.debug("[action]-create-key-with-alias:query create_alias success")
                         time.sleep(1)
                     except Exception as e:
-                        log.error("[action]-create-key-with-alias:query obs url create_alias failded,msg={}"
+                        log.error("[action]-create-key-with-alias:query obs url "
+                                  "create_alias failded,msg={}"
                                   .format(e.error_msg))
                         raise e
 
