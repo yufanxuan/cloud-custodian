@@ -167,7 +167,7 @@ policies:
                          .format(resourceId))
             except Exception as e:
                 if e.status_code == 400:
-                    log.warning(
+                    log.info(
                         "[action]-enable_key_rotation the resource:resourceType:KMS with "
                         "resourceId={} "
                         "is failed, cause={}".format(resourceId, e.error_msg))
@@ -340,7 +340,7 @@ policies:
         resourceId = resource["key_id"]
         obs_client = local_session(self.manager.session_factory).client("obs")
         if not key_aliases and obs_url is None:
-            log.warning(
+            log.info(
                 "[action]-create-key-with-alias the resource:resourceType:KMS with resourceId={} "
                 "is failed, cause=key_aliases or obs_url is required".format(resourceId))
             return []
