@@ -56,11 +56,15 @@ class Kms(QueryResourceManager):
             response = client.list_keys(request)
             details = response.key_details
             if len(details) == 0 or hasattr(details[0], "tags"):
+                log.debug("[action]-fileter the resource:resourceType:KMS "
+                         "list_keys tags is empty")
                 isQueryTags = False
         except Exception as e:
             isQueryTags = False
             log.error(
-                f"Failed to query API list: {str(e)}")
+                "[action]-fileter the resource:resourceType:KMS "
+                "list_keys is failed,"
+                " cause={}".format(e.error_msg))
 
         if isQueryTags:
             while True:
@@ -76,13 +80,16 @@ class Kms(QueryResourceManager):
                     responseTag = client.list_kms_by_tags(requestTag)
                     tagResources = responseTag.resources
                     if len(tagResources) == 0:
-                        log.info("tagResources is empty")
+                        log.debug("[action]-fileter the resource:resourceType:KMS "
+                                 "list_kms_by_tags response is empty")
                     for tagResource in tagResources:
                         resourceTagDict[tagResource.resource_id] = tagResource.to_dict().get('tags')
 
                 except Exception as e:
                     log.error(
-                        f"Failed to query API list: {str(e)}")
+                        "[action]-fileter the resource:resourceType:KMS "
+                        "list_kms_by_tags is failed,"
+                        " cause={}".format(e.error_msg))
                     break
 
                 offset += limit
@@ -358,15 +365,21 @@ policies:
                               f"{resp.errorMessage}")
                     return []
             except exceptions.ClientRequestException as e:
-                log.error(e.status_code, e.request_id, e.error_code, e.error_msg)
+                log.error("[action]-create-key-with-alias:query obs url getobject failded,msg={}"
+                          .format( e.error_msg))
                 raise
 
-        listAliasesRequest = ListAliasesRequest()
-        listAliasResponse = client.list_aliases(listAliasesRequest)
-        arr = set()
-        for realAlias in listAliasResponse.body[0].aliases:
-            arr.add(realAlias.alias.replace('alias/', ''))
-
+        try:
+            listAliasesRequest = ListAliasesRequest()
+            listAliasResponse = client.list_aliases(listAliasesRequest)
+            log.debug("[action]-create-key-with-alias:query list_aliases success")
+            arr = set()
+            for realAlias in listAliasResponse.body[0].aliases:
+                arr.add(realAlias.alias.replace('alias/', ''))
+        except exceptions.ClientRequestException as e:
+            log.error("[action]-create-key-with-alias:query obs url list_aliases failded,msg={}"
+                      .format(e.error_msg))
+            raise
         if len(all_key_aliases) != 0:
             for alias in all_key_aliases:
                 if alias not in arr:
@@ -378,6 +391,7 @@ policies:
                     )
                     try:
                         createKeyResponse = client.create_key(createKeyRequest)
+                        log.debug("[action]-create-key-with-alias:query create_key success")
                         createKeyId = createKeyResponse.key_info.key_id
                         createAliasRequest = CreateAliasRequest()
                         createAliasRequest.body = CreateAliasRequestBody(
@@ -385,8 +399,11 @@ policies:
                             alias="alias/" + alias
                         )
                         client.create_alias(createAliasRequest)
+                        log.debug("[action]-create-key-with-alias:query create_alias success")
                         time.sleep(1)
                     except Exception as e:
+                        log.error("[action]-create-key-with-alias:query obs url create_alias failded,msg={}"
+                                  .format(e.error_msg))
                         raise e
 
     def perform_action(self, resource):
