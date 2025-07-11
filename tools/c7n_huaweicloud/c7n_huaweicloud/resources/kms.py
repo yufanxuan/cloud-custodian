@@ -97,7 +97,7 @@ class Kms(QueryResourceManager):
                 dict["id"] = detail.key_id
                 resources.append(dict)
             return resources
-        else :
+        else:
             return details
 
 
@@ -155,7 +155,8 @@ policies:
             )
             try:
                 client.enable_key_rotation(request)
-                log.info("[action]-enable_key_rotation the resource:resourceType:KMS with resourceId={},"
+                log.info("[action]-enable_key_rotation the resource:resourceType:KMS "
+                         "with resourceId={},"
                          "success"
                          .format(resourceId))
             except Exception as e:
@@ -166,7 +167,8 @@ policies:
                         "is failed, cause={}".format(resourceId, e.error_msg))
                 else:
                     log.error(
-                        "[action]-enable_key_rotation the resource:resourceType:KMS with resourceId={} "
+                        "[action]-enable_key_rotation the resource:resourceType:KMS "
+                        "with resourceId={} "
                         "is failed, cause={}".format(resourceId, e.error_msg))
 
         else:
@@ -350,10 +352,11 @@ policies:
                                             objectKey=obs_file,
                                             loadStreamInMemory=True)
                 if resp.status < 300:
-                    log.debug(f"[action]-create-key-with-alias:query obs url getobject success")
+                    log.debug("[action]-create-key-with-alias:query obs url getobject success")
                     all_key_aliases.update(json.loads(resp.body.buffer)['obs_key_aliases'])
                 else:
-                    log.error(f"[action]-create-key-with-alias failed: {resp.errorCode}, {resp.errorMessage}")
+                    log.error(f"[action]-create-key-with-alias failed: {resp.errorCode}, "
+                              f"{resp.errorMessage}")
                     return []
             except exceptions.ClientRequestException as e:
                 log.error(e.status_code, e.request_id, e.error_code, e.error_msg)
