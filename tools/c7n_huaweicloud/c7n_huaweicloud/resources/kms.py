@@ -62,7 +62,6 @@ class Kms(QueryResourceManager):
             log.error(
                 f"Failed to query API list: {str(e)}")
 
-
         if isQueryTags:
             while True:
                 requestTag = ListKmsByTagsRequest()
