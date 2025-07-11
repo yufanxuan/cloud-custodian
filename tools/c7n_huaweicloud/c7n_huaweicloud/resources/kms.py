@@ -155,17 +155,17 @@ policies:
             )
             try:
                 client.enable_key_rotation(request)
-                log.info("enable_key_rotation the resourceType:KMS resourceId={},success"
+                log.info("[action]-enable_key_rotation the resource:resourceType:KMS with resourceId={},success"
                          .format(resourceId))
             except Exception as e:
                 if e.status_code == 400:
-                    log.info(
-                        "the key rotation is already enabled or the key is not supported "
-                        "for rotation, resourceId={},msg={}".format(
-                            resourceId, e.error_msg))
+                    log.warning(
+                        "[action]-enable_key_rotation the resource:resourceType:KMS with resourceId={} "
+                        "is failed, cause={}".format(resourceId, e.error_msg))
                 else:
-                    log.error("enable_key_rotation the resourceType:KMS resourceId={} is failed"
-                              .format(resourceId))
+                    log.error(
+                        "[action]-enable_key_rotation the resource:resourceType:KMS with resourceId={} "
+                        "is failed, cause={}".format(resourceId, e.error_msg))
 
         else:
             log.info("skip enable_key_rotation the resourceType:KMS resourceId={},"
@@ -327,9 +327,12 @@ policies:
         key_aliases = self.data.get("key_aliases", [])
         all_key_aliases.update(key_aliases)
         obs_url = self.data.get("obs_url", None)
+        resourceId = resource["key_id"]
         obs_client = local_session(self.manager.session_factory).client("obs")
         if not key_aliases and obs_url is None:
-            log.error("key_aliases or obs_url is required")
+            log.warning(
+                "[action]-create-key-with-alias the resource:resourceType:KMS with resourceId={} "
+                "is failed, cause=key_aliases or obs_url is required".format(resourceId))
             return []
         if obs_url is not None and obs_url != '':
             # 1. 提取第一个变量：从 "https://" 到最后一个 "obs" 的部分
@@ -345,9 +348,10 @@ policies:
                                             objectKey=obs_file,
                                             loadStreamInMemory=True)
                 if resp.status < 300:
+                    log.debug(f"[action]-create-key-with-alias:query obs url getobject success")
                     all_key_aliases.update(json.loads(resp.body.buffer)['obs_key_aliases'])
                 else:
-                    log.error(f"get obs object failed: {resp.errorCode}, {resp.errorMessage}")
+                    log.error(f"[action]-create-key-with-alias failed: {resp.errorCode}, {resp.errorMessage}")
                     return []
             except exceptions.ClientRequestException as e:
                 log.error(e.status_code, e.request_id, e.error_code, e.error_msg)
