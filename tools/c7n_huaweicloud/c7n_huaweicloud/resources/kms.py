@@ -60,7 +60,7 @@ class Kms(QueryResourceManager):
                          "list_keys details is empty")
                 return details
 
-            if  hasattr(details[0], "tags"):
+            if hasattr(details[0], "tags"):
                 log.debug("[action]-fileter the resource:resourceType:KMS "
                          "list_keys tags is empty")
                 isQueryTags = False
