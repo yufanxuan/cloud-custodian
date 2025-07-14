@@ -55,7 +55,7 @@ class Kms(QueryResourceManager):
         try:
             response = client.list_keys(request)
             details = response.key_details
-            if len(details) == 0 :
+            if len(details) == 0:
                 log.debug("[action]-fileter the resource:resourceType:KMS "
                          "list_keys details is empty")
                 return details
