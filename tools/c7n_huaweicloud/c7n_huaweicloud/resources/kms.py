@@ -343,12 +343,12 @@ policies:
         key_aliases = self.data.get("key_aliases", [])
         all_key_aliases.update(key_aliases)
         obs_url = self.data.get("obs_url", None)
-        resourceId = resource["key_id"]
+        # resourceId = resource["key_id"]
         obs_client = local_session(self.manager.session_factory).client("obs")
         if not key_aliases and obs_url is None:
             log.info(
-                "[action]-create-key-with-alias the resource:resourceType:KMS with resourceId={} "
-                "is failed, cause=key_aliases or obs_url is required".format(resourceId))
+                "[action]-create-key-with-alias the resource:resourceType:KMS "
+                "is failed, cause=key_aliases or obs_url is required")
             return []
         if obs_url is not None and obs_url != '':
             # 1. 提取第一个变量：从 "https://" 到最后一个 "obs" 的部分
