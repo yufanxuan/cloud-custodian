@@ -216,12 +216,11 @@ policies:
     schema = type_schema("disable_key_rotation")
 
     def perform_action(self, resource):
-        notSupportList = {"RSA_2048", "RSA_3072", "RSA_4096", "EC_P256", "EC_P384",
-                          "SM2", "ML_DSA_44", "ML_DSA_65", "ML_DSA_87"}
-
+        supportList = {"AES_256", "SM4"}
+        resourceId = resource["key_id"]
         if (resource["default_key_flag"] == "0" and resource["key_spec"]
-                not in notSupportList and resource["keystore_id"] == "0"
-                and resource["key_state"] in {"2", "3", "4"}):
+                in supportList and resource["keystore_id"] == "0"
+                and resource["key_state"] in {"2"}):
             client = self.manager.get_client()
             request = DisableKeyRotationRequest()
             request.body = OperateKeyRequestBody(
@@ -231,7 +230,24 @@ policies:
             try:
                 client.disable_key_rotation(request)
             except Exception as e:
-                raise e
+                if e.status_code == 400:
+                    log.info(
+                        "[action]-disable_key_rotation the resource:resourceType:KMS with "
+                        "resourceId={} "
+                        "is failed, cause={}".format(resourceId, e.error_msg))
+                else:
+                    log.error(
+                        "[action]-disable_key_rotation the resource:resourceType:KMS "
+                        "with resourceId={} "
+                        "is failed, cause={}".format(resourceId, e.error_msg))
+                    raise e
+
+            else:
+                log.info("skip disable_key_rotation the resourceType:KMS resourceId={},"
+                         "The key does not meet the conditions for "
+                         "enabling rotation.The conditions for ending the key are:"
+                         "the key is not the default key,is not a shared "
+                         "key,and the algorithm is SM4 or AES_256".format(resourceId))
 
 
 @Kms.action_registry.register("enable_key")
