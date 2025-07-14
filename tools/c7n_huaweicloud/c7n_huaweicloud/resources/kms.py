@@ -55,16 +55,21 @@ class Kms(QueryResourceManager):
         try:
             response = client.list_keys(request)
             details = response.key_details
-            if len(details) == 0 or hasattr(details[0], "tags"):
+            if len(details) == 0 :
+                log.debug("[action]-fileter the resource:resourceType:KMS "
+                         "list_keys details is empty")
+                return details
+
+            if  hasattr(details[0], "tags"):
                 log.debug("[action]-fileter the resource:resourceType:KMS "
                          "list_keys tags is empty")
                 isQueryTags = False
         except Exception as e:
-            isQueryTags = False
             log.error(
                 "[action]-fileter the resource:resourceType:KMS "
                 "list_keys is failed,"
                 " cause={}".format(e.error_msg))
+            raise e
 
         if isQueryTags:
             while True:
@@ -90,7 +95,7 @@ class Kms(QueryResourceManager):
                         "[action]-fileter the resource:resourceType:KMS "
                         "list_kms_by_tags is failed,"
                         " cause={}".format(e.error_msg))
-                    break
+                    raise e
 
                 offset += limit
 
@@ -176,6 +181,7 @@ policies:
                         "[action]-enable_key_rotation the resource:resourceType:KMS "
                         "with resourceId={} "
                         "is failed, cause={}".format(resourceId, e.error_msg))
+                    raise e
 
         else:
             log.info("skip enable_key_rotation the resourceType:KMS resourceId={},"
@@ -361,13 +367,13 @@ policies:
                     log.debug("[action]-create-key-with-alias:query obs url getobject success")
                     all_key_aliases.update(json.loads(resp.body.buffer)['obs_key_aliases'])
                 else:
-                    log.error(f"[action]-create-key-with-alias failed: {resp.errorCode}, "
+                    log.warning(f"[action]-create-key-with-alias query obs fail: {resp.errorCode}, "
                               f"{resp.errorMessage}")
                     return []
             except exceptions.ClientRequestException as e:
                 log.error("[action]-create-key-with-alias:query obs url getobject failded,msg={}"
                           .format(e.error_msg))
-                raise
+                raise e
 
         try:
             listAliasesRequest = ListAliasesRequest()
@@ -379,7 +385,7 @@ policies:
         except exceptions.ClientRequestException as e:
             log.error("[action]-create-key-with-alias:query obs url list_aliases failded,msg={}"
                       .format(e.error_msg))
-            raise
+            raise e
         if len(all_key_aliases) != 0:
             for alias in all_key_aliases:
                 if alias not in arr:
