@@ -343,7 +343,6 @@ policies:
         key_aliases = self.data.get("key_aliases", [])
         all_key_aliases.update(key_aliases)
         obs_url = self.data.get("obs_url", None)
-        # resourceId = resource["key_id"]
         obs_client = local_session(self.manager.session_factory).client("obs")
         if not key_aliases and obs_url is None:
             log.info(
@@ -367,7 +366,7 @@ policies:
                     log.debug("[action]-create-key-with-alias:query obs url getobject success")
                     all_key_aliases.update(json.loads(resp.body.buffer)['obs_key_aliases'])
                 else:
-                    log.warning(f"[action]-create-key-with-alias query obs fail: {resp.errorCode}, "
+                    log.error(f"[action]-create-key-with-alias query obs fail: {resp.errorCode}, "
                               f"{resp.errorMessage}")
                     return []
             except exceptions.ClientRequestException as e:
