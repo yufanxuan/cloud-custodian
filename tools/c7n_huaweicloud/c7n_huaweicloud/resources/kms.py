@@ -57,12 +57,12 @@ class Kms(QueryResourceManager):
             details = response.key_details
             if len(details) == 0:
                 log.debug("[action]-fileter the resource:resourceType:KMS "
-                         "list_keys details is empty")
+                          "list_keys details is empty")
                 return details
 
             if hasattr(details[0], "tags"):
                 log.debug("[action]-fileter the resource:resourceType:KMS "
-                         "list_keys tags is empty")
+                          "list_keys tags is empty")
                 isQueryTags = False
         except Exception as e:
             log.error(
@@ -86,7 +86,7 @@ class Kms(QueryResourceManager):
                     tagResources = responseTag.resources
                     if len(tagResources) == 0:
                         log.debug("[action]-fileter the resource:resourceType:KMS "
-                                 "list_kms_by_tags response is empty")
+                                  "list_kms_by_tags response is empty")
                     for tagResource in tagResources:
                         resourceTagDict[tagResource.resource_id] = tagResource.to_dict().get('tags')
 
@@ -277,7 +277,7 @@ class enableKey(HuaweiCloudBaseAction):
     def perform_action(self, resource):
         client = self.manager.get_client()
         resourceId = resource["key_id"]
-        if (resource["default_key_flag"] == "0"  and resource["keystore_id"] == "0"
+        if (resource["default_key_flag"] == "0" and resource["keystore_id"] == "0"
                 and resource["key_state"] in {"3"}):
             request = EnableKeyRequest()
             request.body = OperateKeyRequestBody(
@@ -449,7 +449,8 @@ policies:
                             alias="alias/" + alias
                         )
                         client.create_alias(createAliasRequest)
-                        log.info("[action]-create-key-with-alias:query create_alias with resourceID={} success".format(createKeyId))
+                        log.info("[action]-create-key-with-alias:query create_alias with resourceID={} success".format(
+                            createKeyId))
                         time.sleep(1)
                     except Exception as e:
                         log.error("[action]-create-key-with-alias:query obs url "
