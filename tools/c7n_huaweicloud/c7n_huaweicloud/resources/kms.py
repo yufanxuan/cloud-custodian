@@ -449,8 +449,8 @@ policies:
                             alias="alias/" + alias
                         )
                         client.create_alias(createAliasRequest)
-                        log.info("[action]-create-key-with-alias:query create_alias with resourceID={} success".format(
-                            createKeyId))
+                        log.info("[action]-create-key-with-alias:query create_alias "
+                                 "with resourceID={} success".format(createKeyId))
                         time.sleep(1)
                     except Exception as e:
                         log.error("[action]-create-key-with-alias:query obs url "
