@@ -205,7 +205,7 @@ policies:
     filters:
         - type: value
           key: key_rotation_enabled
-          value: "False"
+          value: "false"
         - type: value
           key: domain_id
           value: "537f650fb2be4ca3a511f25d8defd3b0"
@@ -229,6 +229,9 @@ policies:
             )
             try:
                 client.disable_key_rotation(request)
+                log.info(
+                    "[action]-disable_key_rotation the resource:resourceType:KMS with "
+                    "resourceId={} success".format(resourceId))
             except Exception as e:
                 if e.status_code == 400:
                     log.info(
@@ -273,17 +276,29 @@ class enableKey(HuaweiCloudBaseAction):
 
     def perform_action(self, resource):
         client = self.manager.get_client()
-
-        request = EnableKeyRequest()
-        request.body = OperateKeyRequestBody(
-            key_id=resource["key_id"],
-            sequence=uuid.uuid4().hex
-        )
-        try:
-            response = client.enable_key(request)
-        except Exception as e:
-            raise e
-
+        resourceId = resource["key_id"]
+        if (resource["default_key_flag"] == "0"  and resource["keystore_id"] == "0"
+                and resource["key_state"] in {"3"}):
+            request = EnableKeyRequest()
+            request.body = OperateKeyRequestBody(
+                key_id=resource["key_id"],
+                sequence=uuid.uuid4().hex
+            )
+            try:
+                response = client.enable_key(request)
+                log.info(
+                    "[action]-enable_key the resource:resourceType:KMS with "
+                    "resourceId={} success".format(resourceId))
+            except Exception as e:
+                if e.status_code == 400:
+                    log.info(
+                        "[action]-enable_key the resource:resourceType:KMS with "
+                        "resourceId={} "
+                        "is failed, cause={}".format(resourceId, e.error_msg))
+                else:
+                    raise e
+        else:
+            log.info("skip enable_key the resourceType:KMS resourceId={}".format(resourceId))
         return response
 
 
@@ -310,16 +325,30 @@ class disableKey(HuaweiCloudBaseAction):
 
     def perform_action(self, resource):
         client = self.manager.get_client()
-        request = DisableKeyRequest()
-        request.body = OperateKeyRequestBody(
-            key_id=resource["key_id"],
-            sequence=uuid.uuid4().hex
-        )
-        try:
-            response = client.disable_key(request)
-        except Exception as e:
-            raise e
-
+        resourceId = resource["key_id"]
+        response = ""
+        if (resource["default_key_flag"] == "0" and resource["keystore_id"] == "0"
+                and resource["key_state"] in {"2"}):
+            request = DisableKeyRequest()
+            request.body = OperateKeyRequestBody(
+                key_id=resource["key_id"],
+                sequence=uuid.uuid4().hex
+            )
+            try:
+                response = client.disable_key(request)
+                log.info(
+                    "[action]-disable_key the resource:resourceType:KMS with "
+                    "resourceId={} success".format(resourceId))
+            except Exception as e:
+                if e.status_code == 400:
+                    log.info(
+                        "[action]-disable_key the resource:resourceType:KMS with "
+                        "resourceId={} "
+                        "is failed, cause={}".format(resourceId, e.error_msg))
+                else:
+                    raise e
+        else:
+            log.info("skip disable_key the resourceType:KMS resourceId={}".format(resourceId))
         return response
 
 
@@ -420,7 +449,7 @@ policies:
                             alias="alias/" + alias
                         )
                         client.create_alias(createAliasRequest)
-                        log.debug("[action]-create-key-with-alias:query create_alias success")
+                        log.info("[action]-create-key-with-alias:query create_alias with resourceID={} success".format(createKeyId))
                         time.sleep(1)
                     except Exception as e:
                         log.error("[action]-create-key-with-alias:query obs url "
