@@ -3,10 +3,6 @@
 
 import logging
 
-from huaweicloudsdkram.v1 import DisassociateResourceShareRequest, ResourceShareAssociationReqBody
-
-from c7n.utils import type_schema
-from c7n_huaweicloud.actions.base import HuaweiCloudBaseAction
 from c7n_huaweicloud.provider import resources
 from c7n_huaweicloud.query import QueryResourceManager, TypeInfo
 
