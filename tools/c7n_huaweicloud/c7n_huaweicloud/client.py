@@ -103,7 +103,7 @@ from huaweicloudsdkhss.v5.region.hss_region import HssRegion
 from huaweicloudsdkram.v1 import (
     RamClient,
     SearchResourceShareAssociationsRequest,
-    SearchResourceShareAssociationsReqBody,
+    SearchResourceShareAssociationsReqBody, SearchSharedResourcesRequest, SearchSharedResourcesReqBody,
 )
 from huaweicloudsdkrds.v3 import RdsClient, ListInstancesRequest as RdsListInstancesRequest
 from huaweicloudsdkrds.v3.region.rds_region import RdsRegion
@@ -567,6 +567,13 @@ class Session:
                 .with_region(CceRegion.value_of(self.region))
                 .build()
             )
+        elif service == "ram-shared-resource":
+            client = (
+                RamClient.new_builder()
+                .with_credentials(globalCredentials)
+                .with_region(RamRegion.value_of("cn-north-4"))
+                .build()
+            )
         return client
 
     def region_client(self, service, region):
@@ -737,6 +744,11 @@ class Session:
             request = ListChartsRequest()
         elif service == "cce-release":
             request = ListReleasesRequest()
+        elif service == "ram-shared-resource":
+            request = SearchSharedResourcesRequest()
+            request.body = SearchSharedResourcesReqBody(
+                resource_owner="self"
+            )
         return request
 
 
