@@ -103,7 +103,8 @@ from huaweicloudsdkhss.v5.region.hss_region import HssRegion
 from huaweicloudsdkram.v1 import (
     RamClient,
     SearchResourceShareAssociationsRequest,
-    SearchResourceShareAssociationsReqBody, SearchSharedResourcesRequest, SearchSharedResourcesReqBody,
+    SearchResourceShareAssociationsReqBody,
+    SearchSharedResourcesRequest, SearchSharedResourcesReqBody,
 )
 from huaweicloudsdkrds.v3 import RdsClient, ListInstancesRequest as RdsListInstancesRequest
 from huaweicloudsdkrds.v3.region.rds_region import RdsRegion

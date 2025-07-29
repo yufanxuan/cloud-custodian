@@ -66,7 +66,8 @@ class Kms(QueryResourceManager):
                 isQueryTags = False
         except Exception as e:
             log.error(
-                "[filter]- the filter list_keys query the service:kms/list-keys the resource:resourceType:KMS "
+                "[filter]- the filter list_keys query the service:kms/list-keys "
+                "the resource:resourceType:KMS "
                 "is failed,cause={}".format(e.error_msg))
             raise e
 
@@ -84,14 +85,17 @@ class Kms(QueryResourceManager):
                     responseTag = client.list_kms_by_tags(requestTag)
                     tagResources = responseTag.resources
                     if len(tagResources) == 0:
-                        log.debug("[filter]-list_kms_by_tags,query the service:kms/service_instance/action,the resource:resourceType:KMS "
+                        log.debug("[filter]-list_kms_by_tags,query the "
+                                  "service:kms/service_instance/action,"
+                                  "the resource:resourceType:KMS "
                                   "list_kms_by_tags response is empty")
                     for tagResource in tagResources:
                         resourceTagDict[tagResource.resource_id] = tagResource.to_dict().get('tags')
 
                 except Exception as e:
                     log.error(
-                        "[filter]-list_kms_by_tags,query the service:kms/service_instance/action, the resource:resourceType:KMS "
+                        "[filter]-list_kms_by_tags,query the service:kms/service_instance/action, "
+                        "the resource:resourceType:KMS "
                         "list_kms_by_tags is failed,cause={}".format(e.error_msg))
 
                     raise e
