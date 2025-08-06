@@ -144,6 +144,7 @@ from c7n_huaweicloud.utils.cci_client import CCIClient
 from huaweicloudsdkvpcep.v1 import VpcepClient
 from huaweicloudsdkvpcep.v1.region.vpcep_region import VpcepRegion
 from huaweicloudsdkvpcep.v1 import ListEndpointsRequest
+from huaweicloudsdkvpcep.v1 import ListEndpointServiceRequest
 
 # CCE相关导入
 from huaweicloudsdkcce.v3 import (
@@ -157,6 +158,14 @@ from huaweicloudsdkcce.v3 import (
     ListReleasesRequest
 )
 from huaweicloudsdkcce.v3.region.cce_region import CceRegion
+from huaweicloudsdkas.v1 import (
+     AsClient, ListScalingGroupsRequest,
+    ListScalingConfigsRequest, ListAllScalingV2PoliciesRequest
+)
+from huaweicloudsdkas.v1.region.as_region import AsRegion
+from huaweicloudsdkelb.v2 import ElbClient as ElbClientV2
+from huaweicloudsdkelb.v2.region.elb_region import ElbRegion as ElbRegionV2
+
 
 log = logging.getLogger("custodian.huaweicloud.client")
 
@@ -256,6 +265,13 @@ class Session:
                 TmsClient.new_builder()
                 .with_credentials(globalCredentials)
                 .with_region(TmsRegion.value_of("ap-southeast-1"))
+                .build()
+            )
+        elif service == "elb_v2":
+            client = (
+                ElbClientV2.new_builder()
+                .with_credentials(credentials)
+                .with_region(ElbRegionV2.value_of(self.region))
                 .build()
             )
         elif service == "cbr":
@@ -575,6 +591,13 @@ class Session:
                 .with_region(RamRegion.value_of("cn-north-4"))
                 .build()
             )
+        elif service in ['as-group', 'as-config', 'as-policy']:
+            client = (
+                AsClient.new_builder()
+                .with_credentials(credentials)
+                .with_region(AsRegion.value_of(self.region))
+                .build()
+            )
         return client
 
     def region_client(self, service, region):
@@ -731,6 +754,8 @@ class Session:
             request = True
         elif service == 'vpcep-ep':
             request = ListEndpointsRequest()
+        elif service == 'vpcep-eps':
+            request = ListEndpointServiceRequest()
         elif service == "cce-cluster":
             request = ListClustersRequest()
         elif service == "cce-nodepool":
@@ -750,6 +775,12 @@ class Session:
             request.body = SearchSharedResourcesReqBody(
                 resource_owner="self"
             )
+        elif service == 'as-group':
+            request = ListScalingGroupsRequest()
+        elif service == 'as-config':
+            request = ListScalingConfigsRequest()
+        elif service == 'as-policy':
+            request = ListAllScalingV2PoliciesRequest()
         return request
 
 
