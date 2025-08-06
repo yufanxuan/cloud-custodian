@@ -87,7 +87,7 @@ class NotifyMessageCustomizeAction(HuaweiCloudBaseAction):
         if keyArr is not None:
             for k in keyArr:
                 kstr = "{" + k + "}"
-                kv =jmespath.search(k, events[0])
+                kv = jmespath.search(k, events[0])
                 if kstr in message:
                     message = message.replace(kstr, kv)
         if '{resource_details}' not in message:
@@ -105,4 +105,3 @@ def get_resource_ids(resources):
 
 def get_resource_details(resource_type, ids):
     return '{resource_type}:{ids}'.format(resource_type=resource_type, ids=','.join(ids))
-
