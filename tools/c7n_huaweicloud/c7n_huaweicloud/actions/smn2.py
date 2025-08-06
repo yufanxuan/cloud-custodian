@@ -100,8 +100,10 @@ class NotifyMessageCustomizeAction(HuaweiCloudBaseAction):
     def perform_action(self, resource):
         pass
 
+
 def get_resource_ids(resources):
     return [data['id'] for data in resources if 'id' in data]
+
 
 def get_resource_details(resource_type, ids):
     return '{resource_type}:{ids}'.format(resource_type=resource_type, ids=','.join(ids))
