@@ -180,7 +180,7 @@ class FunctionGraphManager:
 
         return response
 
-    def get_custodian_depend_version_id(self, runtime="Python3.20"):
+    def get_custodian_depend_version_id(self, runtime="Python3.10"):
         depend_name = f'custodian-huaweicloud-{runtime}'
         list_dependencies_request = ListDependenciesRequest(runtime=runtime, name=depend_name)
         try:
@@ -348,6 +348,7 @@ class FunctionGraphManager:
         return response.body
 
     def publish(self, func, role=None):
+        log.error(f'test log: {self.session.domain_id}')
         try:
             result, changed, _ = self._create_or_update(func, role)
         except PolicyExecutionError:
