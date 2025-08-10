@@ -54,17 +54,16 @@ class NotifyMessageCustomizeAction(HuaweiCloudBaseAction):
         }
     })
 
-    def process(self, events):
+    def process(self, event):
         resource_type = self.manager.resource_type.service
-        ids = None
+        id=jmespath.search('resource_id', event)
         try:
-            ids = get_resource_ids(events)
             smn_client = local_session(self.manager.session_factory).client("smn")
             keyArr = self.data.get('keyArr', [])
 
             body = PublishMessageRequestBody(
                 subject=self.data.get('subject'),
-                message=self.build_message(resource_type, ids, events, keyArr)
+                message=self.build_message(resource_type, id, event, keyArr)
             )
 
             for topic_urn in self.data.get('topic_urn_list', []):
@@ -74,26 +73,26 @@ class NotifyMessageCustomizeAction(HuaweiCloudBaseAction):
                     f"[actions]-[notify-message] query the service:[POST /v2/{{project_id}}"
                     f"/notifications/topics/{topic_urn}/publish] is success.")
                 self.log.info(
-                    f"[actions]-[notify-message] The resource:{resource_type} with id:{ids} "
+                    f"[actions]-[notify-message] The resource:{resource_type} with id:{id} "
                     f"Publish message is success")
         except Exception as e:
             self.log.error(
-                f"[actions]-[notify-message] The resource:{resource_type} with id:{ids} "
+                f"[actions]-[notify-message] The resource:{resource_type} with id:{id} "
                 f"Publish message to SMN Topics is failed, cause:{e}")
-        return self.process_result(events)
+        return self.process_result(event)
 
-    def build_message(self, resource_type, ids, events, keyArr):
+    def build_message(self, resource_type, id, event, keyArr):
         message = self.data.get('message')
         if keyArr is not None:
             for k in keyArr:
                 kstr = "{" + k + "}"
-                kv = jmespath.search(k, events[0])
+                kv = jmespath.search(k, event)
                 if kstr in message:
                     message = message.replace(kstr, kv)
         if '{resource_details}' not in message:
             return message
-        resource_details = get_resource_details(resource_type, ids)
-        if not ids:
+        resource_details = get_resource_details(resource_type, id)
+        if not id:
             self.log.warning(f"[actions]-[notify-message] No id in resource: {resource_type}")
         return message.replace('{resource_details}', resource_details)
 
@@ -101,9 +100,5 @@ class NotifyMessageCustomizeAction(HuaweiCloudBaseAction):
         pass
 
 
-def get_resource_ids(resources):
-    return [data['id'] for data in resources if 'id' in data]
-
-
-def get_resource_details(resource_type, ids):
-    return '{resource_type}:{ids}'.format(resource_type=resource_type, ids=','.join(ids))
+def get_resource_details(resource_type, id):
+    return '{resource_type}:{id}'.format(resource_type=resource_type, id=id)
