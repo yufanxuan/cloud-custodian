@@ -10,10 +10,10 @@ from c7n_huaweicloud.actions import HuaweiCloudBaseAction
 
 
 def register_smn2_actions(actions):
-    actions.register('notify-message-from-event', NotifyMessageCustomizeAction)
+    actions.register('notify-message-from-event', Notifymessagefromevent)
 
 
-class NotifyMessageCustomizeAction(HuaweiCloudBaseAction):
+class Notifymessagefromevent(HuaweiCloudBaseAction):
     """Notify message to the specified smn topic.
 
     :example:
@@ -36,7 +36,7 @@ class NotifyMessageCustomizeAction(HuaweiCloudBaseAction):
                   message: 'test message {status},'
     """
 
-    log = logging.getLogger("custodian.huaweicloud.actions.smn2.NotifyMessageCustomizeAction")
+    log = logging.getLogger("custodian.huaweicloud.actions.smn2.Notifymessagefromevent")
 
     schema = type_schema("notify-message-from-event", rinherit={
         'type': 'object',
@@ -56,6 +56,9 @@ class NotifyMessageCustomizeAction(HuaweiCloudBaseAction):
 
     def process(self, event):
         resource_type = self.manager.resource_type.service
+        self.log.error("--------------------------")
+        self.log.error(event)
+        self.log.error("--------------------------")
         id=jmespath.search('resource_id', event)
         try:
             smn_client = local_session(self.manager.session_factory).client("smn")
