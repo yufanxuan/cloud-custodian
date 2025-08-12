@@ -10,10 +10,10 @@ from c7n_huaweicloud.actions import HuaweiCloudBaseAction
 
 
 def register_smn2_actions(actions):
-    actions.register('notify-message-from-event', Notifymessagefromevent)
+    actions.register('notify-message-from-event', NotifyMessageFromEvent)
 
 
-class Notifymessagefromevent(HuaweiCloudBaseAction):
+class NotifyMessageFromEvent(HuaweiCloudBaseAction):
     """Notify message to the specified smn topic.
 
     :example:
@@ -36,7 +36,7 @@ class Notifymessagefromevent(HuaweiCloudBaseAction):
                   message: 'test message {status},'
     """
 
-    log = logging.getLogger("custodian.huaweicloud.actions.smn2.Notifymessagefromevent")
+    log = logging.getLogger("custodian.huaweicloud.actions.smn2.NotifyMessageFromEvent")
 
     schema = type_schema("notify-message-from-event", rinherit={
         'type': 'object',
